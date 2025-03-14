@@ -5,9 +5,8 @@ import Link from 'next/link'
 import { blog } from '@/data/index'
 import { FaRegClock } from "react-icons/fa6";
 import { CiCalendar } from "react-icons/ci";
-import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
-import { FeaturedSectionData, HeroSectionData, NewArrivalsSanity, TopPicksData } from '@/sanity/lib/queries';
+import { FeaturedSectionData, NewArrivalsSanity, TopPicksData } from '@/sanity/lib/queries';
 import FeaturedSection from '@/components/FeaturedSection';
 import TopPicks from '@/components/TopPicks';
 import NewArrivals from '@/components/NewArrivals';
@@ -15,8 +14,6 @@ import CollectionsSection from '@/components/Collection';
 
 
 const Home = async () => {
-
-const HeroSectionProductData = await HeroSectionData();
 
 const FeaturedSectionProductData = await FeaturedSectionData();
 
