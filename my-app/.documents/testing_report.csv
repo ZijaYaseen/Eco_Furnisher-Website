@@ -1,0 +1,11 @@
+Test Case ID,Test Case Description,Test Steps,Expected Result,Actual Result,Status,Severity Level,Assigned To,Remarks
+TC_001,Check if the homepage loads properly,Open the homepage URL,Homepage should load with all elements visible,Homepage loads correctly,Passed,Low,N/A,Working as expected
+TC_002,Verify navigation links,Click on each navigation link,All links should navigate to the correct page,All links work correctly,Passed,Low,N/A,Navigation is functional
+TC_003,Check if the Shop page displays products,Navigate to the Shop page,Products should be visible on the page,Products are displayed correctly,Passed,Low,N/A,Shop page is functional
+TC_004,Ensure product details page works,Click on a product from the Shop page,The product details page should open with information,Product details page loads correctly,Passed,Low,N/A,Product pages are working
+TC_005,Test contact form submission,Fill and submit the contact form,Form submission should succeed,Form submission successful,Passed,Medium,N/A,Form submission is working fine
+TC_006,Check account login functionality,Enter valid credentials and log in,User should be logged in successfully,Login is successful,Passed,Medium,N/A,Login is functional
+TC_007,Verify cart functionality,Add a product to the cart,Product should be added to cart,Product added successfully,Passed,Medium,N/A,Cart is working fine
+TC_008,Ensure checkout process works,Proceed to checkout and place an order,Order should be placed successfully,Order placed correctly,Passed,High,N/A,Checkout process is smooth
+TC_009,Check if all pages load within 3 seconds,Measure page load time,Pages should load quickly,Some pages take longer,Failed,High,Developer,Optimization needed for faster load times
+TC_010,Test responsiveness on mobile,Open site on mobile device,Site should adjust to mobile layout,Site is responsive,Passed,Low,N/A,Mobile layout works well
