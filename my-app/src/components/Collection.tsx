@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import type { Swiper as SwiperCore } from "swiper";
 
 interface CollectionItem {
   title: string;
@@ -14,7 +15,7 @@ interface CollectionItem {
 }
 
 const CollectionsSection = () => {
-  const swiperRef = useRef<any>(null);
+    const swiperRef = useRef<SwiperCore | null>(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
 
