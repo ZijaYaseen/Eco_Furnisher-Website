@@ -1,5 +1,4 @@
 import { Products } from '@/data'
-import Image from 'next/image'
 
 interface OneProduct {
     product : Products
