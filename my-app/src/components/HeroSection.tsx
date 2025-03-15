@@ -23,7 +23,7 @@ export default function HeroSection() {
 
           {/* Content */}
           <div className="relative z-10 text-center text-white px-3 font-serif md:max-w-3xl">
-            <h2 className="text-3xl md:text-5xl md:font-semibold font-medium md:tracking-wider  mb-4 ">
+            <h2 className="text-2xl md:text-4xl md:font-semibold font-medium md:tracking-wider  mb-4 ">
               Design Your Dream Space with Modern Decor and Thoughtful Furniture
             </h2>
 
