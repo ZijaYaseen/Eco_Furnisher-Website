@@ -6,10 +6,10 @@ import { blog } from '@/data/index'
 import { FaRegClock } from "react-icons/fa6";
 import { CiCalendar } from "react-icons/ci";
 import HeroSection from '@/components/HeroSection';
-import { BestSellerSanity, NewArrivalsSanity, TopPicksData } from '@/sanity/lib/queries';
+import { BestSellerSanity, TopPicksData } from '@/sanity/lib/queries';
 import FeaturedSection from '@/components/FeaturedSection';
 import TopPicks from '@/components/TopPicks';
-import NewArrivals from '@/components/NewArrivals';
+// import NewArrivals from '@/components/NewArrivals';
 import CollectionsSection from '@/components/Collection';
 import BestSellerSection from '@/components/BestSeller';
 
@@ -19,7 +19,7 @@ const Home = async () => {
   const BestSellerData = await BestSellerSanity();
 const TopPicksProductData = await TopPicksData();
 
-const NewArrivalsData = await NewArrivalsSanity()
+// const NewArrivalsData = await NewArrivalsSanity()
 
 
 
@@ -40,7 +40,7 @@ const NewArrivalsData = await NewArrivalsSanity()
     <TopPicks products={TopPicksProductData}/>
 
      {/* Home Page 4th Section */}
-     <NewArrivals product={NewArrivalsData[0]}/>
+     {/* <NewArrivals product={NewArrivalsData[0]}/> */}
 
 
 
