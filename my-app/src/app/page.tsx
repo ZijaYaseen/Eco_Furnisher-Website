@@ -6,17 +6,17 @@ import { blog } from '@/data/index'
 import { FaRegClock } from "react-icons/fa6";
 import { CiCalendar } from "react-icons/ci";
 import HeroSection from '@/components/HeroSection';
-import { FeaturedSectionData, NewArrivalsSanity, TopPicksData } from '@/sanity/lib/queries';
+import { BestSellerSanity, NewArrivalsSanity, TopPicksData } from '@/sanity/lib/queries';
 import FeaturedSection from '@/components/FeaturedSection';
 import TopPicks from '@/components/TopPicks';
 import NewArrivals from '@/components/NewArrivals';
 import CollectionsSection from '@/components/Collection';
+import BestSellerSection from '@/components/BestSeller';
 
 
 const Home = async () => {
 
-const FeaturedSectionProductData = await FeaturedSectionData();
-
+  const BestSellerData = await BestSellerSanity();
 const TopPicksProductData = await TopPicksData();
 
 const NewArrivalsData = await NewArrivalsSanity()
@@ -26,13 +26,15 @@ const NewArrivalsData = await NewArrivalsSanity()
   return (
     <div className='max-w-[1920px] font-poppins h-full w-full overflow-hidden'>
 
-     {/* Home 1 Section Rocket Single Seater sofa*/}
-     {/* <HeroSection product={HeroSectionProductData}  /> */}
+     {/* Home PageSection 1*/}
      <HeroSection />
-     <CollectionsSection />
+
+     <BestSellerSection products={BestSellerData}/>
 
     {/* Home Page 2nd section  Featured section*/}
-    <FeaturedSection products={FeaturedSectionProductData} />
+    <FeaturedSection  />
+
+    <CollectionsSection />
 
     {/* Home page 3rd section */}
     <TopPicks products={TopPicksProductData}/>

@@ -32,6 +32,11 @@ const nextConfig = {
           hostname: "m.media-amazon.com",
           pathname: "/**",
         },
+        {
+          protocol: "https",
+          hostname: "cf.cjdropshipping.com",
+          pathname: "/**",
+        },
       ],
     },
   };

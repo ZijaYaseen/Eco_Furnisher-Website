@@ -126,6 +126,27 @@ export interface IProduct {
     
   }
 
+  export interface Variant {
+    vid: number;
+    variantSellPrice: number;
+    variantSugSellPrice: number;
+    variantactualSellPrice: number;
+    discountPercentage: number;
+  }
+  
+  export interface Product {
+    productNameEn: string;
+    productSku: string;
+    productImageSet: string[]; // Array of image URLs
+    categoryId: string;
+    CategoryName: string[];    // Array of category names
+    packingWeight: number;
+    description: string;       // HTML description
+    rating: number;
+    variants: Variant[];
+  }
+  
+
 export const blog = [
     {
         image:"blog1.svg",
