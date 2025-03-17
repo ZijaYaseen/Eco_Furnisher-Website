@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import ProductDetailClient from "@/components/ClientDetailProductPage";
 import { TopPicksData } from "@/sanity/lib/queries";

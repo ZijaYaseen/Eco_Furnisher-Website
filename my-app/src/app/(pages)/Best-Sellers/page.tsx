@@ -1,10 +1,8 @@
 // /app/best-seller/page.tsx
 
 import Image from "next/image";
-import Link from "next/link";
 import { BestSellerSanity } from "@/sanity/lib/queries";
 import ProductCard from "@/components/ProductCard";
-import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 // Define your Product and Variant interfaces here (or import them from a shared types file)
 interface Variant {
