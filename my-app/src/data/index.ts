@@ -125,26 +125,6 @@ export interface IProduct {
     tags?: string[];
     
   }
-
-  export interface Variant {
-    vid: number;
-    variantSellPrice: number;
-    variantSugSellPrice: number;
-    variantactualSellPrice: number;
-    discountPercentage: number;
-  }
-  
-  export interface Product {
-    productNameEn: string;
-    productSku: string;
-    productImageSet: string[]; // Array of image URLs
-    categoryId: string;
-    CategoryName: string[];    // Array of category names
-    packingWeight: number;
-    description: string;       // HTML description
-    rating: number;
-    variants: Variant[];
-  }
   
 
 export const blog = [
@@ -328,3 +308,24 @@ export const shortBlogs = [
     },
 ]
 
+/// for ecofurnisher ........
+
+interface Variant {
+    vid: string;
+    variantactualSellPrice: number;
+    discountPercentage: number;
+  }
+  
+  export interface Product {
+    _id: string;
+    slug: { current: string };
+    productNameEn: string;
+    productSku: string;
+    imagePath: string;
+    rating: number;
+    shortDescription: string;
+    categoryId: string;
+    CategoryName: string[];
+    packingWeight: number;
+    variants: Variant;
+  }

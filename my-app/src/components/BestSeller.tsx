@@ -7,26 +7,7 @@ import "swiper/css";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import type { Swiper as SwiperCore } from "swiper";
 import ProductCard from "../components/ProductCard"; 
-
-interface Variant {
-  vid: string;
-  variantactualSellPrice: number;
-  discountPercentage: number;
-}
-
-interface Product {
-  _id: string;
-  slug: { current: string };
-  productNameEn: string;
-  productSku: string;
-  imagePath: string;
-  rating: number;
-  shortDescription: string;
-  categoryId: string;
-  CategoryName: string[];
-  packingWeight: number;
-  variants: Variant;
-}
+import { Product } from "@/data";
 
 interface BestSellerSectionProps {
   products: Product[];

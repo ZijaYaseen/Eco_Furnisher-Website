@@ -4,24 +4,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
-
-// Define the interfaces
-interface Variant {
-  vid: string;
-  variantactualSellPrice: number;
-  discountPercentage: number;
-}
-
-interface Product {
-  _id: string;
-  slug: { current: string };
-  productNameEn: string;
-  productSku: string;
-  imagePath: string;
-  rating: number;
-  shortDescription: string;
-  variants: Variant;
-}
+import { Product } from "@/data";
 
 // Helper to truncate text
 const truncateText = (text: string, wordLimit: number = 25): string => {

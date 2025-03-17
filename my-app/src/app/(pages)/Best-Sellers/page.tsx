@@ -3,27 +3,7 @@
 import Image from "next/image";
 import { BestSellerSanity } from "@/sanity/lib/queries";
 import ProductCard from "@/components/ProductCard";
-
-// Define your Product and Variant interfaces here (or import them from a shared types file)
-interface Variant {
-  vid: string;
-  variantactualSellPrice: number;
-  discountPercentage: number;
-}
-
-interface Product {
-  _id: string;
-  slug: { current: string };
-  productNameEn: string;
-  productSku: string;
-  imagePath: string;
-  rating: number;
-  shortDescription: string;
-  categoryId: string;
-  CategoryName: string[];
-  packingWeight: number;
-  variants: Variant;
-}
+import { Product } from "@/data";
 
 export default async function BestSellerPage() {
   const products: Product[] = await BestSellerSanity();
