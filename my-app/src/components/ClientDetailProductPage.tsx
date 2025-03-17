@@ -49,16 +49,12 @@ export interface IProduct {
     categoryId?: string;
 }
 
-interface Products {
-    // Define as needed for TopPicks
-}
 
 interface ProductDetailClientProps {
     product: IProduct;
-    topPicks: Products[];
 }
 
-export default function ProductDetailClient({ product, topPicks }: ProductDetailClientProps) {
+export default function ProductDetailClient({ product }: ProductDetailClientProps) {
     const dispatch = useDispatch();
     const [count, setCount] = useState(1);
     const [selectedSize, setSelectedSize] = useState<string | null>(null);

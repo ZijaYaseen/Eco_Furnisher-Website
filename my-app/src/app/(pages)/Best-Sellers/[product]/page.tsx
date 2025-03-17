@@ -77,7 +77,4 @@ export default async function ProductPage({ params }: { params: { product: strin
       </div>
     );
   }
-
-  const topPicks = await TopPicksData();
-  return <ProductDetailClient product={product} topPicks={topPicks} />;
 }
