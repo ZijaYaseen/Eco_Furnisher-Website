@@ -327,3 +327,4 @@ export const shortBlogs = [
         date:"03 Aug 2022",
     },
 ]
+

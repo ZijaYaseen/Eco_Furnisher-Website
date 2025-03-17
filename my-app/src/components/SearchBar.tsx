@@ -36,18 +36,18 @@ const SearchBar: React.FC = () => {
         )}
       </div>
       {searchOpen && (
-        <div className="fixed z-10 md:top-[72px] top-16 left-4 right-4 md:right-8 md:left-8 max-w-[1440vw]">
+        <div className="fixed z-10 md:top-[86px] top-[68px] left-4 right-4 md:right-8 md:left-8 max-w-6xl mx-auto">
           <div className="flex items-center gap-2 w-full">
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search products..."
-              className="border px-4 py-2 md:py-4 rounded w-full focus:outline-none"
+              className="border px-4 py-2 md:py-3 rounded w-full focus:outline-none"
             />
             <button
               onClick={handleSearch}
-              className="px-4 md:px-8 py-2 md:py-3 bg-[#7e6b2f] hover:bg-[#b1a067] text-white rounded"
+              className="px-4 md:px-8 py-2 md:py-3 bg-black hover:bg-[#3b3b3b] text-white rounded"
             >
               Search
             </button>

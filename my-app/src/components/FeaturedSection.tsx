@@ -33,7 +33,7 @@ const FeaturedSection = () => {
       {/* Section Heading */}
       <div className="mb-8 text-center">
         <h2 className="text-3xl md:text-4xl font-bold">Featured on Amazon</h2>
-        <p className="mt-2 text-lg text-gray-600">Click on any product to visit Amazon Store.</p>
+        <p className="mt-2 text-lg text-gray-600">Click on a category to visit the Amazon store and see great deals.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 justify-center">

@@ -5,11 +5,10 @@ export default function HeroSection() {
     <>
       <main className="w-full mt-16 font-poppins">
         {/* HERO SECTION with Video Background */}
-        <section className="relative w-full h-[80vh] flex items-center justify-center overflow-hidden">
+        <section className="relative w-full h-[80vh]  flex items-center justify-center overflow-hidden">
           {/* Video Background */}
           <video
             autoPlay
-            loop
             muted
             playsInline
             className="absolute inset-0 w-full h-full object-cover"
@@ -23,7 +22,7 @@ export default function HeroSection() {
 
           {/* Content */}
           <div className="relative z-10 text-center text-white px-3 font-serif md:max-w-3xl">
-            <h2 className="text-2xl md:text-4xl md:font-semibold font-medium md:tracking-wider  mb-4 ">
+            <h2 className="text-xl md:text-4xl md:font-semibold font-medium md:tracking-wider  mb-4 ">
               Design Your Dream Space with Modern Decor and Thoughtful Furniture
             </h2>
 

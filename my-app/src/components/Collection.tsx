@@ -22,32 +22,57 @@ const CollectionsSection = () => {
   const collections: CollectionItem[] = [
     {
       title: "Vanity Tables & Mirrors",
-      image: "/p2.svg",
+      image: "/collection1.jpg",
       link: "/collections/vanity-tables",
     },
     {
-      title: "Bedroom Furniture",
-      image: "/images/bedroom-furniture.jpg",
-      link: "/collections/bedroom-furniture",
+      title: "Home Decor & Accessories",
+      image: "/collection2.jpg",
+      link: "/collections/vanity-tables",
     },
     {
       title: "Living Room Furniture",
-      image: "/images/living-room-furniture.jpg",
+      image: "/collection3.jpg",
       link: "/collections/living-room-furniture",
     },
     {
       title: "Dining Room Furniture",
-      image: "/images/dining-room-furniture.jpg",
+      image: "/collection4.jpg",
       link: "/collections/dining-room-furniture",
     },
     {
       title: "Home Office Furniture",
-      image: "/images/home-office-furniture.jpg",
+      image: "/collection5.jpg",
       link: "/collections/home-office-furniture",
     },
     {
-      title: "Vanity Tables & Mirrors",
-      image: "/images/vanity-tables.jpg",
+      title: "Kitchen Furniture",
+      image: "/collection6.jpg",
+      link: "/collections/vanity-tables",
+    },
+    {
+      title: "Kids & Teen Furniture",
+      image: "/collection7.jpg",
+      link: "/collections/vanity-tables",
+    },
+    {
+      title: "Office & Study Furniture",
+      image: "/collection8.jpg",
+      link: "/collections/vanity-tables",
+    },
+    {
+      title: "Outdoor & Patio Furniture",
+      image: "/collection9.jpg",
+      link: "/collections/vanity-tables",
+    },
+    {
+      title: "Bedroom Furniture",
+      image: "/collection10.jpg",
+      link: "/collections/bedroom-furniture",
+    },
+    {
+      title: "Smart Storage",
+      image: "/collection11.jpg",
       link: "/collections/vanity-tables",
     },
   ];
@@ -59,7 +84,7 @@ const CollectionsSection = () => {
     <section className="mx-auto max-w-screen-xl py-12 px-4 sm:px-6 lg:px-8 relative">
       <div className="text-center mb-8">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-          Explore Our Latest Collections
+          Explore Latest Collections
         </h2>
         <p className="mt-2 text-lg text-gray-600">
           Discover your perfect fit

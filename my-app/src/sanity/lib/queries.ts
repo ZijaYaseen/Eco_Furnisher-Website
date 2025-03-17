@@ -1,28 +1,40 @@
 import { client } from "./client";
 
-
-// Hero section product data
+// Best seller section product data
 export async function BestSellerSanity() {
   const query = `
-  *[_type == "product"]{
-    _id,
-    productNameEn,
-    productSku,
-    "imagePath": productImageSet[0],
-    rating,
-    shortDescription,
-    categoryId,
-    CategoryName,
-    packingWeight,
-    variants[]{
-      vid,
-      variantactualSellPrice,
-      discountPercentage
+    *[_type == "product"]{
+      _id,
+      slug { current },
+      productNameEn,
+      productSku,
+      "imagePath": productImageSet[0],
+      "imageSet" : productImageSet,
+      rating,
+      description,
+      shortDescription,
+      categoryId,
+      CategoryName,
+      packingWeight,
+      inventory,
+      tags,
+      seo {
+        metaTitle,
+        metaDescription,
+        metaKeywords
+      },
+      variants{
+        vid,
+        variantSellPrice,
+        variantSugSellPrice,
+        variantactualSellPrice,
+        discountPercentage
+      }
     }
-  }
-    `;
-  return await client.fetch(query);
+  `;
+  return await client.fetch(query, {}, { cache: "no-store" });
 }
+
 
 
 

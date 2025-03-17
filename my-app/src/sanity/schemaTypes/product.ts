@@ -1,4 +1,9 @@
-// schemas/product.js
+// Define an interface for the required fields used in slug generation
+interface ProductDoc {
+  productNameEn?: string;
+  CategoryName?: string[];
+}
+
 export default {
   name: 'product',
   title: 'Product',
@@ -51,8 +56,8 @@ export default {
     {
       name: 'description',
       title: 'Description',
-      type: 'text',
-      description: 'A detailed description of the product (HTML content)',
+      type: "string",
+      description: 'A detailed description of the product (rich text content)',
     },
     {
       name: 'rating',
@@ -61,15 +66,68 @@ export default {
       description: 'Average rating of the product (out of 5)',
     },
     {
+      name: 'inventory',
+      title: 'Inventory',
+      type: 'number',
+      description: 'Available inventory count for the product',
+    },
+    {
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Tags associated with the product. [Best Seller]',
+    },
+    {
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      description:
+        'URL-friendly identifier auto-generated from the product name and category',
+      options: {
+        source: (doc: ProductDoc): string => {
+          const productName = doc.productNameEn || '';
+          // Use first category name if available
+          const categoryName =
+            doc.CategoryName && doc.CategoryName.length > 0 ? doc.CategoryName[0] : '';
+          return `${productName}-${categoryName}`;
+        },
+        slugify: (input: string): string =>
+          input.toLowerCase().replace(/\s+/g, '-').slice(0, 200),
+      },
+    },
+    // Add your SEO metadata field here
+    {
+      name: 'seo',
+      title: 'SEO',
+      type: 'object',
+      fields: [
+        {
+          name: 'metaTitle',
+          title: 'Meta Title',
+          type: 'string',
+          description: 'The title used for SEO and social sharing',
+        },
+        {
+          name: 'metaDescription',
+          title: 'Meta Description',
+          type: 'text',
+          description: 'A brief description used for SEO and social sharing',
+        },
+        {
+          name: 'metaKeywords',
+          title: 'Meta Keywords',
+          type: 'array',
+          of: [{ type: 'string' }],
+          description: 'A list of keywords used for SEO',
+        },
+      ],
+    },
+    {
       name: 'variants',
       title: 'Variants',
-      type: 'array',
-      of: [
-        {
-          type: 'object',
-          name: 'variant',
-          title: 'Variant',
-          fields: [
+      type: 'object',
+      fields: [
             {
               name: 'vid',
               title: 'Variant ID',
@@ -102,8 +160,5 @@ export default {
             },
           ],
         },
-      ],
-      description: 'Array of product variants',
-    },
   ],
 };
