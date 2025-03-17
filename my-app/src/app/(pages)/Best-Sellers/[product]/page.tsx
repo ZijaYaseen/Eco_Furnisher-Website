@@ -1,6 +1,4 @@
 import { client } from "@/sanity/lib/client";
-import ProductDetailClient from "@/components/ClientDetailProductPage";
-import { TopPicksData } from "@/sanity/lib/queries";
 import Link from "next/link";
 
 // Generate static routes using product slug
