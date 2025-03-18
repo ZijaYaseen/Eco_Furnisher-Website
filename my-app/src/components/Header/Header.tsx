@@ -48,7 +48,7 @@ export default function Header() {
 
   return (
     <>
-      <nav className="w-screen h-[60px] fixed bg-white border-b border-gray-300 flex items-center justify-between md:px-6">
+      <nav className="w-screen md:h-[60px] fixed bg-white border-b border-gray-300 flex items-center justify-between md:px-6">
         {/* MOBILE: Hamburger & Logo */}
         <div className="md:hidden flex items-center">
           <div
@@ -60,7 +60,7 @@ export default function Header() {
               NavsetMenuOpen(!NavmenuOpen);
             }}
           >
-            <GiHamburgerMenu size={20} className="w-[22px] h-6 lg:w-8 lg:h-8" />
+            <GiHamburgerMenu size={22} className="w-7 h-7 lg:w-8 lg:h-8" />
           </div>
           <div className="text-black font-serif">
             <h1 className="font-semibold text-2xl">EcoFurnish</h1>
