@@ -24,7 +24,7 @@ const TopPicksProductData = await TopPicksData();
 
 
   return (
-    <div className='max-w-[1920px] font-poppins h-full w-full overflow-hidden'>
+    <div className='max-w-[1920px] font-poppins h-full w-full overflow-hidden mt-[60px]'>
 
      {/* Home PageSection 1*/}
      <HeroSection />

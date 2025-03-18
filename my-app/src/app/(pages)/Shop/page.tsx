@@ -18,7 +18,7 @@ const Shop = () => {
   const endIndex = Math.min(currentPage * itemsPerPage, filteredProducts.length);
 
   return (
-    <div className='max-w-[1440px] font-poppins w-full md:mt-[90px] mt-[60px]'>
+    <div className='max-w-[1440px] font-poppins w-full mt-[60px]'>
       {/* Header */}
       <PagesHeader title='Shop' name='Shop' />
 

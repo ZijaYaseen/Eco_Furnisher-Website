@@ -1,6 +1,6 @@
 export const Nav = [
     {name:"Home", Link:"/"},
-    {name:"Shop", Link:"/Shop"},
+    {name:"Shop All", Link:"/Shop"},
     {name:"About", Link:"/About"},
     {name:"Contact", Link:"/Contact"},
     {name:"Blogs", Link:"/Blog"},
@@ -10,7 +10,7 @@ export const Nav = [
 export const NavMbl = [
     { name: "Home", link: "/" },
     { 
-      name: "Shop", 
+      name: "Shop All", 
       link: "/Shop",
       subItems: [
         { 
@@ -140,122 +140,6 @@ export const blog = [
         image:"blog3.svg",
         title:"Going all-in with millennial design",
     },
-];
-
-export const shop = [
-    {
-        id:"Trenton-modular-sofa_3",
-        image: "/shop1.svg",
-        title :"Trenton modular sofa_3",
-        price :"Rs. 25,000.00",
-        link :"/"
-    },
-    {
-        id:"Granite-dining-table-with-dining-chair",
-        image: "/shop2.svg",
-        title :"Granite dining table with dining chair",
-        price :"Rs. 25,000.00",
-        link :"/"
-    },
-    {
-        id:"Outdoor-bar-table-and-stool",
-        image: "/shop3.svg",
-        title :"Outdoor bar table and stool",
-        price :"Rs. 25,000.00",
-        link :"/"
-    },
-    {
-        id:"Plain-console-with-teak-mirror",
-        image: "/shop4.svg",
-        title :"Plain console with teak mirror",
-        price :"Rs. 25,000.00",
-        link :"/"
-    },
-    {
-        id:5,
-        image: "/shop5.svg",
-        title :"Grain coffee table",
-        price :"Rs. 15,000.00",
-        link :"/"
-    },
-    {
-        id:6,
-        image: "/shop6.svg",
-        title :"Kent coffee table",
-        price :"Rs. 225,000.00",
-        link :"/"
-    },
-    {
-        id:7,
-        image: "/shop7.svg",
-        title :"Round coffee table_color 2",
-        price :"Rs. 251,000.00",
-        link :"/"
-    },
-    {
-        id:8,
-        image: "/shop8.svg",
-        title :"Reclaimed teak coffee table",
-        price :"Rs. 25,200.00",
-        link :"/"
-    },
-    {
-        id:9,
-        image: "/shop9.svg",
-        title :"Plain console_",
-        price :"Rs. 258,200.00",
-        link :"/"
-    },
-    {
-        id:10,
-        image: "/shop10.svg",
-        title :"Reclaimed teak Sideboard",
-        price :"Rs. 20,000.00",
-        link :"/"
-    },
-    {
-        id:11,
-        image: "/shop11.svg",
-        title :"SJP_0825 ",
-        price :"Rs. 200,000.00",
-        link :"/"
-    },
-    {
-        id:12,
-        image: "/shop12.svg",
-        title :"Bella chair and table",
-        price :"Rs. 100,000.00",
-        link :"/"
-    },
-    {
-        id:13,
-        image: "/shop13.svg",
-        title :"Granite square side table",
-        price :"Rs. 258,800.00",
-        link :"/"
-    },
-    {
-        id:14,
-        image: "/shop14.svg",
-        title :"Asgaard sofa",
-        price :"Rs. 250,000.00",
-        link :"/Single-Product"
-    },
-    {
-        id:15,
-        image: "/shop15.svg",
-        title :"Maya sofa three seater",
-        price :"Rs. 115,000.00",
-        link :"/"
-    },
-    {
-        id:16,
-        image: "/shop16.svg",
-        title :"Outdoor sofa set",
-        price :"Rs. 244,000.00",
-        link :"/"
-    },
-
 ];
 
 export const blogposts = [

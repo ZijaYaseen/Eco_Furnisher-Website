@@ -3,9 +3,9 @@
 export default function HeroSection() {
   return (
     <>
-      <main className="w-full mt-16 font-poppins">
+      <main className="w-full font-poppins">
         {/* HERO SECTION with Video Background */}
-        <section className="relative w-full h-[80vh]  flex items-center justify-center overflow-hidden">
+        <section className="relative w-full md:h-[80vh] h-[50vh]  flex items-center justify-center overflow-hidden">
           {/* Video Background */}
           <video
             autoPlay

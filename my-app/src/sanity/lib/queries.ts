@@ -1,5 +1,42 @@
 import { client } from "./client";
 
+export async function GetProductsData(searchQuery: string = '') {
+  const query = `
+    *[_type == "product" &&
+      (productNameEn match $searchQuery || CategoryName match $searchQuery)
+    ]{
+      _id,
+      slug { current },
+      productNameEn,
+      productSku,
+      "imagePath": productImageSet[0],
+      "imageSet": productImageSet,
+      rating,
+      description,
+      shortDescription,
+      categoryId,
+      CategoryName,
+      packingWeight,
+      inventory,
+      tags,
+      seo {
+        metaTitle,
+        metaDescription,
+        metaKeywords
+      },
+      variants{
+        vid,
+        variantSellPrice,
+        variantSugSellPrice,
+        variantactualSellPrice,
+        discountPercentage
+      }
+    }
+  `;
+  return await client.fetch(query, { searchQuery: `*${searchQuery}*` }, { cache: "no-store" });
+}
+
+
 // Best seller section product data
 export async function BestSellerSanity() {
   const query = `
@@ -36,31 +73,6 @@ export async function BestSellerSanity() {
 }
 
 
-
-
-
-
-// for shop page data
-export async function GetProductsData(searchQuery: string = '') {
-  const query = `
-    *[_type == 'product' && 
-      (name match $searchQuery || category match $searchQuery)
-    ] {
-      _id,
-      name,
-      imagePath,
-      description,
-      price,
-      category,
-      stockLevel,
-      size,
-      color,
-      discountPercentage,
-      isFeaturedProduct
-    }
-  `;
-  return await client.fetch(query, { searchQuery: `*${searchQuery}*` });
-}
 
 
 // Top Picks product data

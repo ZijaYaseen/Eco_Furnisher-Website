@@ -1,11 +1,11 @@
 // redux/Search/searchSlice.ts
-import { IProduct } from '@/data';
+import { Product } from '@/data';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface SearchState {
   searchQuery: string;
-  filteredProducts: IProduct[]; // filtered products for search query
-  allProducts: IProduct[]; // Default products for search query
+  filteredProducts: Product[]; // filtered products for search query
+  allProducts: Product[]; // Default products for search query
   currentPage: number; // Active page number
   itemsPerPage: number; // Products per page
 }
@@ -25,10 +25,10 @@ const searchSlice = createSlice({
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
     },
-    setFilteredProducts: (state, action: PayloadAction<IProduct[]>) => {
+    setFilteredProducts: (state, action: PayloadAction<Product[]>) => {
       state.filteredProducts = action.payload;
     },
-    setAllProducts: (state, action: PayloadAction<IProduct[]>) => {
+    setAllProducts: (state, action: PayloadAction<Product[]>) => {
       state.allProducts = action.payload; // Set default products
       state.filteredProducts = action.payload; // Initially, filtered products are the same
     },
