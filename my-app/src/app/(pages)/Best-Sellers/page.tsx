@@ -9,9 +9,9 @@ export default async function BestSellerPage() {
   const products: Product[] = await BestSellerSanity();
 
   return (
-    <div>
+    <div className="max-w-[1440px] font-poppins mt-[56px]">
       {/* Header */}
-      <div className="relative h-64 w-full">
+      <div className="relative h-60 w-full">
         <Image
           src="/path-to-your-background-image.jpg"
           alt="Best Sellers Background"

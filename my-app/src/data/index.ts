@@ -213,3 +213,250 @@ interface Variant {
     packingWeight: number;
     variants: Variant;
   }
+
+  // categoriesData.ts
+
+export const megaMenuData = [
+  {
+    name: "Furniture",
+    columns: [
+      {
+        heading: "Bed Room Furniture",
+        items: [
+          { name: "Beds", link: "/furniture/beds" },
+          { name: "Side Tables", link: "/furniture/side-tables" },
+          { name: "Dressers", link: "/furniture/dressers" },
+        ],
+      },
+      {
+        heading: "Dining Room Furniture",
+        items: [
+          { name: "Dining Tables", link: "/furniture/dining-tables" },
+          { name: "Dining Chairs", link: "/furniture/dining-chairs" },
+          { name: "Crockery Units", link: "/furniture/crockery-units" },
+        ],
+      },
+      {
+        heading: "Kids Room Furniture",
+        items: [
+          { name: "Bunk Beds", link: "/furniture/bunk-beds" },
+          { name: "Study Desks", link: "/furniture/study-desks" },
+        ],
+      },
+      {
+        heading: "Office Furniture",
+        items: [
+          { name: "Office Chairs", link: "/furniture/office-chairs" },
+          { name: "Office Tables", link: "/furniture/office-tables" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Furniture",
+    columns: [
+      {
+        heading: "Bed Room Furniture",
+        items: [
+          { name: "Beds", link: "/furniture/beds" },
+          { name: "Side Tables", link: "/furniture/side-tables" },
+          { name: "Dressers", link: "/furniture/dressers" },
+        ],
+      },
+      {
+        heading: "Dining Room Furniture",
+        items: [
+          { name: "Dining Tables", link: "/furniture/dining-tables" },
+          { name: "Dining Chairs", link: "/furniture/dining-chairs" },
+          { name: "Crockery Units", link: "/furniture/crockery-units" },
+        ],
+      },
+      {
+        heading: "Kids Room Furniture",
+        items: [
+          { name: "Bunk Beds", link: "/furniture/bunk-beds" },
+          { name: "Study Desks", link: "/furniture/study-desks" },
+        ],
+      },
+      {
+        heading: "Office Furniture",
+        items: [
+          { name: "Office Chairs", link: "/furniture/office-chairs" },
+          { name: "Office Tables", link: "/furniture/office-tables" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Furniture",
+    columns: [
+      {
+        heading: "Bed Room Furniture",
+        items: [
+          { name: "Beds", link: "/furniture/beds" },
+          { name: "Side Tables", link: "/furniture/side-tables" },
+          { name: "Dressers", link: "/furniture/dressers" },
+        ],
+      },
+      {
+        heading: "Dining Room Furniture",
+        items: [
+          { name: "Dining Tables", link: "/furniture/dining-tables" },
+          { name: "Dining Chairs", link: "/furniture/dining-chairs" },
+          { name: "Crockery Units", link: "/furniture/crockery-units" },
+        ],
+      },
+      {
+        heading: "Kids Room Furniture",
+        items: [
+          { name: "Bunk Beds", link: "/furniture/bunk-beds" },
+          { name: "Study Desks", link: "/furniture/study-desks" },
+        ],
+      },
+      {
+        heading: "Office Furniture",
+        items: [
+          { name: "Office Chairs", link: "/furniture/office-chairs" },
+          { name: "Office Tables", link: "/furniture/office-tables" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Furniture",
+    columns: [
+      {
+        heading: "Bed Room Furniture",
+        items: [
+          { name: "Beds", link: "/furniture/beds" },
+          { name: "Side Tables", link: "/furniture/side-tables" },
+          { name: "Dressers", link: "/furniture/dressers" },
+        ],
+      },
+      {
+        heading: "Dining Room Furniture",
+        items: [
+          { name: "Dining Tables", link: "/furniture/dining-tables" },
+          { name: "Dining Chairs", link: "/furniture/dining-chairs" },
+          { name: "Crockery Units", link: "/furniture/crockery-units" },
+        ],
+      },
+      {
+        heading: "Kids Room Furniture",
+        items: [
+          { name: "Bunk Beds", link: "/furniture/bunk-beds" },
+          { name: "Study Desks", link: "/furniture/study-desks" },
+        ],
+      },
+      {
+        heading: "Office Furniture",
+        items: [
+          { name: "Office Chairs", link: "/furniture/office-chairs" },
+          { name: "Office Tables", link: "/furniture/office-tables" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Furniture",
+    columns: [
+      {
+        heading: "Bed Room Furniture",
+        items: [
+          { name: "Beds", link: "/furniture/beds" },
+          { name: "Side Tables", link: "/furniture/side-tables" },
+          { name: "Dressers", link: "/furniture/dressers" },
+        ],
+      },
+      {
+        heading: "Dining Room Furniture",
+        items: [
+          { name: "Dining Tables", link: "/furniture/dining-tables" },
+          { name: "Dining Chairs", link: "/furniture/dining-chairs" },
+          { name: "Crockery Units", link: "/furniture/crockery-units" },
+        ],
+      },
+      {
+        heading: "Kids Room Furniture",
+        items: [
+          { name: "Bunk Beds", link: "/furniture/bunk-beds" },
+          { name: "Study Desks", link: "/furniture/study-desks" },
+        ],
+      },
+      {
+        heading: "Office Furniture",
+        items: [
+          { name: "Office Chairs", link: "/furniture/office-chairs" },
+          { name: "Office Tables", link: "/furniture/office-tables" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Lighting",
+    columns: [
+      {
+        heading: "Indoor Lights",
+        items: [
+          { name: "Chandeliers", link: "/lighting/chandeliers" },
+          { name: "Ceiling Lamps", link: "/lighting/ceiling-lamps" },
+        ],
+      },
+      {
+        heading: "Outdoor Lights",
+        items: [
+          { name: "Garden Lights", link: "/lighting/garden-lights" },
+          { name: "Wall Lamps", link: "/lighting/wall-lamps" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Decor",
+    columns: [
+      {
+        heading: "Wall Art",
+        items: [
+          { name: "Paintings", link: "/decor/paintings" },
+          { name: "Wall Hangings", link: "/decor/wall-hangings" },
+        ],
+      },
+      {
+        heading: "Mirrors",
+        items: [
+          { name: "Round Mirrors", link: "/decor/round-mirrors" },
+          { name: "Full-Length Mirrors", link: "/decor/full-mirrors" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Kitchen",
+    columns: [
+      {
+        heading: "Dinnerware",
+        items: [
+          { name: "Plates", link: "/kitchen/plates" },
+          { name: "Bowls", link: "/kitchen/bowls" },
+        ],
+      },
+      // ...
+    ],
+  },
+  {
+    name: "Outdoor",
+    columns: [
+      {
+        heading: "Patio Furniture",
+        items: [
+          { name: "Outdoor Sofas", link: "/outdoor/sofas" },
+          { name: "Garden Chairs", link: "/outdoor/chairs" },
+        ],
+      },
+      // ...
+    ],
+  },
+];
+
+
+  

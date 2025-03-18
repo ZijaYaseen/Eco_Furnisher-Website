@@ -3,7 +3,7 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import { Poppins } from "next/font/google";
 import { Providers } from "./providers";
-import ClientHeader from "@/components/ClientHeader";
+import ClientHeader from "@/components/Header/ClientHeader";
 
 const poppins = Poppins({
   subsets: ["latin"],

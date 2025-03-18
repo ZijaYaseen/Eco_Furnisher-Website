@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdClose } from "react-icons/md";
-import { CiSearch } from "react-icons/ci";
+import { FiSearch } from "react-icons/fi";
 import { performSearch } from "@/redux/Search/searchActions";
 import { UseAppDispatch } from "@/redux/hooks";
 
@@ -31,15 +31,15 @@ const SearchBar: React.FC = () => {
             onClick={() => setSearchOpen(false)}
           />
         ) : (
-          <CiSearch
-            size={28}
-            className="cursor-pointer w-7 h-7 lg:w-8 lg:h-8"
+          <FiSearch 
+            size={32}
+            className="cursor-pointer w-7 h-7 lg:w-8 lg:h-7"
             onClick={() => setSearchOpen(true)}
           />
         )}
       </div>
       {searchOpen && (
-        <div className="fixed z-10 md:top-[86px] top-[68px] left-4 right-4 md:right-8 md:left-8 max-w-6xl mx-auto">
+        <div className="fixed z-10 md:top-[120px] top-[68px] left-4 right-4 md:right-8 md:left-8 max-w-6xl mx-auto">
           <div className="flex items-center gap-2 w-full">
             <input
               type="text"

@@ -5,7 +5,7 @@ export default function HeroSection() {
     <>
       <main className="w-full font-poppins">
         {/* HERO SECTION with Video Background */}
-        <section className="relative w-full md:h-[80vh] h-[50vh]  flex items-center justify-center overflow-hidden">
+        <section className="relative w-full md:h-[90vh] h-[80vh]  flex items-center justify-center overflow-hidden">
           {/* Video Background */}
           <video
             autoPlay
