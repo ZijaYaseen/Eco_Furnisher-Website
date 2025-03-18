@@ -52,7 +52,7 @@ const ProductsList: React.FC = () => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 py-4 place-items-center px-6 md:px-16 lg:px-10 gap-2">
       {paginatedProducts.map((product) => (
-        <div>
+        <div key={product._id}>
           <ProductCard product={product} />
         </div>
       ))}

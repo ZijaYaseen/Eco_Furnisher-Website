@@ -97,9 +97,9 @@ const Header = (props: {  shadow: string;atTop: boolean }) => {
         className={`fixed z-10 ${
           // Agar atTop true hai, header ko TopHeader ke niche rakhne ke liye (e.g. 50px) otherwise top-0
           props.atTop ? "top-[40px]" : "top-0"
-        } left-0 w-screen md:h-[80px] h-[60px] transition-transform duration-300 ${
+        } left-0 w-screen md:h-[70px] h-[60px] transition-transform duration-300 ${
           showHeader ? "translate-y-0" : "-translate-y-full"
-        } ${props.shadow} bg-white flex items-center justify-between px-4`}
+        } ${props.shadow} bg-white flex items-center justify-between px-4  border-b-4 border-red-600`}
       >
         {/* MOBILE: Hamburger & Logo */}
         <div className="md:hidden flex items-center">
