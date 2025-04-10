@@ -12,6 +12,7 @@ import TopPicks from '@/components/TopPicks';
 // import NewArrivals from '@/components/NewArrivals';
 import CollectionsSection from '@/components/Collection';
 import BestSellerSection from '@/components/BestSeller';
+import BlogSection from '@/components/Blog';
 
 
 const Home = async () => {
@@ -37,7 +38,7 @@ const TopPicksProductData = await TopPicksData();
     <CollectionsSection />
 
     {/* Home page 3rd section */}
-    <TopPicks products={TopPicksProductData}/>
+    <TopPicks products={BestSellerData}/>
 
      {/* Home Page 4th Section */}
      {/* <NewArrivals product={NewArrivalsData[0]}/> */}
@@ -46,53 +47,7 @@ const TopPicksProductData = await TopPicksData();
 
 
 {/* Home page 5th section */}
-<section className="flex flex-col items-center justify-center bg-[#FFFFFF] py-10">
-  <h1 className="font-medium text-3xl sm:text-4xl">Our Blogs</h1>
-  <p className="text-[#9F9F9F] font-medium text-base mt-[13px] text-center sm:text-lg px-2">
-    Find a bright ideal to suit your taste with our great selection
-  </p>
-
-  <div className="flex flex-wrap justify-center items-center w-full gap-10 mt-8">
-    {blog.map((items, index) => (
-      <div
-        key={index}
-        className="flex flex-col items-center justify-center mb-8 w-full sm:w-[45%] md:w-[30%] lg:w-[22%]"
-      >
-        
-        <Image
-          src={items.image}
-          alt="blog"
-          width={80}
-          height={100}
-          priority={false} // Default lazy loading
-          className="md:w-full w-[90%] h-[50vh] object-cover rounded-lg"
-        ></Image>
-        <p className="py-4 text-xl font-normal text-center">{items.title}</p>
-        <button className="text-base font-bold border-b-2 border-black">Read More</button>
-
-        <div className="flex items-center space-x-4 mt-6">
-          <div className="flex items-center space-x-2">
-            <FaRegClock size={18} className="font-bold" />
-            <span>5 min</span>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <CiCalendar size={24} className="font-bold" />
-            <span>
-              12<sup>th</sup> Oct 2022
-            </span>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
-
-  <Link href={"/Blog"}>
-  <button className="font-medium text-xl border-b-2 border-black pb-2">
-    View All Post
-    </button>
-    </Link>
-</section>
+<BlogSection />
 
 
 {/* Home pae 6th section */}

@@ -69,7 +69,7 @@ export default function Header() {
 
         {/* DESKTOP: Logo */}
         <div className="hidden lg:block text-black font-serif">
-          <h1 className="font-semibold lg:text-2xl text-xl px-5">EcoFurnish</h1>
+          <h1 className="font-semibold md:text-3xl text-xl px-5">EcoFurnisher</h1>
         </div>
 
         {/* DESKTOP Navigation */}
@@ -77,7 +77,7 @@ export default function Header() {
           <ul className="flex space-x-6 uppercase tracking-wider text-sm font-medium">
             {Nav.map((item) => (
               <li key={item.name}>
-                <Link href={item.Link || "#"}>
+                <Link href={item.Link || "/"}>
                   <span className="cursor-pointer px-3 flex items-center">
                     {item.name}
                   </span>

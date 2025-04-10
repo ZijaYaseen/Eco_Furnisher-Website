@@ -24,7 +24,7 @@ const BestSellerSection = ({ products }: BestSellerSectionProps) => {
   return (
     <section className="mx-auto max-w-screen-xl md:py-12 py-5 px-4 sm:px-6 lg:px-8 relative">
       <div className="text-center mb-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 bg">
           Best Sellers
         </h2>
         <p className="mt-2 text-lg text-gray-600">
