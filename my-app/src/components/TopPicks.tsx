@@ -1,11 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
-import Link from "next/link";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import type { Swiper as SwiperCore } from "swiper";
 import ProductCard from "../components/ProductCard"; 
 import { Product } from "@/data";
 
@@ -28,7 +23,7 @@ const TopPicks = ({ products }: BestSellerSectionProps) => {
 
   
        
-       <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+       <div className="grid grid-cols-2 md:grid-cols-4 md:gap-28">
        {products.map((product) => (
        
        <ProductCard product={product} />

@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from 'next/dynamic';
-import { UseAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import { LiaSlidersHSolid } from "react-icons/lia";
 import { BsFillGridFill } from "react-icons/bs";
 import { PiLineVertical } from "react-icons/pi";
@@ -12,7 +12,7 @@ const ProductsList = dynamic(() => import('@/components/ProductsList'));
 const Pagination = dynamic(() => import('@/components/Pagination'));
 
 const Shop = () => {
-  const { itemsPerPage, filteredProducts, currentPage, searchQuery } = UseAppSelector((state) => state.search);
+  const { itemsPerPage, filteredProducts, currentPage, searchQuery } = useAppSelector((state) => state.search);
   
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
   const endIndex = Math.min(currentPage * itemsPerPage, filteredProducts.length);

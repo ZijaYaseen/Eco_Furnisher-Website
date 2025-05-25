@@ -27,7 +27,7 @@ export default function MegaMenu() {
           return (
             <div
               key={cat.name}
-              className="cursor-pointer hover:text-blue-600 font-medium text-sm flex items-center space-x-1"
+              className="cursor-pointer hover:text-blue-600 font-medium text-base flex items-center space-x-1"
               onMouseEnter={() => setActiveCat(cat.name)}
             >
               <span>{cat.name}</span>

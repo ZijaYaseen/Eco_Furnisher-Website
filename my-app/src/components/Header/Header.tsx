@@ -9,7 +9,7 @@ import { MdClose, MdArrowBack, MdKeyboardArrowDown, MdSupervisorAccount } from "
 import Link from "next/link";
 import SearchBar from "../SearchBar";
 import { useRouter } from "next/navigation";
-import { UseAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 
 // NavItem interface for both desktop and mobile nav
 interface NavItem {
@@ -23,7 +23,7 @@ export default function Header() {
   const [NavmenuOpen, NavsetMenuOpen] = useState(false);
   const [menuStack, setMenuStack] = useState<NavItem[][]>([NavMbl]);
   const router = useRouter();
-  const cartItems = UseAppSelector((state) => state.cart.items);
+  const cartItems = useAppSelector((state) => state.cart.items);
 
   // Login token logic
   const [token, setToken] = useState<string | null>(null);
@@ -63,7 +63,7 @@ export default function Header() {
             <GiHamburgerMenu size={22} className="w-7 h-7 lg:w-8 lg:h-8" />
           </div>
           <div className="text-black font-serif">
-            <h1 className="font-semibold text-2xl">EcoFurnish</h1>
+            <h1 className="font-semibold text-2xl">EcoFurnisher</h1>
           </div>
         </div>
 
@@ -123,7 +123,7 @@ export default function Header() {
                 <span className="font-semibold text-xl">Back</span>
               </button>
             ) : (
-              <span className="font-semibold text-xl">Menu</span>
+              <span className="font-semibold text-xl">EcoFurnisher</span>
             )}
             <div
               className="cursor-pointer"

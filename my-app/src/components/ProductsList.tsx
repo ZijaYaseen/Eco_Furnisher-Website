@@ -1,17 +1,17 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import { UseAppSelector, UseAppDispatch } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { fetchAllProducts, selectPaginatedProducts } from '@/redux/Search/searchActions';
 import { Product } from '@/data';
 import ProductCard from './ProductCard';
 
 const ProductsList: React.FC = () => {
-  const paginatedProducts: Product[] = UseAppSelector(selectPaginatedProducts);
+  const paginatedProducts: Product[] = useAppSelector(selectPaginatedProducts);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const dispatch = UseAppDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchProducts = async () => {

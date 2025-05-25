@@ -237,32 +237,47 @@ export async function GET(req: NextRequest) {
     let queryParams: { userId?: string; guestId?: string } = {};
 
     if (userId) {
-      query = `*[_type == "cart" && user._ref == $userId][0]{
-        ...,
-        items[]{
-          ...,
-          product->{
-            _id,
-            name,
-            imagePath,
-            price
-          }
-        }
-      }`;
+      query = `
+      *[_type == "cart" && guestId == $guestId][0]{
+  _id,
+  items[]{
+    product->{
+      productNameEn,
+      productSku,
+      "imageSet": productImageSet,
+      variants{
+        variantactualSellPrice,
+        discountPercentage
+      }
+    },
+    quantity,
+    'discountedPrice': product->variants.variantactualSellPrice * (1 - product->variants.discountPercentage / 100),
+    'subtotal': quantity * (product->variants.variantactualSellPrice * (1 - product->variants.discountPercentage / 100))
+    }
+}
+`;
       queryParams = { userId };
     } else if (guestId) {
-      query = `*[_type == "cart" && guestId == $guestId][0]{
-        ...,
-        items[]{
-          ...,
-          product->{
-            _id,
-            name,
-            imagePath,
-            price
-          }
-        }
-      }`;
+      query = `
+      *[_type == "cart" && guestId == $guestId][0]{
+  _id,
+  items[]{
+    product->{
+      productNameEn,
+      productSku,
+      "imageSet": productImageSet,
+      variants{
+        vid,
+        variantactualSellPrice,
+        discountPercentage
+      }
+    },
+    quantity,
+   'discountedPrice': product->variants.variantactualSellPrice * (1 - product->variants.discountPercentage / 100),
+    'subtotal': quantity * (product->variants.variantactualSellPrice * (1 - product->variants.discountPercentage / 100))
+      }
+}
+`;
       queryParams = { guestId };
     } else {
       // Agar koi identifier nahin, to empty cart return karein.
@@ -287,8 +302,9 @@ export async function GET(req: NextRequest) {
 // DELETE: Remove Item from Cart
 // ----------------------------
 export async function DELETE(req: NextRequest) {
-  try {
-    const { productId } = await req.json();
+    try {
+    const { searchParams } = new URL(req.url);
+    const productId = searchParams.get("productId");
     if (!productId) {
       return NextResponse.json(
         { success: false, error: "Missing productId" },

@@ -45,7 +45,7 @@ const FeaturedProducts = [
 
 const FeaturedSection = () => {
   return (
-    <section className="px-4 sm:px-8 lg:px-20 py-10 md:py-16 bg-gray-50">
+    <section className="px-4 md:px-8 py-10 md:py-16 bg-gray-50">
       {/* Section Heading */}
       <div className="mb-8 text-center">
         <h2 className="text-3xl md:text-4xl font-bold">
@@ -62,8 +62,8 @@ const FeaturedSection = () => {
           // Calculate excerpt by taking first 30 words from blogParagraph
           const words = product.blogParagraph.split(" ");
           const excerpt =
-            words.length > 15
-              ? words.slice(0, 15).join(" ") + "..."
+            words.length > 30
+              ? words.slice(0, 30).join(" ") + "..."
               : product.blogParagraph;
           return (
             <div key={product.id}>
@@ -74,7 +74,7 @@ const FeaturedSection = () => {
                 rel="noopener noreferrer"
                 className="block"
               >
-                <div className="relative w-full h-[250px] sm:h-[300px] lg:h-[350px]">
+                <div className="relative w-full h-[250px] md:h-[300px]">
                   <Image
                     src={product.imagePath}
                     alt={product.name}
@@ -83,7 +83,7 @@ const FeaturedSection = () => {
                   />
                   {/* Overlay for blog title */}
                   <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-2">
-                    <h2 className="font-semibold text-xl sm:text-2xl lg:text-3xl text-center text-white">
+                    <h2 className="font-semibold text-xl md:text-3xl text-center text-white">
                       {product.name}
                     </h2>
                   </div>
@@ -91,7 +91,7 @@ const FeaturedSection = () => {
 
                 {/* Blog Section Under the Image */}
                 <div className="py-4">
-                  <h2 className="font-semibold text-xl sm:text-2xl lg:text-3xl text-black hover:text-gray-700">
+                  <h2 className="font-semibold text-xl md:text-3xl text-black hover:text-gray-700">
                     sofa Trends and techniques , would u like to do it more ...
 
                   </h2>

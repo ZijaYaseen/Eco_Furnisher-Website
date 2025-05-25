@@ -17,6 +17,7 @@ const productMetaQuery = `*[_type == "product" && slug.current == $product][0]{
 }`;
 
 const productDetailQuery = `*[_type == "product" && slug.current == $product][0]{
+  'slug': slug.current,
   _id,
   productNameEn,
   productSku,
@@ -41,8 +42,6 @@ const productDetailQuery = `*[_type == "product" && slug.current == $product][0]
     variantactualSellPrice,
     discountPercentage
   },
-  size,
-  color
 }`;
 
 // Generate static routes using product slug

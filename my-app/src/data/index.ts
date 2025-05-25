@@ -14,7 +14,7 @@ export const NavMbl = [
       link: "/Shop",
       subItems: [
         { 
-          name: "Bed", 
+          name: "Beds", 
           link: "https://www.amazon.com/stores/page/C0C62B15-19A4-43C0-9B36-8C2E9FCC15DA?_encoding=UTF8&store_ref=SB_A03291291XKV1YI70WONF-A0296085BSBY5BMRPJ3L&pd_rd_plhdr=t&aaxitk=4a7d8c89d9655a9d0da2c9a89ef42e1e&hsa_cr_id=0&lp_asins=B0CW9TZV5F%2CB0CW9HN31C%2CB0D1JWQ8HK&lp_query=bed+furniture&lp_slot=desktop-hsa-3psl&pd_rd_w=DOKUX&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=E7QHS7NDSDB7RCCFK8JE&pd_rd_wg=8EbPN&pd_rd_r=46480aba-b078-49d7-856e-10ab6decc785&linkCode=ll2&tag=zijaecommerce-20&linkId=38f229dda47f416387852a37157b5133&language=en_US&ref_=as_li_ss_tl",
           subItems: [
             { name: "Platform Beds", link: "https://www.amazon.com/s?k=Platform+beds&crid=2EVSDG0CU6UMJ&sprefix=platform+b%2Caps%2C1250&linkCode=ll2&tag=zijaecommerce-20&linkId=761dd791f16341f6665551fab62b2b90&language=en_US&ref_=as_li_ss_tl" },
@@ -40,7 +40,37 @@ export const NavMbl = [
             ]
           },
           { 
-            name: "Chair", 
+            name: "Lighting", 
+            link: "https://www.amazon.com/s?k=wardrobe&crid=1AQUTDLYL09FA&sprefix=war%2Caps%2C1315&linkCode=ll2&tag=zijaecommerce-20&linkId=eb2610412216f417b48621dac2def588&language=en_US&ref_=as_li_ss_tl",
+            subItems: [
+              { name: "Sliding Door Wardrobe", link: "https://www.amazon.com/stores/page/3ABE7240-9C07-48F3-8ADE-863CD8825783?_encoding=UTF8&store_ref=SB_A03257346X6PLFU7SIN1-A06482242GXEVF76XLHDM&pd_rd_plhdr=t&aaxitk=4175700ac17c1f9a3cc5eccafea90fc7&hsa_cr_id=0&lp_asins=B0DCZMD6VX%2CB0DCZNFRLN&lp_query=sliding+door+wardrobe+with+mirror&lp_slot=desktop-hsa-3psl&pd_rd_w=QD4SC&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=SNH58Z7B27Q2NVAN2ZQ2&pd_rd_wg=BDipF&pd_rd_r=fd1d6c3a-9ff4-425e-b4e4-8f9b504e8d69&linkCode=ll2&tag=zijaecommerce-20&linkId=5d63ada1ae1ffdda85d6dcaa4f743e33&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Hinged Door Wardrobe", link: "https://www.amazon.com/s?k=hinged+door+wardrobe&crid=1A133II3Z6G3O&sprefix=hinged+door+ward%2Caps%2C1997&linkCode=ll2&tag=zijaecommerce-20&linkId=fb86b0031f66b30aff041de17a0c6a4b&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Walk-in Wardrobe", link: "https://www.amazon.com/stores/page/92BBD666-1A89-4790-B2F4-9343E41CCAF5?_encoding=UTF8&store_ref=SB_A02640493G4ASYZ0UWMBS-A07123683CKWUMR7F5NMS&pd_rd_plhdr=t&aaxitk=a9056f19d2730ef70a8e7bbfeb749eaf&hsa_cr_id=0&lp_asins=B09CTHYG3Z%2CB0BDFRPYB2%2CB0CWRTNZRF&lp_query=Walk-in+Wardrobe&lp_slot=desktop-hsa-3psl&pd_rd_w=I6GqH&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=V4D6WW5TZJCQZTFV6DE4&pd_rd_wg=khuHD&pd_rd_r=d8b94d3b-4751-4f64-b439-62bf23830659&linkCode=ll2&tag=zijaecommerce-20&linkId=80372daf8c6ef04cfd9536ac0869b0be&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Built-in Wardrobe", link: "https://www.amazon.com/stores/page/171B08BE-1D07-45DB-BF6F-D928425B7D12?_encoding=UTF8&store_ref=SB_A052805422MOJKPZ7O4HF-A07103991QDNEZKT2B9ZW&pd_rd_plhdr=t&aaxitk=83e3b2354d9a329de3f2c50b117e8dbe&hsa_cr_id=0&lp_asins=B0CP56BTKP%2CB0C88WNZDY%2CB0CP5626FS&lp_query=Built-in+Wardrobe&lp_slot=desktop-hsa-3psl&pd_rd_w=w5jfD&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=XNDWHHJNC1S9YS3JRF54&pd_rd_wg=gN3OH&pd_rd_r=7753b5e7-195a-4fcb-941f-05ab77d77ded&linkCode=ll2&tag=zijaecommerce-20&linkId=f8fcaa283ac578e4cd3a399109241a04&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Freestanding Wardrobe", link: "https://www.amazon.com/s?k=Freestanding+Wardrobe&linkCode=ll2&tag=zijaecommerce-20&linkId=c56ed7e2a387a65cc30184a06401af9b&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Wardrobe with Loft", link: "https://www.amazon.com/stores/page/3774139D-680E-47D7-B869-495D3FC38316?_encoding=UTF8&store_ref=SB_A061676821DO59D3X7W0X-A01886632OCYFGSLFEJKJ&pd_rd_plhdr=t&aaxitk=73c54ff7068e3da4c3657334ad2cb4fd&hsa_cr_id=0&lp_asins=B0CPBGG4S2%2CB0CKV7H1LH&lp_query=Wardrobe+with+Loft&lp_slot=desktop-hsa-3psl&pd_rd_w=vgs7v&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=Q9NGEWTAKM4GNGRWQEH8&pd_rd_wg=IOMX1&pd_rd_r=ab54c08e-3527-4213-9134-98a78b41e759&linkCode=ll2&tag=zijaecommerce-20&linkId=65b4e63f7ab771fdc1357fe5094eb526&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Kids Wardrobe", link: "https://www.amazon.com/MU-TU-Kids-Wardrobe-Closet/dp/B0CNP5WF9F?crid=1SSUWGLMTYV6G&dib=eyJ2IjoiMSJ9.5UgUqpnrcpv3TQT-6HPaoSEMdkmxf2jlKBXrujBcqgjpheiqLOtFE7Y1cLZGCVyMT77KH1Wb_NJM_vXxj_0ZLgBLKrLhd1UfM3KADHGU5xsNR3yyiAITmZWSPr-PDzr1VazOHC3GM0C2iQeZebwkSYA9AxKrq2luneQ4ZaiJjma2fTuoD_OJhCYlVoSfvjBV8oXjKQhn0Muciq-GwuBu9qgh9lAMoYL-bx1k-CcmGHeNSw_BcL9Mao2dOuxtaMl9Iv8V81NbvR6XnZ9XfQdU65FePQCwVIPJYVWbNTE135Y.UmMmXW82qc8ZMe6zXB8iu1BmY_hUL7ItrngEn8iLvCY&dib_tag=se&keywords=Glass+Door+Wardrobe&qid=1739737783&sprefix=%2Caps%2C1112&sr=8-14-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9tdGY&psc=1&linkCode=ll1&tag=zijaecommerce-20&linkId=5cc0f535556a98bcde47306a6adf6ac7&language=en_US&ref_=as_li_ss_tl" },
+            ]
+          },
+          { 
+            name: "Tables", 
+            link: "/Shop/category1",
+            subItems: [
+              { name: "Dining Table", link: "https://www.amazon.com/dp/B0BVFMPX3L?ie=UTF8&pf_rd_p=5b369509-6129-4a91-bcbd-b82cefe94467&pf_rd_r=ZV2TZ74X4Q45Z4YM2G7F&pd_rd_wg=7JRrO&pd_rd_w=RjmQv&pd_rd_r=a889bfd4-339d-4781-a4e5-373ec4c9bad1&aref=s6JBvRM9po&th=1&linkCode=ll1&tag=zijaecommerce-20&linkId=91d69c3635b729ea6e7bfbeee2dac611&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Console Table", link: "https://www.amazon.com/stores/page/808CA664-7677-4188-9D27-F09C28E95BC2?_encoding=UTF8&store_ref=SB_A04846951BZ31XKT4VFOH-A076517421RA3V5967W6K&pd_rd_plhdr=t&aaxitk=45ed412a171544e77730708f84f25ca8&hsa_cr_id=0&lp_asins=B0DJGQTTMT%2CB0CW3HGFB8&lp_query=Furniture&lp_slot=desktop-hsa-3psl&pd_rd_w=PbBtU&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=0KG43PC1XAQC4RK1XPRW&pd_rd_wg=WEvFY&pd_rd_r=d57219fb-352f-406a-b17f-8e59c2bb24f1&linkCode=ll2&tag=zijaecommerce-20&linkId=73235dffce21bd28eb7e687ebf19ddd7&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Entryway Hallway Table", link: "https://www.amazon.com/stores/page/9405B0A0-1615-4CBA-8031-EBD411D0CF46?_encoding=UTF8&store_ref=SB_A09336083C0DCX9LLFBQ8-A0205779T1IZ4CEH22TS&pd_rd_plhdr=t&aaxitk=b351420e5a451646f194af38c1360aba&hsa_cr_id=0&lp_asins=B0C15KHLF3%2CB0C15LG7J8%2CB0CPB13YJH&lp_query=Entryway+Table&lp_slot=desktop-hsa-3psl&pd_rd_w=RIscc&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=00HADY28XH6AY62APHRZ&pd_rd_wg=TrM4t&pd_rd_r=820082e7-000f-4903-90aa-c61c6256ffaa&linkCode=ll2&tag=zijaecommerce-20&linkId=219a78e0488a28d76f5a8fbaabef580b&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Computer Table", link: "https://www.amazon.com/s?k=Computer+Table&crid=31CP1RESWONOK&sprefix=computer+ta%2Caps%2C1177&linkCode=ll2&tag=zijaecommerce-20&linkId=0d76fa4ca0d70d9a5aea395078417800&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Office Desk", link: "https://www.amazon.com/s?k=Office+Desk&linkCode=ll2&tag=zijaecommerce-20&linkId=c5b88b2ea2007aa70d2dd620d0aedf5f&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Coffee Table", link: "https://www.amazon.com/s?k=coffee+table&crid=FUZ71DZM74ZE&sprefix=coffee+t%2Caps%2C1887&linkCode=ll2&tag=zijaecommerce-20&linkId=b3264625a8cb081632fb28eb04586a5f&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Beside Table", link: "https://www.amazon.com/s?k=Beside+Table&crid=3JFC3SANGCWVR&sprefix=beside+t%2Caps%2C1078&linkCode=ll2&tag=zijaecommerce-20&linkId=b5e221e8c23b5d1e02ad528d931d6853&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Folding Table", link: "https://www.amazon.com/s?k=Folding+Table&crid=2TQKN6NGEQ3P1&sprefix=folding+t%2Caps%2C923&linkCode=ll2&tag=zijaecommerce-20&linkId=9bf8b34a04848272b64ccdb6347d6b54&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Gaming Table", link: "https://www.amazon.com/s?k=Gaming+Table&crid=1OS77CTC1BDP3&sprefix=ga+table%2Caps%2C1038&linkCode=ll2&tag=zijaecommerce-20&linkId=b4411d426d28c974c409d9f71f748a59&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Workstation Table", link: "https://www.amazon.com/stores/page/B403E281-E080-4C3C-9928-A4F9D7B31BE9?_encoding=UTF8&store_ref=SB_A08091063T5TK69SFE2M-A1004514313E6T21FACAD&pd_rd_plhdr=t&aaxitk=bf339bc480a8eb287db7f60c39f42613&hsa_cr_id=0&lp_asins=B0CBBM27GN%2CB0BRNC16WY%2CB0CH82PNC5&lp_query=Workstation+Table&lp_slot=desktop-hsa-3psl&pd_rd_w=JKEVo&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=XY00F8TQGDDGAJMXQ3FJ&pd_rd_wg=HgaJi&pd_rd_r=2d2337cd-1a56-4be3-8413-81a4324136bb&linkCode=ll2&tag=zijaecommerce-20&linkId=a483c966ce775e4dddcdf2b633dfc6a7&language=en_US&ref_=as_li_ss_tl" },
+              
+            ]
+          },
+          { 
+            name: "Chairs", 
             link: "/Shop/category1",
             subItems: [
               { name: "Outdoor Rocking Chair", link: "https://www.amazon.com/s?k=Outdoor+Rocking+Chair&linkCode=ll2&tag=zijaecommerce-20&linkId=7855b410a7b1a0d4916a3b99d02c83fc&language=en_US&ref_=as_li_ss_tl" },
@@ -70,7 +100,7 @@ export const NavMbl = [
             ]
           },
           { 
-            name: "Table", 
+            name: "Decor", 
             link: "/Shop/category1",
             subItems: [
               { name: "Dining Table", link: "https://www.amazon.com/dp/B0BVFMPX3L?ie=UTF8&pf_rd_p=5b369509-6129-4a91-bcbd-b82cefe94467&pf_rd_r=ZV2TZ74X4Q45Z4YM2G7F&pd_rd_wg=7JRrO&pd_rd_w=RjmQv&pd_rd_r=a889bfd4-339d-4781-a4e5-373ec4c9bad1&aref=s6JBvRM9po&th=1&linkCode=ll1&tag=zijaecommerce-20&linkId=91d69c3635b729ea6e7bfbeee2dac611&language=en_US&ref_=as_li_ss_tl" },
@@ -86,6 +116,41 @@ export const NavMbl = [
               
             ]
           },
+          { 
+            name: "Kitchen", 
+            link: "/Shop/category1",
+            subItems: [
+              { name: "Dining Table", link: "https://www.amazon.com/dp/B0BVFMPX3L?ie=UTF8&pf_rd_p=5b369509-6129-4a91-bcbd-b82cefe94467&pf_rd_r=ZV2TZ74X4Q45Z4YM2G7F&pd_rd_wg=7JRrO&pd_rd_w=RjmQv&pd_rd_r=a889bfd4-339d-4781-a4e5-373ec4c9bad1&aref=s6JBvRM9po&th=1&linkCode=ll1&tag=zijaecommerce-20&linkId=91d69c3635b729ea6e7bfbeee2dac611&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Console Table", link: "https://www.amazon.com/stores/page/808CA664-7677-4188-9D27-F09C28E95BC2?_encoding=UTF8&store_ref=SB_A04846951BZ31XKT4VFOH-A076517421RA3V5967W6K&pd_rd_plhdr=t&aaxitk=45ed412a171544e77730708f84f25ca8&hsa_cr_id=0&lp_asins=B0DJGQTTMT%2CB0CW3HGFB8&lp_query=Furniture&lp_slot=desktop-hsa-3psl&pd_rd_w=PbBtU&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=0KG43PC1XAQC4RK1XPRW&pd_rd_wg=WEvFY&pd_rd_r=d57219fb-352f-406a-b17f-8e59c2bb24f1&linkCode=ll2&tag=zijaecommerce-20&linkId=73235dffce21bd28eb7e687ebf19ddd7&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Entryway Hallway Table", link: "https://www.amazon.com/stores/page/9405B0A0-1615-4CBA-8031-EBD411D0CF46?_encoding=UTF8&store_ref=SB_A09336083C0DCX9LLFBQ8-A0205779T1IZ4CEH22TS&pd_rd_plhdr=t&aaxitk=b351420e5a451646f194af38c1360aba&hsa_cr_id=0&lp_asins=B0C15KHLF3%2CB0C15LG7J8%2CB0CPB13YJH&lp_query=Entryway+Table&lp_slot=desktop-hsa-3psl&pd_rd_w=RIscc&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=00HADY28XH6AY62APHRZ&pd_rd_wg=TrM4t&pd_rd_r=820082e7-000f-4903-90aa-c61c6256ffaa&linkCode=ll2&tag=zijaecommerce-20&linkId=219a78e0488a28d76f5a8fbaabef580b&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Computer Table", link: "https://www.amazon.com/s?k=Computer+Table&crid=31CP1RESWONOK&sprefix=computer+ta%2Caps%2C1177&linkCode=ll2&tag=zijaecommerce-20&linkId=0d76fa4ca0d70d9a5aea395078417800&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Office Desk", link: "https://www.amazon.com/s?k=Office+Desk&linkCode=ll2&tag=zijaecommerce-20&linkId=c5b88b2ea2007aa70d2dd620d0aedf5f&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Coffee Table", link: "https://www.amazon.com/s?k=coffee+table&crid=FUZ71DZM74ZE&sprefix=coffee+t%2Caps%2C1887&linkCode=ll2&tag=zijaecommerce-20&linkId=b3264625a8cb081632fb28eb04586a5f&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Beside Table", link: "https://www.amazon.com/s?k=Beside+Table&crid=3JFC3SANGCWVR&sprefix=beside+t%2Caps%2C1078&linkCode=ll2&tag=zijaecommerce-20&linkId=b5e221e8c23b5d1e02ad528d931d6853&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Folding Table", link: "https://www.amazon.com/s?k=Folding+Table&crid=2TQKN6NGEQ3P1&sprefix=folding+t%2Caps%2C923&linkCode=ll2&tag=zijaecommerce-20&linkId=9bf8b34a04848272b64ccdb6347d6b54&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Gaming Table", link: "https://www.amazon.com/s?k=Gaming+Table&crid=1OS77CTC1BDP3&sprefix=ga+table%2Caps%2C1038&linkCode=ll2&tag=zijaecommerce-20&linkId=b4411d426d28c974c409d9f71f748a59&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Workstation Table", link: "https://www.amazon.com/stores/page/B403E281-E080-4C3C-9928-A4F9D7B31BE9?_encoding=UTF8&store_ref=SB_A08091063T5TK69SFE2M-A1004514313E6T21FACAD&pd_rd_plhdr=t&aaxitk=bf339bc480a8eb287db7f60c39f42613&hsa_cr_id=0&lp_asins=B0CBBM27GN%2CB0BRNC16WY%2CB0CH82PNC5&lp_query=Workstation+Table&lp_slot=desktop-hsa-3psl&pd_rd_w=JKEVo&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=XY00F8TQGDDGAJMXQ3FJ&pd_rd_wg=HgaJi&pd_rd_r=2d2337cd-1a56-4be3-8413-81a4324136bb&linkCode=ll2&tag=zijaecommerce-20&linkId=a483c966ce775e4dddcdf2b633dfc6a7&language=en_US&ref_=as_li_ss_tl" },
+              
+            ]
+          },
+          { 
+            name: "Outdoor", 
+            link: "/Shop/category1",
+            subItems: [
+              { name: "Dining Table", link: "https://www.amazon.com/dp/B0BVFMPX3L?ie=UTF8&pf_rd_p=5b369509-6129-4a91-bcbd-b82cefe94467&pf_rd_r=ZV2TZ74X4Q45Z4YM2G7F&pd_rd_wg=7JRrO&pd_rd_w=RjmQv&pd_rd_r=a889bfd4-339d-4781-a4e5-373ec4c9bad1&aref=s6JBvRM9po&th=1&linkCode=ll1&tag=zijaecommerce-20&linkId=91d69c3635b729ea6e7bfbeee2dac611&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Console Table", link: "https://www.amazon.com/stores/page/808CA664-7677-4188-9D27-F09C28E95BC2?_encoding=UTF8&store_ref=SB_A04846951BZ31XKT4VFOH-A076517421RA3V5967W6K&pd_rd_plhdr=t&aaxitk=45ed412a171544e77730708f84f25ca8&hsa_cr_id=0&lp_asins=B0DJGQTTMT%2CB0CW3HGFB8&lp_query=Furniture&lp_slot=desktop-hsa-3psl&pd_rd_w=PbBtU&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=0KG43PC1XAQC4RK1XPRW&pd_rd_wg=WEvFY&pd_rd_r=d57219fb-352f-406a-b17f-8e59c2bb24f1&linkCode=ll2&tag=zijaecommerce-20&linkId=73235dffce21bd28eb7e687ebf19ddd7&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Entryway Hallway Table", link: "https://www.amazon.com/stores/page/9405B0A0-1615-4CBA-8031-EBD411D0CF46?_encoding=UTF8&store_ref=SB_A09336083C0DCX9LLFBQ8-A0205779T1IZ4CEH22TS&pd_rd_plhdr=t&aaxitk=b351420e5a451646f194af38c1360aba&hsa_cr_id=0&lp_asins=B0C15KHLF3%2CB0C15LG7J8%2CB0CPB13YJH&lp_query=Entryway+Table&lp_slot=desktop-hsa-3psl&pd_rd_w=RIscc&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=00HADY28XH6AY62APHRZ&pd_rd_wg=TrM4t&pd_rd_r=820082e7-000f-4903-90aa-c61c6256ffaa&linkCode=ll2&tag=zijaecommerce-20&linkId=219a78e0488a28d76f5a8fbaabef580b&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Computer Table", link: "https://www.amazon.com/s?k=Computer+Table&crid=31CP1RESWONOK&sprefix=computer+ta%2Caps%2C1177&linkCode=ll2&tag=zijaecommerce-20&linkId=0d76fa4ca0d70d9a5aea395078417800&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Office Desk", link: "https://www.amazon.com/s?k=Office+Desk&linkCode=ll2&tag=zijaecommerce-20&linkId=c5b88b2ea2007aa70d2dd620d0aedf5f&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Coffee Table", link: "https://www.amazon.com/s?k=coffee+table&crid=FUZ71DZM74ZE&sprefix=coffee+t%2Caps%2C1887&linkCode=ll2&tag=zijaecommerce-20&linkId=b3264625a8cb081632fb28eb04586a5f&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Beside Table", link: "https://www.amazon.com/s?k=Beside+Table&crid=3JFC3SANGCWVR&sprefix=beside+t%2Caps%2C1078&linkCode=ll2&tag=zijaecommerce-20&linkId=b5e221e8c23b5d1e02ad528d931d6853&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Folding Table", link: "https://www.amazon.com/s?k=Folding+Table&crid=2TQKN6NGEQ3P1&sprefix=folding+t%2Caps%2C923&linkCode=ll2&tag=zijaecommerce-20&linkId=9bf8b34a04848272b64ccdb6347d6b54&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Gaming Table", link: "https://www.amazon.com/s?k=Gaming+Table&crid=1OS77CTC1BDP3&sprefix=ga+table%2Caps%2C1038&linkCode=ll2&tag=zijaecommerce-20&linkId=b4411d426d28c974c409d9f71f748a59&language=en_US&ref_=as_li_ss_tl" },
+              { name: "Workstation Table", link: "https://www.amazon.com/stores/page/B403E281-E080-4C3C-9928-A4F9D7B31BE9?_encoding=UTF8&store_ref=SB_A08091063T5TK69SFE2M-A1004514313E6T21FACAD&pd_rd_plhdr=t&aaxitk=bf339bc480a8eb287db7f60c39f42613&hsa_cr_id=0&lp_asins=B0CBBM27GN%2CB0BRNC16WY%2CB0CH82PNC5&lp_query=Workstation+Table&lp_slot=desktop-hsa-3psl&pd_rd_w=JKEVo&content-id=amzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a%3Aamzn1.sym.5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_p=5594c86b-e694-4e3e-9301-a074f0faf98a&pf_rd_r=XY00F8TQGDDGAJMXQ3FJ&pd_rd_wg=HgaJi&pd_rd_r=2d2337cd-1a56-4be3-8413-81a4324136bb&linkCode=ll2&tag=zijaecommerce-20&linkId=a483c966ce775e4dddcdf2b633dfc6a7&language=en_US&ref_=as_li_ss_tl" },
+              
+            ]
+          },
+          
       ]
     },
     { name: "About", link: "/About" },
@@ -253,112 +318,20 @@ export const megaMenuData = [
     ],
   },
   {
-    name: "Furniture",
+    name: "Beds",
     columns: [
       {
-        heading: "Bed Room Furniture",
+        heading: "Bed Furniture",
         items: [
-          { name: "Beds", link: "/furniture/beds" },
-          { name: "Side Tables", link: "/furniture/side-tables" },
-          { name: "Dressers", link: "/furniture/dressers" },
+          { name: "Platform Bed", link: "/furniture/beds" },
+          { name: "Storage Bed", link: "/furniture/side-tables" },
+          { name: "Bunk Bed", link: "/furniture/dressers" },
         ],
-      },
-      {
-        heading: "Dining Room Furniture",
-        items: [
-          { name: "Dining Tables", link: "/furniture/dining-tables" },
-          { name: "Dining Chairs", link: "/furniture/dining-chairs" },
-          { name: "Crockery Units", link: "/furniture/crockery-units" },
-        ],
-      },
-      {
-        heading: "Kids Room Furniture",
-        items: [
-          { name: "Bunk Beds", link: "/furniture/bunk-beds" },
-          { name: "Study Desks", link: "/furniture/study-desks" },
-        ],
-      },
-      {
-        heading: "Office Furniture",
-        items: [
-          { name: "Office Chairs", link: "/furniture/office-chairs" },
-          { name: "Office Tables", link: "/furniture/office-tables" },
-        ],
-      },
+      }
     ],
   },
   {
-    name: "Furniture",
-    columns: [
-      {
-        heading: "Bed Room Furniture",
-        items: [
-          { name: "Beds", link: "/furniture/beds" },
-          { name: "Side Tables", link: "/furniture/side-tables" },
-          { name: "Dressers", link: "/furniture/dressers" },
-        ],
-      },
-      {
-        heading: "Dining Room Furniture",
-        items: [
-          { name: "Dining Tables", link: "/furniture/dining-tables" },
-          { name: "Dining Chairs", link: "/furniture/dining-chairs" },
-          { name: "Crockery Units", link: "/furniture/crockery-units" },
-        ],
-      },
-      {
-        heading: "Kids Room Furniture",
-        items: [
-          { name: "Bunk Beds", link: "/furniture/bunk-beds" },
-          { name: "Study Desks", link: "/furniture/study-desks" },
-        ],
-      },
-      {
-        heading: "Office Furniture",
-        items: [
-          { name: "Office Chairs", link: "/furniture/office-chairs" },
-          { name: "Office Tables", link: "/furniture/office-tables" },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Furniture",
-    columns: [
-      {
-        heading: "Bed Room Furniture",
-        items: [
-          { name: "Beds", link: "/furniture/beds" },
-          { name: "Side Tables", link: "/furniture/side-tables" },
-          { name: "Dressers", link: "/furniture/dressers" },
-        ],
-      },
-      {
-        heading: "Dining Room Furniture",
-        items: [
-          { name: "Dining Tables", link: "/furniture/dining-tables" },
-          { name: "Dining Chairs", link: "/furniture/dining-chairs" },
-          { name: "Crockery Units", link: "/furniture/crockery-units" },
-        ],
-      },
-      {
-        heading: "Kids Room Furniture",
-        items: [
-          { name: "Bunk Beds", link: "/furniture/bunk-beds" },
-          { name: "Study Desks", link: "/furniture/study-desks" },
-        ],
-      },
-      {
-        heading: "Office Furniture",
-        items: [
-          { name: "Office Chairs", link: "/furniture/office-chairs" },
-          { name: "Office Tables", link: "/furniture/office-tables" },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Furniture",
+    name: "Wardrobe",
     columns: [
       {
         heading: "Bed Room Furniture",
@@ -394,6 +367,63 @@ export const megaMenuData = [
   },
   {
     name: "Lighting",
+    columns: [
+      {
+        heading: "Indoor Lights",
+        items: [
+          { name: "Chandeliers", link: "/lighting/chandeliers" },
+          { name: "Ceiling Lamps", link: "/lighting/ceiling-lamps" },
+        ],
+      },
+      {
+        heading: "Outdoor Lights",
+        items: [
+          { name: "Garden Lights", link: "/lighting/garden-lights" },
+          { name: "Wall Lamps", link: "/lighting/wall-lamps" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Tables",
+    columns: [
+      {
+        heading: "Indoor Lights",
+        items: [
+          { name: "Chandeliers", link: "/lighting/chandeliers" },
+          { name: "Ceiling Lamps", link: "/lighting/ceiling-lamps" },
+        ],
+      },
+      {
+        heading: "Outdoor Lights",
+        items: [
+          { name: "Garden Lights", link: "/lighting/garden-lights" },
+          { name: "Wall Lamps", link: "/lighting/wall-lamps" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Chairs",
+    columns: [
+      {
+        heading: "Indoor Lights",
+        items: [
+          { name: "Chandeliers", link: "/lighting/chandeliers" },
+          { name: "Ceiling Lamps", link: "/lighting/ceiling-lamps" },
+        ],
+      },
+      {
+        heading: "Outdoor Lights",
+        items: [
+          { name: "Garden Lights", link: "/lighting/garden-lights" },
+          { name: "Wall Lamps", link: "/lighting/wall-lamps" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Sofa & Couches",
     columns: [
       {
         heading: "Indoor Lights",

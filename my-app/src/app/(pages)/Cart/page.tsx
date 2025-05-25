@@ -2,23 +2,31 @@
 
 import Image from "next/image";
 import PagesHeader from "@/components/PagesHeader";
-import { UseAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { removeFromCart, setCartItems } from "@/redux/cartSlice";
 import { MdDelete } from "react-icons/md";
 import { useEffect } from "react";
 import axios from "axios";
+axios.defaults.withCredentials = true;  // sabse upar, “use client” ke baad
+
+// Global default: is se sare axios requests ke saath cookies bheji jayengi
+// for cookies sessions , guest id and user id , 
+// axios.defaults.withCredentials = true;
 
 const Cart = () => {
   // Redux se cart items le rahe hain
-  const cartItems = UseAppSelector((state) => state.cart.items);
+  const cartItems = useAppSelector((state) => state.cart.items);
+  console.log("cart item from cart page" , cartItems);
+  
   const dispatch = useDispatch();
 
   // API se cart items fetch karne ke liye function
   const fetchCartItems = async () => {
     try {
       const response = await axios.get("/api/cart");
+      
       console.log("API Response:", response.data);
       // Response ke andar cart object ka items array update kar rahe hain
       dispatch(setCartItems(response.data.cart.items));
@@ -40,10 +48,15 @@ const Cart = () => {
   // Item remove karne ka handler
   const handleRemove = async (id: string) => {
     try {
+      console.log("Product Id", id);
       // Redux store se update karo
       dispatch(removeFromCart(id));
       // DELETE request bhejo, yahan product id JSON body mein bheji ja rahi hai
-      await axios.delete("/api/cart", { data: { productId: id } });
+      
+      await axios.delete(`/api/cart`, {
+        params :{ productId : id}
+      });
+      await fetchCartItems(); 
     } catch (error) {
       console.error("Error removing item:", error);
     }
@@ -85,7 +98,7 @@ const Cart = () => {
                   {cartItems.map((item) => (
                     <Link
                       key={item._key}
-                      href={`/Shop/${item.product._id}`}
+                      href={`/Shop/${item.product.slug}`}
                       passHref
                       legacyBehavior
                     >
@@ -96,8 +109,8 @@ const Cart = () => {
                             <div className="flex items-center space-x-4">
                               <div className="relative w-16 h-16 flex-shrink-0">
                                 <Image
-                                  src={item.product.imagePath}
-                                  alt={item.product.name}
+                                  src={item.product.imageSet[0]}
+                                  alt={item.product.productNameEn}
                                   layout="fill"
                                   objectFit="cover"
                                   className="rounded"
@@ -105,13 +118,13 @@ const Cart = () => {
                               </div>
                               <div>
                                 <p className="text-sm font-medium text-gray-900">
-                                  {item.product.name}
+                                {item.product.productNameEn}
                                 </p>
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 align-middle">
-                            ${item.product.price.toFixed(2)}
+                          ${item.product.variants.variantactualSellPrice.toFixed(2)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap align-middle">
                             <div className="w-12 h-8 border border-gray-300 rounded flex items-center justify-center text-sm">

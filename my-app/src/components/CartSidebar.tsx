@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { removeFromCart, setCartItems } from "@/redux/cartSlice";
-import { UseAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import Image from "next/image";
 import Link from "next/link";
 import { MdClose } from "react-icons/md";
@@ -17,11 +17,12 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
   const dispatch = useDispatch();
 
   // Redux store se cart items retrieve kar rahe hain.
-  const cartItems = UseAppSelector((state) => state.cart.items);
+  const cartItems = useAppSelector((state) => state.cart.items);
+  
 
   // Calculate the cart total using the subtotal provided by the backend.
   const cartTotal = cartItems.reduce(
-    (acc, item) => acc + (item.subtotal || 0),
+    (acc, item) => acc + (item.subtotal),
     0
   );
 
@@ -108,27 +109,28 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
                   >
                     <div className="flex items-center gap-4">
                       <Link
-                        href={`/Shop/${item.product._id}`}
+                        href={`/Shop/${item.product.slug}`}
                         onClick={handleLinkClick}
                         className="flex items-center lg:gap-4 gap-2"
                       >
                         <Image
-                          src={item.product.imagePath}
-                          alt="Cart"
+                          src={item.product.imageSet[0]}
+                          alt={item.product.productNameEn}
                           width={100}
                           height={100}
                           className="bg-[#FBEBB5] md:w-[76px] w-[50px] md:h-[80px] h-[50px] md:rounded-[10px] rounded-sm"
                         />
                         <div className="flex flex-col text-left lg:gap-2 gap-1">
                           <p className="lg:text-lg text-xs font-semibold">
-                            {item.product.name}
+                          {item.product.productNameEn}
                           </p>
                           <div className="flex items-center lg:gap-4 gap-1 text-xs">
                             <p>Quantity: {item.quantity}</p>
                             <MdClose size={12} />
                             <span className="text-[#B88E2F] font-bold">
-                              ${item.product.price.toFixed(2)}
+                             ${ (item.product.variants.variantactualSellPrice * (1 - item.product.variants.discountPercentage / 100)).toFixed(2) }
                             </span>
+
                           </div>
                         </div>
                       </Link>

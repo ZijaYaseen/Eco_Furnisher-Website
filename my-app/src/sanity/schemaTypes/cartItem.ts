@@ -17,12 +17,5 @@ export default {
       type: 'number',
       validation: (Rule: Rule) => Rule.min(1),
     },
-    {
-      name: 'subtotal',
-      title: 'Subtotal',
-      type: 'number',
-      readOnly: true,
-      description: 'Calculated as product price * quantity (set via backend)',
-    },
   ],
 };

@@ -3,14 +3,13 @@ import { useRouter } from "next/navigation";
 import { MdClose } from "react-icons/md";
 import { FiSearch } from "react-icons/fi";
 import { performSearch } from "@/redux/Search/searchActions";
-import { UseAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 
 const SearchBar: React.FC = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const dispatch = UseAppDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
-  console.log(router);
 
   const handleSearch = () => {
     if (searchTerm.trim() === "") {

@@ -42,7 +42,7 @@ const Footer = () => {
         </div>
 
         {/* Newsletter Section */}
-        <div className="flex flex-col w-full  sm:w-auto">
+        <div className="flex flex-col w-full sm:w-auto">
           <h4 className="text-[#9F9F9F] font-medium text-base mb-1 sm:mb-8 text-left">
             Newsletter
           </h4>

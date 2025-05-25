@@ -15,50 +15,45 @@ import "react-toastify/dist/ReactToastify.css";
 import OutOfStockModal from "./OutOfStockModal";
 
 // Define interfaces based on your schema
-interface Variant {
+interface Product {
+  _id: string;
+  productNameEn: string;
+  productSku: string;
+  imageSet: string[];
+  categoryId: string;
+  CategoryName: string[];
+  packingWeight: number;
+  shortDescription: string;
+  description: string;
+  rating: number;
+  inventory: number;
+  tags: string[];
+  slug: { current: string };
+  variants: {
     vid: string;
     variantSellPrice: number;
     variantSugSellPrice: number;
     variantactualSellPrice: number;
     discountPercentage: number;
+  };
 }
 
-export interface IProduct {
-    _id: string;
-    productNameEn: string;
-    productSku: string;
-    imageSet?: string[];
-    imagePath: string;
-    rating: number;
-    shortDescription: string;
-    // For this implementation, we assume description is a string containing HTML.
-    description: string;
-    inventory: number;
-    tags: string[];
-    seo: {
-        metaTitle: string;
-        metaDescription: string;
-        metaKeywords: string[];
-    };
-    // In your query, variants are returned as an array.
-    variants: Variant;
-    size?: string[];
-    color?: string[];
-    // Optional category fields
-    CategoryName?: string[];
-    categoryId?: string;
+// CartItem type matching Sanity cartItem object
+export interface CartItem {
+  _key: string;
+  product: Product;
+  quantity: number;
+  subtotal: number;
+  discountedPrice: number;
 }
-
 
 interface ProductDetailClientProps {
-    product: IProduct;
+    product: Product;
 }
 
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
     const dispatch = useDispatch();
     const [count, setCount] = useState(1);
-    const [selectedSize, setSelectedSize] = useState<string | null>(null);
-    const [selectedColor, setSelectedColor] = useState<string | null>(null);
     const [error, setError] = useState("");
     const [cartSidebar, setCartSidebar] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,13 +68,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     const overviewHTML = parts[0]; // Everything before "Specification:"
     const specHTML = parts[1] ? "Specification:" + parts[1] : "";
 
-    // Determine images array from product.imageSet, fallback to imagePath if not provided
-    const images = product.imageSet && product.imageSet.length > 0
-        ? product.imageSet
-        : [product.imagePath];
-
     // Desktop main image state
-    const [mainImage, setMainImage] = useState(images[0]);
+    const [mainImage, setMainImage] = useState(product.imageSet[0]);
 
     // Mobile carousel state and ref
     const carouselRef = useRef<HTMLDivElement>(null);
@@ -104,26 +94,15 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             setIsModalOpen(true);
             return;
         }
-        if (product.size && product.size.length > 0 && !selectedSize) {
-            setError("Please select a size.");
-            return;
-        }
-        if (product.color && product.color.length > 0 && !selectedColor) {
-            setError("Please select a color.");
-            return;
-        }
         const cartItem = {
-            id: product._id,
-            name: product.productNameEn,
-            imagePath: mainImage,
-            description: product.description,
-            price: discountedPrice,
-            size: selectedSize,
-            color: selectedColor,
+            _key: product._id,
+            product,
             quantity: count,
-            discountPercentage: discountPercent,
+            subtotal : discountedPrice  * count,
+            discountedPrice
         };
         dispatch(addToCart(cartItem));
+        console.log("Dispatched product:", cartItem.product);
         setError("");
         setCartSidebar(true);
         try {
@@ -172,7 +151,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 <div className="hidden md:flex">
                     {/* Thumbnails */}
                     <div className="flex flex-col gap-3 md:mr-10 overflow-x-hidden">
-                        {images.map((src, index) => (
+                        {product.imageSet.map((src, index) => (
                             <Image
                                 key={index}
                                 src={src}
@@ -209,7 +188,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                         onScroll={handleScroll}
                         className="overflow-x-scroll snap-x snap-mandatory flex scroll-smooth"
                     >
-                        {images.map((src, index) => (
+                        {product.imageSet.map((src, index) => (
                             <div key={index} className="snap-center w-full flex-shrink-0">
                                 <div className="relative">
                                     {discountPercent > 0 && (
@@ -229,7 +208,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                         ))}
                     </div>
                     <div className="flex justify-center mt-2 space-x-2">
-                        {images.map((_, index) => (
+                        {product.imageSet.map((_, index) => (
                             <div
                                 key={index}
                                 className={`w-2 h-2 rounded-full ${index === currentMobileIndex ? "bg-black" : "bg-gray-300"}`}
@@ -278,42 +257,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     </div>
 
 
-                    {/* Size Options (only if available) */}
-                    {product.size && product.size.length > 0 && (
-                        <>
-                            <p className="text-[#9F9F9F] font-normal text-sm mb-3">Size</p>
-                            <div className="flex gap-4">
-                                {product.size.map((size) => (
-                                    <p
-                                        key={size}
-                                        onClick={() => setSelectedSize(size)}
-                                        className={`flex p-1 rounded-md text-sm justify-center items-center cursor-pointer ${selectedSize === size ? "bg-[#FBEBB5]" : "bg-[#FAF4F4]"
-                                            }`}
-                                    >
-                                        {size}
-                                    </p>
-                                ))}
-                            </div>
-                        </>
-                    )}
-
-                    {/* Color Options (only if available) */}
-                    {product.color && product.color.length > 0 && (
-                        <>
-                            <p className="text-[#9F9F9F] font-normal text-sm my-3">Color</p>
-                            <div className="flex gap-4">
-                                {product.color.map((color, index) => (
-                                    <button key={index} onClick={() => setSelectedColor(color)}>
-                                        <p
-                                            className={`w-[30px] h-[30px] rounded-full ${selectedColor === color ? "border-4 border-lime-950" : "border-2 border-transparent"
-                                                }`}
-                                            style={{ backgroundColor: color }}
-                                        ></p>
-                                    </button>
-                                ))}
-                            </div>
-                        </>
-                    )}
+                   
 
                     {/* Error Message */}
                     {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
