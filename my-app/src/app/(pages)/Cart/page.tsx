@@ -87,7 +87,7 @@ const Cart = () => {
   };
 
   return (
-    <div className="w-full mt-16 md:mt-24 font-poppins max-w-[1440px] mx-auto">
+    <div className="w-full mt-12 md:mt-24 font-poppins max-w-[1440px] mx-auto">
       <PagesHeader name="Cart" title="Your Cart" />
 
       {isLoading ? (

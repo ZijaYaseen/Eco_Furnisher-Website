@@ -168,7 +168,7 @@ const Checkout = () => {
 };
 
   return (
-    <div className="w-full mt-16 md:mt-24 font-poppins bg-white text-black">
+    <div className="w-full mt-12 md:mt-24 font-poppins bg-white text-black">
       <PagesHeader name="Checkout" title="Checkout" />
 
       {isLoading ? (
