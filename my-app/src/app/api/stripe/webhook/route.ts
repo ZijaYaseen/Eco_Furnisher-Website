@@ -18,12 +18,9 @@ export const client = createClient({
   token: process.env.SANITY_API_TOKEN,
 })
 
-// 3) Disable default body parsing taake raw buffer mil sake
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
+// 3) Tell Next.js to run this route in Node.js and disable built-in body parsing
+export const runtime = 'nodejs'
+export const requestBodyParser = false
 
 // 4) Named export POST (App Router requirement)
 export async function POST(request: NextRequest) {
