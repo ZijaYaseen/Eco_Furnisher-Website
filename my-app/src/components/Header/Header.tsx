@@ -48,7 +48,7 @@ export default function Header() {
 
   return (
     <>
-      <nav className="w-screen h-[60px] fixed bg-white border-b border-gray-300 flex items-center justify-between md:px-6">
+      <nav className="w-full h-[60px] fixed bg-white border-b border-gray-300 flex items-center justify-between md:px-6">
         {/* MOBILE: Hamburger & Logo */}
         <div className="md:hidden flex items-center">
           <div

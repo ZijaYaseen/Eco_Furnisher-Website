@@ -14,7 +14,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OutOfStockModal from "./OutOfStockModal";
 
-// Define interfaces based on your schema
+// Define interfaces based on sanity schema
 interface Product {
   _id: string;
   productNameEn: string;
@@ -94,15 +94,14 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             setIsModalOpen(true);
             return;
         }
-        const cartItem = {
+        const cartItem : CartItem = {
             _key: product._id,
             product,
             quantity: count,
             subtotal : discountedPrice  * count,
             discountedPrice
         };
-        dispatch(addToCart(cartItem));
-        console.log("Dispatched product:", cartItem.product);
+        dispatch(addToCart(cartItem))
         setError("");
         setCartSidebar(true);
         try {
@@ -176,7 +175,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                             height={500}
                             alt={product.productNameEn}
                             priority
-                            className="bg-[#FFF9E5] w-[423px] md:h-[500px] h-[250px] rounded-lg"
+                            className="bg-[#FFF9E5] w-[423px] md:h-[423px] h-[250px] rounded-md"
                         />
                     </div>
                 </div>
@@ -265,12 +264,12 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     {/* Add to Cart Section */}
                     <div className="flex flex-col pb-10 gap-5">
                         <div className="flex md:gap-4 gap-2 my-5">
-                            <div className="flex px-2 md:gap-8 gap-4 items-center border border-[#9F9F9F] w-[123px] md:h-16 h-12 rounded-[10px] justify-center">
+                            <div className="flex px-2 md:gap-8 gap-4 items-center border border-[#9F9F9F] w-[123px] md:h-16 h-12 rounded-md justify-center">
                                 <button onClick={handleDecrement} className="text-xl font-bold"> - </button>
                                 <p className="text-lg">{count}</p>
                                 <button onClick={handleIncrement} className="text-xl"> + </button>
                             </div>
-                            <div className="flex items-center border border-black w-[215px] md:h-16 h-12 rounded-[10px] md:rounded-[15px] justify-center">
+                            <div className="flex items-center border border-black w-[215px] md:h-16 h-12 rounded-md justify-center">
                                 <button onClick={handleAddToCart} className="md:font-normal font-bold md:text-xl text-xs">
                                     Add To Cart
                                 </button>
@@ -328,7 +327,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
 
                     {product.inventory > 0 ? (
-                        <div className="inline-block bg-[#FBEBB5] text-black font-bold px-4 py-2 w-fit rounded-md shadow-md">
+                        <div className="inline-block bg-gray-200 text-black font-bold px-4 py-2 w-fit rounded-md shadow-md">
                             In Stock, Grab Yours Now!
                         </div>
                     ) : (

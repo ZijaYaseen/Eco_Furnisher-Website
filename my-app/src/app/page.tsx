@@ -1,10 +1,5 @@
 // app/page.tsx
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { blog } from '@/data/index'
-import { FaRegClock } from "react-icons/fa6";
-import { CiCalendar } from "react-icons/ci";
 import HeroSection from '@/components/HeroSection';
 import { BestSellerSanity, TopPicksData } from '@/sanity/lib/queries';
 import FeaturedSection from '@/components/FeaturedSection';
@@ -25,7 +20,7 @@ const TopPicksProductData = await TopPicksData();
 
 
   return (
-    <div className='max-w-[1920px] font-poppins h-full w-full overflow-hidden mt-[56px]'>
+    <div className='max-w-[1440px] mx-auto font-poppins h-full w-full overflow-hidden mt-[56px]'>
 
      {/* Home PageSection 1*/}
      <HeroSection />

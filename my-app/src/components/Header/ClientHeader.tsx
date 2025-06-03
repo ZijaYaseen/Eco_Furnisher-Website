@@ -29,7 +29,7 @@ export default function ClientHeader() {
   }, []);
 
   return (
-    <>
+    <main className="max-w-[1440px] mx-auto">
       {/* TopHeader only when at top */}
       {atTop && <TopHeader />}
 
@@ -45,6 +45,6 @@ export default function ClientHeader() {
         <Header />
         <CategoriesNav />
       </div>
-    </>
+    </main>
   );
 }

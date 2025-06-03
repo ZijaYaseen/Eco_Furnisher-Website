@@ -27,7 +27,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="max-w-[1440px] font-poppins w-full mx-auto mt-[90px]">
+    <div className="max-w-[1440px] font-poppins w-full mx-auto mt-16 md:mt-28">
       <h1 className="text-4xl font-semibold text-center">
         Hello {user ? user.fullName : "!"}
       </h1>

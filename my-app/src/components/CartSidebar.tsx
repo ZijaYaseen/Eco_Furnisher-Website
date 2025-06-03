@@ -7,6 +7,7 @@ import { useAppSelector } from "@/redux/hooks";
 import Image from "next/image";
 import Link from "next/link";
 import { MdClose } from "react-icons/md";
+import axios from "axios";
 
 interface CartSidebarProps {
   CartmenuOpen: boolean;
@@ -18,13 +19,19 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
 
   // Redux store se cart items retrieve kar rahe hain.
   const cartItems = useAppSelector((state) => state.cart.items);
-  
+
 
   // Calculate the cart total using the subtotal provided by the backend.
-  const cartTotal = cartItems.reduce(
-    (acc, item) => acc + (item.subtotal),
-    0
-  );
+ const calculateDiscountedPrice = (item: any) => {
+    const price = item.product.variants.variantactualSellPrice;
+    const discount = item.product.variants.discountPercentage || 0;
+    return price * (1 - discount / 100);
+  };
+
+  const cartTotal = cartItems.reduce((acc, item) => {
+    const discountedPrice = calculateDiscountedPrice(item);
+    return acc + (item.quantity * discountedPrice);
+  }, 0);
 
   // GET request: Fetch the cart data from the backend and update Redux store.
   useEffect(() => {
@@ -54,21 +61,17 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
   };
 
   // DELETE request: Remove a product from the cart.
-  const handleRemove = async (productId: string) => {
+  const handleRemove = async (id: string) => {
     try {
-      const response = await fetch("/api/cart", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
+      // Redux store se update karo
+      dispatch(removeFromCart(id));
+      // DELETE request bhejo, yahan product id JSON body mein bheji ja rahi hai
+
+      await axios.delete(`/api/cart`, {
+        params: { productId: id }
       });
-      const data = await response.json();
-      if (data.success) {
-        dispatch(removeFromCart(productId));
-      } else {
-        console.error("Failed to remove product:", data.error);
-      }
     } catch (error) {
-      console.error("Error removing product from cart:", error);
+      console.error("Error removing item:", error);
     }
   };
 
@@ -118,17 +121,21 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
                           alt={item.product.productNameEn}
                           width={100}
                           height={100}
-                          className="bg-[#FBEBB5] md:w-[76px] w-[50px] md:h-[80px] h-[50px] md:rounded-[10px] rounded-sm"
+                          className="bg-[#FBEBB5] md:w-[76px] w-[50px] md:h-[80px] h-[50px] md:rounded-md rounded-sm"
                         />
                         <div className="flex flex-col text-left lg:gap-2 gap-1">
                           <p className="lg:text-lg text-xs font-semibold">
-                          {item.product.productNameEn}
+                            {item.product.productNameEn}
                           </p>
                           <div className="flex items-center lg:gap-4 gap-1 text-xs">
                             <p>Quantity: {item.quantity}</p>
                             <MdClose size={12} />
-                            <span className="text-[#B88E2F] font-bold">
-                             ${ (item.product.variants.variantactualSellPrice * (1 - item.product.variants.discountPercentage / 100)).toFixed(2) }
+                           {/* // Individual item price display} */}
+                            <span className="font-bold">
+                              ${(
+                                item.product.variants.variantactualSellPrice *
+                                (1 - item.product.variants.discountPercentage / 100)
+                              ).toFixed(2)}
                             </span>
 
                           </div>
@@ -137,13 +144,13 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
                       <MdClose
                         size={25}
                         color="white"
-                        className="ml-auto bg-gray-400 w-6 h-6 border-4 border-gray-400 rounded-full cursor-pointer"
+                        className="ml-auto bg-gray-400 w-8 h-6 border-4 border-gray-400 rounded-full cursor-pointer"
                         onClick={() => handleRemove(item.product._id)}
                       />
                     </div>
-                    <div className="flex justify-between">
-                      <p className="text-sm font-medium">Subtotal</p>
-                      <p className="text-[#B88E2F] font-bold">
+                    <div className="flex justify-between font-bold">
+                      <p className="text-sm">Subtotal</p>
+                      <p>
                         ${item.subtotal.toFixed(2)}
                       </p>
                     </div>
@@ -156,21 +163,21 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
             <div className="absolute bottom-0 left-0 right-0">
               <div className="p-3 px-8 items-center flex justify-between">
                 <h2 className="text-2xl font-semibold">Total</h2>
-                <p className="text-[#B88E2F] font-bold text-xl">
+                <p className="font-bold text-xl">
                   ${cartTotal.toFixed(2)}
                 </p>
               </div>
               <div className="p-4 bg-white shadow-lg border-t border-[#D9D9D9] flex justify-between gap-2">
                 <Link
                   href={"/Cart"}
-                  className="w-36 h-10 flex justify-center items-center font-medium text-base border border-black rounded-[18px] hover:text-white hover:bg-black"
+                  className="w-36 h-10 flex justify-center items-center font-medium text-base border border-black rounded-[10px] hover:text-white hover:bg-black"
                   onClick={handleLinkClick}
                 >
                   View Cart
                 </Link>
                 <Link
                   href={"/Checkout"}
-                  className="w-36 h-10 flex justify-center items-center font-medium text-base border border-black rounded-[18px] hover:text-white hover:bg-black"
+                  className="w-36 h-10 flex justify-center items-center font-medium text-base border border-black rounded-[10px] hover:text-white hover:bg-black"
                   onClick={handleLinkClick}
                 >
                   Checkout

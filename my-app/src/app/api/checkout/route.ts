@@ -1,119 +1,170 @@
-// /app/api/checkout/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { client } from '@/sanity/lib/client';
+import Stripe from 'stripe';
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: '2025-01-27.acacia',
+});
+
 interface BillingDetails {
   firstName: string;
   lastName: string;
-  companyName?: string;
-  country: string;
   streetAddress: string;
-  town: string;
-  province: string;
+  city: string;
+  state: string;
   zip: string;
   phone: string;
   email: string;
+  country: string;
 }
 
 interface OrderItem {
-  product: { _type: 'reference'; _ref: string }; // Reference to the product document
-  selectedColor: string;
-  selectedSize: string;
+  product: { 
+    _ref: string;
+    name: string;
+    imageSet: string[];
+  };
   quantity: number;
   subtotal: number;
 }
 
-interface PaymentDetails {
-  transactionId: string;
-  paymentAmount: number;
-  paymentCard: string;
-}
-
-interface Order {
-  _type: 'order';
-  billingDetails: BillingDetails;
-  paymentMethod: 'cod' | 'bank'; // Cash on Delivery or Direct Bank Transfer
-  orderItems: OrderItem[];
-  orderTotal: number;
-  createdAt: string; // ISO 8601 format (e.g., "2025-01-17T10:00:00Z")
-  orderStatus: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
-  user?: { _type: 'reference'; _ref: string }; // Reference to the user document
-  paymentDetails?: PaymentDetails;
-}
-
-
 export async function POST(req: NextRequest) {
   try {
-    // Check for user authentication via JWT cookie
+    // Authentication
     const token = req.cookies.get('token')?.value;
-    let userId: string | null = null;
     if (!token) {
       return NextResponse.json(
-        { success: false, error: 'User not logged in. Please log in.' },
+        { success: false, error: 'Authentication required. Please log in.' },
         { status: 401 }
       );
     }
+
+    let userId: string;
     try {
       const { payload } = await jwtVerify(token, SECRET_KEY);
       userId = (payload as { _id: string })._id;
     } catch (error) {
-      console.log(error);
       return NextResponse.json(
-        
-        { success: false, error: 'Invalid token. Please log in again.' },
+        { success: false, error: 'Invalid session. Please log in again.' },
         { status: 401 }
       );
     }
 
-    // Parse checkout data from request body
-    const { billingDetails, paymentMethod, orderItems, orderTotal, paymentDetails } = await req.json();
+    // Parse request body
+    const body = await req.json();
+    const { billingDetails, paymentMethod, orderItems, orderTotal } = body;
 
-    // Validate required fields (billingDetails, paymentMethod, orderItems, orderTotal)
-    if (!billingDetails || !paymentMethod || !orderItems || !orderTotal) {
+    // Validation
+    const validationErrors: string[] = [];
+    if (!billingDetails?.firstName) validationErrors.push('First name required');
+    if (!billingDetails?.lastName) validationErrors.push('Last name required');
+    if (!billingDetails?.email) validationErrors.push('Email required');
+    if (!billingDetails?.phone) validationErrors.push('Phone required');
+    if (!paymentMethod) validationErrors.push('Payment method missing');
+    if (!orderItems || orderItems.length === 0) validationErrors.push('Order items missing');
+    if (!orderTotal || orderTotal <= 0) validationErrors.push('Invalid order total');
+    
+    if (validationErrors.length > 0) {
       return NextResponse.json(
-        { success: false, error: 'Missing required checkout data.' },
+        { success: false, error: 'Validation failed', details: validationErrors },
         { status: 400 }
       );
     }
 
-    // If payment method is 'bank' (direct bank transfer), then instruct client to redirect to payment page
-    if (paymentMethod === 'bank' && !paymentDetails) {
-      // The client should be redirected to a payment page.
-      // Once payment is complete, that page should call this same endpoint with paymentDetails.
+    // Create pending order in Sanity
+    const sanityOrderItems = orderItems.map((item: OrderItem) => ({
+      product: { 
+        _type: 'reference',
+        _ref: item.product._ref 
+      },
+      quantity: item.quantity,
+      subtotal: item.subtotal,
+    }));
+
+    const newOrder = {
+      _type: 'order',
+      user: { _type: 'reference', _ref: userId },
+      billingDetails: {
+        ...billingDetails,
+        country: billingDetails.country || 'USA'
+      },
+      paymentMethod: paymentMethod === 'stripe' ? 'stripe' : 'paypal',
+      orderItems: sanityOrderItems,
+      orderTotal,
+      orderStatus: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+
+    const createdOrder = await client.create(newOrder);
+
+    // Handle Stripe payments
+    if (paymentMethod === 'stripe') {
+      try {
+        const lineItems = orderItems.map((item: OrderItem) => ({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: item.product.name,
+              images: [item.product.imageSet[0]],
+            },
+            unit_amount: Math.round(item.subtotal * 100),
+          },
+          quantity: item.quantity,
+        }));
+
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items: lineItems,
+          mode: 'payment',
+          success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/order-success?orderId=${createdOrder._id}`,
+          cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout`,
+          metadata: {
+            sanityOrderId: createdOrder._id,
+            userId,
+          },
+          customer_email: billingDetails.email,
+        });
+
+        return NextResponse.json(
+          { success: true, url: session.url },
+          { status: 200 }
+        );
+      } catch (error: any) {
+        console.error('Stripe error:', error);
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: 'Payment processing failed. Please try again.',
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Handle PayPal payments
+    if (paymentMethod === 'paypal') {
       return NextResponse.json(
-        { success: false, redirectTo: '/Payment', message: 'Redirect to payment page' },
+        { 
+          success: true, 
+          redirectTo: `/api/paypal/create-order?orderId=${createdOrder._id}&total=${orderTotal}`,
+        },
         { status: 200 }
       );
     }
 
-    // For COD or for bank payments that have been completed, create the Order document.
-    const newOrder: Order = {
-      _type: 'order',
-      billingDetails,
-      paymentMethod,
-      orderItems,
-      orderTotal,
-      createdAt: new Date().toISOString(),
-      orderStatus: paymentMethod === 'cod' ? 'pending' : 'paid',
-    };
-    if (userId) {
-      newOrder.user = { _type: 'reference', _ref: userId };
-    }
-
-    // If the payment is done via bank transfer, include the paymentDetails in the order
-    if (paymentMethod === 'bank' && paymentDetails) {
-      newOrder.paymentDetails = paymentDetails;
-    }
-
-    const createdOrder = await client.create(newOrder);
-
-    return NextResponse.json({ success: true, order: createdOrder });
-  } catch (error) {
-    console.error('Checkout API Error:', error);
     return NextResponse.json(
-      { success: false, error: 'Checkout failed. Please try again.' },
+      { success: false, error: 'Invalid payment method' },
+      { status: 400 }
+    );
+  } catch (error: any) {
+    console.error('Checkout API error:', error);
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: 'Checkout process failed. Please contact support.',
+      },
       { status: 500 }
     );
   }

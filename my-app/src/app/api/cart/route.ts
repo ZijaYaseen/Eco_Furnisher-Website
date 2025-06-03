@@ -239,9 +239,9 @@ export async function GET(req: NextRequest) {
     if (userId) {
       query = `
       *[_type == "cart" && guestId == $guestId][0]{
-  _id,
   items[]{
     product->{
+      _id,
       productNameEn,
       productSku,
       "imageSet": productImageSet,
@@ -260,9 +260,9 @@ export async function GET(req: NextRequest) {
     } else if (guestId) {
       query = `
       *[_type == "cart" && guestId == $guestId][0]{
-  _id,
   items[]{
     product->{
+      _id,
       productNameEn,
       productSku,
       "imageSet": productImageSet,
@@ -303,8 +303,7 @@ export async function GET(req: NextRequest) {
 // ----------------------------
 export async function DELETE(req: NextRequest) {
     try {
-    const { searchParams } = new URL(req.url);
-    const productId = searchParams.get("productId");
+    const productId = req.nextUrl.searchParams.get("productId");
     if (!productId) {
       return NextResponse.json(
         { success: false, error: "Missing productId" },
@@ -365,6 +364,97 @@ export async function DELETE(req: NextRequest) {
     console.error("Cart DELETE Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to remove product from cart" },
+      { status: 500 }
+    );
+  }
+};
+
+// ----------------------------
+// PATCH: Update Item Quantity in Cart
+// ----------------------------
+export async function PATCH(req: NextRequest) {
+  try {
+    const { productId, quantity } = await req.json();
+    
+    // 1. Authenticate User/Guest
+    const token = req.cookies.get("token")?.value;
+    let userId: string | null = null;
+    const guestId = req.cookies.get("guestId")?.value;
+
+    if (token) {
+      try {
+        const { payload } = await jwtVerify(token, SECRET_KEY);
+        userId = (payload as { _id: string })._id;
+      } catch (err) {
+        console.warn("Invalid token, proceeding as guest.", err);
+      }
+    }
+
+    // 2. Fetch Product's Current Price
+    const product = await client.fetch(
+      `*[_type == "product" && _id == $productId][0]{
+        "price": variants.variantactualSellPrice
+      }`,
+      { productId }
+    );
+
+    if (!product) {
+      return NextResponse.json(
+        { success: false, error: "Product not found" },
+        { status: 404 }
+      );
+    }
+    const productPrice = product.price;
+
+    // 3. Find User's/Guest's Cart
+    let query = "";
+    let queryParams: { userId?: string; guestId?: string } = {};
+
+    if (userId) {
+      query = `*[_type == "cart" && user._ref == $userId][0]`;
+      queryParams = { userId };
+    } else if (guestId) {
+      query = `*[_type == "cart" && guestId == $guestId][0]`;
+      queryParams = { guestId };
+    } else {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const existingCart = (await client.fetch(query, queryParams)) as ExistingCart | undefined;
+    if (!existingCart) {
+      return NextResponse.json(
+        { success: false, error: "Cart not found" },
+        { status: 404 }
+      );
+    }
+
+    // 4. Update Quantity & Subtotal
+    const updatedItems = existingCart.items.map(item => {
+      if (item.product._ref === productId) {
+        return {
+          ...item,
+          quantity: quantity,
+          subtotal: quantity * productPrice
+        };
+      }
+      return item;
+    });
+
+    // 5. Save Updated Cart
+    await client.patch(existingCart._id).set({ items: updatedItems }).commit();
+
+    return NextResponse.json({
+      success: true,
+      message: "Quantity updated successfully!"
+    });
+
+  } catch (error) {
+    console.error("Cart PATCH Error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to update quantity" },
       { status: 500 }
     );
   }

@@ -70,8 +70,20 @@ const cartSlice = createSlice({
     setCartItems: (state, action: PayloadAction<CartItem[]>) => {
       state.items = action.payload;
     },
+
+    updateQuantity: (state, action: PayloadAction<{
+      id: string;
+      quantity: number;
+      discountedPrice: number;
+    }>) => {
+      const item = state.items.find(item => item.product._id === action.payload.id);
+      if (item) {
+        item.quantity = action.payload.quantity;
+        item.subtotal = action.payload.quantity * action.payload.discountedPrice;
+      }
+    },
   },
 });
 
-export const { addToCart, removeFromCart, clearCart, setCartItems } = cartSlice.actions;
+export const { addToCart, removeFromCart, clearCart, setCartItems, updateQuantity } = cartSlice.actions;
 export default cartSlice.reducer;

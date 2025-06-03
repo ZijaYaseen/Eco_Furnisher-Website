@@ -1,12 +1,12 @@
 "use client"
 
 import React from 'react';
-import { UseAppSelector, UseAppDispatch } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { setCurrentPage } from '@/redux/Search/searchSlice';
 
 const Pagination = () => {
-  const dispatch = UseAppDispatch();
-  const { currentPage, itemsPerPage, filteredProducts } = UseAppSelector((state) => state.search);
+  const dispatch = useAppDispatch();
+  const { currentPage, itemsPerPage, filteredProducts } = useAppSelector((state) => state.search);
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 

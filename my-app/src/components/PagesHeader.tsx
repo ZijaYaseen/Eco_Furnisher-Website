@@ -5,10 +5,10 @@ import { RiArrowRightSLine } from 'react-icons/ri';
 
 const PagesHeader = (props: { name: string; title: string }) => {
   return (
-    <div className="relative flex flex-col items-center justify-center lg:h-[318px] h-[150px] px-4 bg-gray-100">
+    <div className="relative flex flex-col text-white items-center justify-center lg:h-[318px] h-[150px] px-4 bg-gray-600">
       {/* Background Image using Next/Image with priority */}
       <Image
-        src="/Rectangle1.svg"
+        src="/best-seller-home.jpg"
         alt="Background"
         fill
         priority
@@ -24,12 +24,12 @@ const PagesHeader = (props: { name: string; title: string }) => {
           priority
           className="w-[40px] h-[40px] md:w-[60px] md:h-[50px]"
         />
-        <h1 className="font-medium text-3xl md:text-5xl">{props.title}</h1>
-        <div className="flex space-x-2 py-1 text-sm sm:text-base">
+        <h1 className="font-medium text-3xl md:text-7xl">{props.title}</h1>
+        <div className="flex space-x-2 py-2 text-sm sm:text-lg items-center">
           <Link href="/">
             <h1 className="font-medium">Home</h1>
           </Link>
-          <RiArrowRightSLine size={20} />
+          <RiArrowRightSLine size={24} />
           <h1 className="font-light">{props.name}</h1>
         </div>
       </div>
