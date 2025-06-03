@@ -1,7 +1,7 @@
 // app/page.tsx
 
 import HeroSection from '@/components/HeroSection';
-import { BestSellerSanity, TopPicksData } from '@/sanity/lib/queries';
+import { BestSellerSanity } from '@/sanity/lib/queries';
 import FeaturedSection from '@/components/FeaturedSection';
 import TopPicks from '@/components/TopPicks';
 // import NewArrivals from '@/components/NewArrivals';

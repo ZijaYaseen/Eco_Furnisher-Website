@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MdClose } from "react-icons/md";
 import axios from "axios";
+import { CartItem } from "@/data";
 
 interface CartSidebarProps {
   CartmenuOpen: boolean;
@@ -22,7 +23,7 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
 
 
   // Calculate the cart total using the subtotal provided by the backend.
- const calculateDiscountedPrice = (item: any) => {
+ const calculateDiscountedPrice = (item: CartItem) => {
     const price = item.product.variants.variantactualSellPrice;
     const discount = item.product.variants.discountPercentage || 0;
     return price * (1 - discount / 100);
