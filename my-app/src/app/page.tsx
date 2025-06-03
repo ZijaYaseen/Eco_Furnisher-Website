@@ -13,7 +13,7 @@ import BlogSection from '@/components/Blog';
 const Home = async () => {
 
   const BestSellerData = await BestSellerSanity();
-const TopPicksProductData = await TopPicksData();
+// const TopPicksProductData = await TopPicksData();
 
 // const NewArrivalsData = await NewArrivalsSanity()
 

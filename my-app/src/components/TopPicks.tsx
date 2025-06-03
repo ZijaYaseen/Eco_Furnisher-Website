@@ -26,7 +26,7 @@ const TopPicks = ({ products }: BestSellerSectionProps) => {
        <div className="grid grid-cols-2 md:grid-cols-4 md:gap-28">
        {products.map((product) => (
        
-       <ProductCard product={product} />
+       <ProductCard product={product} key={product._id}/>
 
    ))}
        </div>

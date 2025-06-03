@@ -33,10 +33,10 @@ export async function POST(request: NextRequest) {
   try {
     // 4b) Signature verify karo aur event construct karo
     event = stripe.webhooks.constructEvent(Buffer.from(buf), sig, webhookSecret)
-  } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message)
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err)
     return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
+      { error: `Webhook Error: ${err}` },
       { status: 400 }
     )
   }
@@ -48,8 +48,6 @@ export async function POST(request: NextRequest) {
     // 4d) Metadata se pending order ID aur userId nikaalo
     const sanityOrderId  = session.metadata?.sanityOrderId  as string
     const userId         = session.metadata?.userId         as string
-    const billingDetails = JSON.parse(session.metadata?.billingDetails || '{}')
-    const orderItems     = JSON.parse(session.metadata?.orderItems   || '[]')
 
     // 4e) Agar sanityOrderId hai, to existing “pending” order ko patch karke “paid” mark karo
     if (sanityOrderId) {
