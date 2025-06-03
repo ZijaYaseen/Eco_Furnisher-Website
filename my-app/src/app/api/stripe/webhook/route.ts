@@ -19,14 +19,16 @@ export const requestBodyParser = false
 // 4) Named export POST (App Router requirement)
 export async function POST(request: NextRequest) {
   // 4a) Raw body buffer nikaalo
-  const buf = await request.arrayBuffer()
-  const sig = request.headers.get('stripe-signature')!
+// Raw body string
+  const rawBody = await request.text();
+  // Ab signature verify kar sakte ho, kyunki text() me exact payload mil jātā.
+  const sig = request.headers.get('stripe-signature')!;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
   let event: Stripe.Event
   try {
     // 4b) Signature verify karo aur event construct karo
-    event = stripe.webhooks.constructEvent(Buffer.from(buf), sig, webhookSecret)
+    event = stripe.webhooks.constructEvent(Buffer.from(rawBody), sig, webhookSecret)
   } catch (err) {
     console.error('Webhook signature verification failed:', err)
     return NextResponse.json(
