@@ -394,11 +394,11 @@ const Checkout = () => {
             <div className="flex flex-col gap-6 md:w-[40%]">
               <h2 className="text-3xl font-bold mb-6">Your Order</h2>
               
-              <div className="max-h-[50vh] overflow-y-auto pr-2 border-b border-gray-300 pb-4">
+              <div className="max-h-[50vh] overflow-y-auto pr-2">
                 {cartItems.map((item) => (
                   <div
                     key={item._key}
-                    className="flex justify-between items-start gap-4 pb-4 mb-4"
+                    className="flex justify-between items-start gap-4"
                   >
                     <div className="flex items-start gap-4">
                       <div className="p-1 flex-shrink-0">

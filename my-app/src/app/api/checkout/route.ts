@@ -1,3 +1,5 @@
+// /app/api/checkout/route.ts (ya jahan aapka checkout API hai)
+
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { client } from '@/sanity/lib/client';
@@ -21,18 +23,18 @@ interface BillingDetails {
 }
 
 interface OrderItem {
-  product: { 
+  product: {
     _ref: string;
     name: string;
     imageSet: string[];
   };
   quantity: number;
-  subtotal: number;
+  subtotal: number;  // already includes quantity * per-unit price
 }
 
 export async function POST(req: NextRequest) {
   try {
-    // Authentication
+    // 1) Authentication
     const token = req.cookies.get('token')?.value;
     if (!token) {
       return NextResponse.json(
@@ -45,18 +47,17 @@ export async function POST(req: NextRequest) {
     try {
       const { payload } = await jwtVerify(token, SECRET_KEY);
       userId = (payload as { _id: string })._id;
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { success: false, error: 'Invalid session. Please log in again.' },
         { status: 401 }
       );
     }
 
-    // Parse request body
-    const body = await req.json();
-    const { billingDetails, paymentMethod, orderItems, orderTotal } = body;
+    // 2) Parse request body
+    const { billingDetails, paymentMethod, orderItems, orderTotal } = await req.json();
 
-    // Validation
+    // 3) Validation
     const validationErrors: string[] = [];
     if (!billingDetails?.firstName) validationErrors.push('First name required');
     if (!billingDetails?.lastName) validationErrors.push('Last name required');
@@ -65,7 +66,6 @@ export async function POST(req: NextRequest) {
     if (!paymentMethod) validationErrors.push('Payment method missing');
     if (!orderItems || orderItems.length === 0) validationErrors.push('Order items missing');
     if (!orderTotal || orderTotal <= 0) validationErrors.push('Invalid order total');
-    
     if (validationErrors.length > 0) {
       return NextResponse.json(
         { success: false, error: 'Validation failed', details: validationErrors },
@@ -73,12 +73,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create pending order in Sanity
+    // 4) Create pending order in Sanity
     const sanityOrderItems = orderItems.map((item: OrderItem) => ({
-      product: { 
-        _type: 'reference',
-        _ref: item.product._ref 
-      },
+      product: { _type: 'reference', _ref: item.product._ref },
       quantity: item.quantity,
       subtotal: item.subtotal,
     }));
@@ -88,7 +85,7 @@ export async function POST(req: NextRequest) {
       user: { _type: 'reference', _ref: userId },
       billingDetails: {
         ...billingDetails,
-        country: billingDetails.country || 'USA'
+        country: billingDetails.country || 'USA',
       },
       paymentMethod: paymentMethod === 'stripe' ? 'stripe' : 'paypal',
       orderItems: sanityOrderItems,
@@ -96,23 +93,31 @@ export async function POST(req: NextRequest) {
       orderStatus: 'pending',
       createdAt: new Date().toISOString(),
     };
-
     const createdOrder = await client.create(newOrder);
 
-    // Handle Stripe payments
+    // 5) Handle Stripe payments
     if (paymentMethod === 'stripe') {
       try {
-        const lineItems = orderItems.map((item: OrderItem) => ({
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: item.product.name,
-              images: [item.product.imageSet[0]],
+        //    ――――――――――――――――――――――――――――――
+        //    |  Yahan per-unit price calculate kar ke send karenge  |
+        //    ――――――――――――――――――――――――――――――
+        const lineItems = orderItems.map((item: OrderItem) => {
+          // per-unit price in dollars:
+          const perUnitPrice = item.subtotal / item.quantity;
+          return {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: item.product.name,
+                images: [item.product.imageSet[0]],
+              },
+              unit_amount: Math.round(perUnitPrice * 100), 
+              // eg: item.subtotal=42.50, quantity=2 → perUnitPrice=21.25 → unit_amount=2125
             },
-            unit_amount: Math.round(item.subtotal * 100),
-          },
-          quantity: item.quantity,
-        }));
+            quantity: item.quantity, 
+            // Stripe will calculate total = 2125 * 2 = 4250 cents ($42.50)
+          };
+        });
 
         const session = await stripe.checkout.sessions.create({
           payment_method_types: ['card'],
@@ -134,16 +139,13 @@ export async function POST(req: NextRequest) {
       } catch (error: any) {
         console.error('Stripe error:', error);
         return NextResponse.json(
-          { 
-            success: false, 
-            error: 'Payment processing failed. Please try again.',
-          },
+          { success: false, error: `Stripe Error: ${error.message}` },
           { status: 500 }
         );
       }
     }
 
-    // Handle PayPal payments
+    // 6) Handle PayPal payments…
     if (paymentMethod === 'paypal') {
       return NextResponse.json(
         { 
@@ -161,10 +163,7 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error('Checkout API error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Checkout process failed. Please contact support.',
-      },
+      { success: false, error: 'Checkout process failed. Please contact support.' },
       { status: 500 }
     );
   }

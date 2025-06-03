@@ -238,7 +238,7 @@ export async function GET(req: NextRequest) {
 
     if (userId) {
       query = `
-      *[_type == "cart" && guestId == $guestId][0]{
+      *[_type == "cart" && user._ref == $userId][0]{
   items[]{
     product->{
       _id,
