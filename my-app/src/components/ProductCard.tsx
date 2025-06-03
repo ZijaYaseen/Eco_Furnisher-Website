@@ -51,7 +51,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       {/* Image Container */}
       <div className="relative md:h-40 h-36">
         <Image
-          src={product.imagePath || "/placeholder.png"}
+          src={product.imageSet[0]|| "/placeholder.png"}
           alt={product.productNameEn}
           fill
           className="object-cover bg-gray-100 object-center transition-transform duration-300 group-hover:scale-105"
