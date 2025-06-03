@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
             orderStatus: 'paid',
           })
           .commit()
-        console.log(`Order ${sanityOrderId} updated to paid`)
+        // console.log(`Order ${sanityOrderId} updated to paid`)
       } catch (err) {
         console.error('Error updating order in webhook:', err)
       }
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         if (cartId) {
           // items ko empty array set kar do
           await client.patch(cartId).set({ items: [] }).commit()
-          console.log(`Cleared cart (${cartId}) for user ${userId}`)
+          // console.log(`Cleared cart (${cartId}) for user ${userId}`)
         }
       } catch (err) {
         console.error('Error clearing cart in webhook:', err)
