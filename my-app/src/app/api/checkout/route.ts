@@ -10,18 +10,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2025-01-27.acacia',
 });
 
-interface BillingDetails {
-  firstName: string;
-  lastName: string;
-  streetAddress: string;
-  city: string;
-  state: string;
-  zip: string;
-  phone: string;
-  email: string;
-  country: string;
-}
-
 interface OrderItem {
   product: {
     _ref: string;
@@ -136,10 +124,10 @@ export async function POST(req: NextRequest) {
           { success: true, url: session.url },
           { status: 200 }
         );
-      } catch (error: any) {
+      } catch (error) {
         console.error('Stripe error:', error);
         return NextResponse.json(
-          { success: false, error: `Stripe Error: ${error.message}` },
+          { success: false, error: `Stripe Error: ${error}` },
           { status: 500 }
         );
       }
@@ -160,7 +148,7 @@ export async function POST(req: NextRequest) {
       { success: false, error: 'Invalid payment method' },
       { status: 400 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Checkout API error:', error);
     return NextResponse.json(
       { success: false, error: 'Checkout process failed. Please contact support.' },
