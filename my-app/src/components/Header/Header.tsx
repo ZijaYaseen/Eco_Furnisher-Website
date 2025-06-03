@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { megaMenuData } from "@/data";
+import { megaMenuData, Nav } from "@/data"; // Added Nav import
 import { HiOutlineShoppingCart } from "react-icons/hi";
 import { FaRegHeart, FaRegUser } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -97,8 +97,23 @@ export default function Header() {
         </div>
 
         {/* DESKTOP: Logo */}
-        <div className="hidden lg:block text-black font-serif">
+        <div className="hidden md:block text-black font-serif">
           <h1 className="font-semibold md:text-3xl text-xl px-5">EcoFurnisher</h1>
+        </div>
+
+        {/* DESKTOP Navigation - Added back */}
+        <div className="hidden md:flex flex-1 items-center justify-center">
+          <ul className="flex space-x-6 uppercase tracking-wider text-sm font-medium">
+            {Nav.map((item) => (
+              <li key={item.name}>
+                <Link href={item.Link || "/"}>
+                  <span className="cursor-pointer px-3 flex items-center hover:text-gray-600 transition-colors">
+                    {item.name}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Unified Icons */}
@@ -162,7 +177,7 @@ export default function Header() {
                 {item.isHeading ? (
                   // Heading with arrow to show items
                   <div className="flex items-center justify-between">
-                    <span className="text-lg">{item.name}</span>
+                    <span className="font-medium">{item.name}</span>
                     <button
                       onClick={() => handleHeadingClick(item)}
                       aria-label={`Show ${item.name} items`}
@@ -186,7 +201,7 @@ export default function Header() {
                   <Link 
                     href={item.link || "/Shop"} 
                     onClick={() => setNavMenuOpen(false)}
-                    className="block w-full py-2"
+                    className="block w-full font-medium"
                   >
                     <span className="cursor-pointer">{item.name}</span>
                   </Link>
