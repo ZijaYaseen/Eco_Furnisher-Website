@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { createClient } from 'next-sanity'
+import {client} from "@/sanity/lib/client"
 
 // 1) Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -10,13 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 })
 
 // 2) Initialize Sanity client (apiVersion specify karo)
-export const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  apiVersion: '2025-01-01',
-  useCdn: false,
-  token: process.env.SANITY_API_TOKEN,
-})
+// sanity client info , 
 
 // 3) Tell Next.js to run this route in Node.js and disable built-in body parsing
 export const runtime = 'nodejs'
