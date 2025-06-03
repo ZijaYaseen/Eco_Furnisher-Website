@@ -258,27 +258,39 @@ export const shortBlogs = [
 ]
 
 /// for ecofurnisher ........
-
-interface Variant {
+  
+  // Product type matching Sanity schema
+export interface Product {
+  _id: string;
+  productNameEn: string;
+  productSku: string;
+  imageSet: string[];
+  categoryId: string;
+  CategoryName: string[];
+  packingWeight: number;
+  shortDescription: string;
+  description: string;
+  rating: number;
+  inventory: number;
+  tags: string[];
+  slug: { current: string };
+  variants: {
     vid: string;
+    variantSellPrice: number;
+    variantSugSellPrice: number;
     variantactualSellPrice: number;
     discountPercentage: number;
-  }
-  
-  export interface Product {
-    _id: string;
-    slug: { current: string };
-    productNameEn: string;
-    productSku: string;
-    imagePath: string;
-    rating: number;
-    shortDescription: string;
-    categoryId: string;
-    CategoryName: string[];
-    packingWeight: number;
-    variants: Variant;
-  }
+  };
+}
 
+// CartItem type matching Sanity cartItem object
+export interface CartItem {
+  _key: string;
+  product: Product;
+  quantity: number;
+  subtotal: number;
+  discountedPrice : number;
+}
   // categoriesData.ts
 
 export const megaMenuData = [

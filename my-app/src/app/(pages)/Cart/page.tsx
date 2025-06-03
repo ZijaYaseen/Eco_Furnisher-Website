@@ -10,6 +10,7 @@ import { MdDelete } from "react-icons/md";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import { CartItem } from "@/data";
 
 const Cart = () => {
   const cartItems = useAppSelector((state) => state.cart.items);
@@ -33,7 +34,7 @@ const Cart = () => {
     fetchCartItems();
   }, [dispatch]);
 
-  const calculateDiscountedPrice = (item: any) => {
+  const calculateDiscountedPrice = (item: CartItem) => {
     const price = item.product.variants.variantactualSellPrice;
     const discount = item.product.variants.discountPercentage || 0;
     return price * (1 - discount / 100);
@@ -58,14 +59,18 @@ const Cart = () => {
     try {
       if(newQuantity < 1) return;
       setUpdatingItems(prev => [...prev, id]);
-      
+
+      // 1. Pehlā find karke ek variable me rakh lo
+  const itemToUpdate = cartItems.find(item => item.product._id === id);
+
+  // 2. Agar waqean nahī mile (undefined), to function se nikal jāo
+  if (!itemToUpdate) return;
+  
       // Optimistic update
       dispatch(updateQuantity({
         id,
         quantity: newQuantity,
-        discountedPrice: calculateDiscountedPrice(
-          cartItems.find(item => item.product._id === id)
-        )
+        discountedPrice: calculateDiscountedPrice(itemToUpdate) // 3. Ab itemToUpdate kabhī undefined nahī ho sakta ➞ safe to use
       }));
 
       await axios.patch("/api/cart", { 

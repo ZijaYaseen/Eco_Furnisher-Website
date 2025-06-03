@@ -1,38 +1,7 @@
 // redux/cartSlice.ts
+import { CartItem } from '@/data';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// Product type matching Sanity schema
-interface Product {
-  _id: string;
-  productNameEn: string;
-  productSku: string;
-  imageSet: string[];
-  categoryId: string;
-  CategoryName: string[];
-  packingWeight: number;
-  shortDescription: string;
-  description: string;
-  rating: number;
-  inventory: number;
-  tags: string[];
-  slug: { current: string };
-  variants: {
-    vid: string;
-    variantSellPrice: number;
-    variantSugSellPrice: number;
-    variantactualSellPrice: number;
-    discountPercentage: number;
-  };
-}
-
-// CartItem type matching Sanity cartItem object
-export interface CartItem {
-  _key: string;
-  product: Product;
-  quantity: number;
-  subtotal: number;
-  discountedPrice : number;
-}
 
 interface CartState {
   items: CartItem[];
