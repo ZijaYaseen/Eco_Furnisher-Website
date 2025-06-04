@@ -22,9 +22,9 @@ const BestSellerSection = ({ products }: BestSellerSectionProps) => {
   const handleNext = () => swiperRef.current?.slideNext();
 
   return (
-    <section className="mx-auto max-w-screen-xl md:py-12 py-5 px-4 sm:px-6 lg:px-8 relative">
+    <section className="mx-auto max-w-screen-xl py-12  px-4 sm:px-6 lg:px-8 relative">
       <div className="text-center mb-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 bg">
+        <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
           Best Sellers
         </h2>
         <p className="mt-2 text-lg text-gray-600">
@@ -42,12 +42,12 @@ const BestSellerSection = ({ products }: BestSellerSectionProps) => {
           setIsBeginning(swiper.isBeginning);
           setIsEnd(swiper.isEnd);
         }}
-        slidesPerView={2}
+        slidesPerView={1}
         spaceBetween={10}
         breakpoints={{
           640: { slidesPerView: 2 },
           768: { slidesPerView: 4 },
-          1024: { slidesPerView: 6 },
+          1024: { slidesPerView: 4 },
         }}
         className="relative"
       >

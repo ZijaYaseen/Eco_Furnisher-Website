@@ -49,9 +49,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
       className="group block border border-gray-100 shadow hover:shadow-lg p-2 relative"
     >
       {/* Image Container */}
-      <div className="relative md:h-40 h-36">
+      <div className="relative md:h-56 h-60">
         <Image
-          src={product.imageSet[0]|| "/placeholder.png"}
+          src={product.imageSet[0]}
           alt={product.productNameEn}
           fill
           className="object-cover bg-gray-100 object-center transition-transform duration-300 group-hover:scale-105"
@@ -63,16 +63,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
         )}
       </div>
       {/* Product Details */}
-      <div className="mt-2">
-        <h3 className="text-sm md:text-base font-semibold text-gray-900">
+      <div className="md:mt-2 mt-6">
+        <h3 className="text-base font-semibold text-gray-900">
           {product.productNameEn}
         </h3>
         <div className="mt-1 flex items-center gap-2">
-          <span className="text-sm md:text-base text-gray-700 font-bold">
+          <span className="text-base text-gray-700 font-bold">
             ${discountedPrice.toFixed(2)}
           </span>
           {discountPercent > 0 && (
-            <span className="text-xs md:text-sm text-gray-500 line-through">
+            <span className="text-sm text-gray-500 line-through">
               ${originalPrice.toFixed(2)}
             </span>
           )}
@@ -82,8 +82,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <span className="text-xs text-gray-600">{product.rating.toFixed(1)}</span>
         </div>
         {product.shortDescription && (
-          <p className="mt-1 md:text-xs text-[10px] text-gray-600">
-            {truncateText(product.shortDescription, 10)}
+          <p className="mt-1 text-xs  text-gray-600">
+            {truncateText(product.shortDescription, 20)}
           </p>
         )}
       </div>

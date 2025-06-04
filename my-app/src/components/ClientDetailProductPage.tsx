@@ -264,13 +264,13 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     {/* Add to Cart Section */}
                     <div className="flex flex-col pb-10 gap-5">
                         <div className="flex md:gap-4 gap-2 my-5">
-                            <div className="flex px-2 md:gap-8 gap-4 items-center border border-[#9F9F9F] w-[123px] md:h-16 h-12 rounded-md justify-center">
+                            <div className="flex px-2 gap-8 items-center border border-[#9F9F9F] w-[123px] h-16 rounded-md justify-center">
                                 <button onClick={handleDecrement} className="text-xl font-bold"> - </button>
                                 <p className="text-lg">{count}</p>
                                 <button onClick={handleIncrement} className="text-xl"> + </button>
                             </div>
-                            <div className="flex items-center border border-black w-[215px] md:h-16 h-12 rounded-md justify-center">
-                                <button onClick={handleAddToCart} className="md:font-normal font-bold md:text-xl text-xs">
+                            <div className="flex items-center border border-[#9F9F9F] w-[215px] h-16 rounded-md justify-center">
+                                <button onClick={handleAddToCart} className="text-xl">
                                     Add To Cart
                                 </button>
                                 <OutOfStockModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

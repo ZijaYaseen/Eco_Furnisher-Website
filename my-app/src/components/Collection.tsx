@@ -83,7 +83,7 @@ const CollectionsSection = () => {
   return (
     <section className="mx-auto max-w-screen-xl py-12 px-4 sm:px-6 lg:px-8 relative">
       <div className="text-center mb-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+        <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
           Explore Latest Collections
         </h2>
         <p className="mt-2 text-lg text-gray-600">

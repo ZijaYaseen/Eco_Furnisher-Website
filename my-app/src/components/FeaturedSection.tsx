@@ -48,7 +48,7 @@ const FeaturedSection = () => {
     <section className="px-4 md:px-8 py-10 md:py-16 bg-gray-50">
       {/* Section Heading */}
       <div className="mb-8 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold">
+        <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
           Featured Articles
         </h2>
         <p className="mt-2 text-lg text-gray-600">
