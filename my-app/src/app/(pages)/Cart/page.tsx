@@ -216,7 +216,7 @@ const Cart = () => {
                     Taxes and discounts calculated at checkout
                   </p>
 
-                  <Link href="/checkout">
+                  <Link href="/Checkout">
                     <button className="w-full bg-black text-white py-4 rounded-lg hover:bg-gray-800 transition-colors">
                       Proceed to Checkout
                     </button>

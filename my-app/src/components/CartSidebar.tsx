@@ -177,7 +177,7 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
                   View Cart
                 </Link>
                 <Link
-                  href={"/checkout"}
+                  href={"/Checkout"}
                   className="w-36 h-10 flex justify-center items-center font-medium text-base border border-black rounded-[10px] hover:text-white hover:bg-black"
                   onClick={handleLinkClick}
                 >
