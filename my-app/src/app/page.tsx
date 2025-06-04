@@ -4,7 +4,6 @@ import HeroSection from '@/components/HeroSection';
 import { BestSellerSanity } from '@/sanity/lib/queries';
 import FeaturedSection from '@/components/FeaturedSection';
 import TopPicks from '@/components/TopPicks';
-// import NewArrivals from '@/components/NewArrivals';
 import CollectionsSection from '@/components/Collection';
 import BestSellerSection from '@/components/BestSeller';
 import BlogSection from '@/components/Blog';
@@ -13,9 +12,6 @@ import BlogSection from '@/components/Blog';
 const Home = async () => {
 
   const BestSellerData = await BestSellerSanity();
-// const TopPicksProductData = await TopPicksData();
-
-// const NewArrivalsData = await NewArrivalsSanity()
 
 
 
@@ -35,17 +31,12 @@ const Home = async () => {
     {/* Home page 3rd section */}
     <TopPicks products={BestSellerData}/>
 
-     {/* Home Page 4th Section */}
-     {/* <NewArrivals product={NewArrivalsData[0]}/> */}
 
-
-
-
-{/* Home page 5th section */}
+{/* Home page 4th section */}
 <BlogSection />
 
 
-{/* Home pae 6th section */}
+{/* Home pae 5th section */}
 
 <section className="flex flex-col items-center justify-center space-y-6 sm:space-y-8 py-16 sm:py-32 bg-[url('/bgHome.svg')] bg-cover bg-center">
   <h1 className="font-bold text-4xl sm:text-6xl text-center">Our Instagram</h1>

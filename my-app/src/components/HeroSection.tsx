@@ -28,9 +28,12 @@ export default function HeroSection() {
               Design Your Dream Space with Modern Decor and Thoughtful Furniture
             </h2>
 
-            <Link href={"/Shop"} className="bg-white text-black px-6 py-2 transition duration-300">
-              Explore Now
-            </Link>
+           <Link 
+            href="/Shop"
+            className="bg-white text-black px-6 py-3 md:px-8 md:py-3 rounded-sm font-medium text-lg hover:bg-opacity-90 transition-all duration-300 hover:scale-105 inline-block"
+          >
+            Explore Now
+          </Link>
           </div>
         </section>
       </main>
