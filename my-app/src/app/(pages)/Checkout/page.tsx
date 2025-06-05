@@ -434,7 +434,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-lg mt-2">
                   <p>Shipping</p>
-                  <p>Calculated at next step</p>
+                  <p>$10</p>
                 </div>
                 <div className="flex justify-between text-xl font-bold mt-4 pt-4 border-t border-gray-300">
                   <p>Total</p>

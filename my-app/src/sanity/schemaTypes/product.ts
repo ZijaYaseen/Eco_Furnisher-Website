@@ -48,6 +48,12 @@ export default {
       description: 'Weight of the packaging',
     },
     {
+      name: "shippingCharge",
+      title: "Shipping Charge (in cents)",
+      type: "number",
+      description: "Shipping charge for this product (e.g. 500 for $5.00)",
+    },
+    {
       name: 'shortDescription',
       title: 'Short Description',
       type: 'string',

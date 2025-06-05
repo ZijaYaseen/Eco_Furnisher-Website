@@ -5,9 +5,9 @@ import Link from "next/link";
 export default function HeroSection() {
   return (
     <>
-      <main className="w-full font-poppins max-w-[1440px] mx-auto">
+      <main className="w-full font-poppins max-w-[1440px] mx-auto bg-[url('/Home-Section.jpg')] bg-cover">
         {/* HERO SECTION with Video Background */}
-        <section className="relative w-full md:h-[100vh] h-[80vh]  flex items-center justify-center overflow-hidden">
+        <section className="relative w-full h-screen flex items-center  overflow-hidden">
           {/* Video Background */}
           <video
             autoPlay
@@ -23,10 +23,10 @@ export default function HeroSection() {
           <div className="absolute inset-0 bg-black/40" />
 
           {/* Content */}
-          <div className="relative z-10 text-center text-white px-3 font-serif md:max-w-3xl">
-            <h2 className="text-xl md:text-5xl md:font-semibold font-medium md:tracking-wider mb-6 ">
-              Design Your Dream Space with Modern Decor and Thoughtful Furniture
-            </h2>
+           <div className="relative z-10 text-white px-6 md:px-12 lg:px-40 max-w-5xl">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium md:font-semibold mb-6 leading-tight md:leading-[1.2]">
+            Design Your Dream Space with Modern Decor and Thoughtful Furniture
+          </h2>
 
            <Link 
             href="/Shop"

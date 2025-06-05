@@ -88,6 +88,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     const originalPrice = firstVariant.variantactualSellPrice;
     const discountPercent = firstVariant.discountPercentage;
     const discountedPrice = originalPrice - originalPrice * (discountPercent / 100);
+    
 
     const handleAddToCart = async () => {
         if (product.inventory < count) {
