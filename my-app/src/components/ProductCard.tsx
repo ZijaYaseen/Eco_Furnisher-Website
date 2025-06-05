@@ -57,14 +57,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
           className="object-cover bg-gray-100 object-center transition-transform duration-300 group-hover:scale-105"
         />
         {discountPercent > 0 && (
-          <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 text-xs font-bold rounded">
+          <div className="absolute top-2 left-2 bg-red-600 text-white px-4 py-2 text-xs font-bold rounded">
             {discountPercent}% OFF
           </div>
         )}
       </div>
       {/* Product Details */}
-      <div className="md:mt-2 mt-6">
-        <h3 className="text-base font-semibold text-gray-900">
+      <div className="py-3">
+        <h3 className="text-lg font-semibold text-gray-900">
           {product.productNameEn}
         </h3>
         <div className="mt-1 flex items-center gap-2">
@@ -83,7 +83,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
         {product.shortDescription && (
           <p className="mt-1 text-xs  text-gray-600">
-            {truncateText(product.shortDescription, 20)}
+            {truncateText(product.shortDescription, 15)}
           </p>
         )}
       </div>

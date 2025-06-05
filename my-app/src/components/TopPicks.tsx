@@ -11,7 +11,7 @@ interface BestSellerSectionProps {
 const TopPicks = ({ products }: BestSellerSectionProps) => {
 
   return (
-    <section className="mx-auto max-w-screen-xl py-12 px-6 lg:px-8 relative bg-gray-50">
+    <section className="mx-auto max-w-[1440px] py-12 px-6 lg:px-14 relative bg-gray-50">
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
           Top Picks For You
@@ -23,7 +23,7 @@ const TopPicks = ({ products }: BestSellerSectionProps) => {
 
   
        
-       <div className="grid grid-cols-1 md:grid-cols-4 md:gap-10">
+       <div className="grid grid-cols-1 md:grid-cols-4 md:gap-6">
        {products.map((product) => (
        
        <ProductCard product={product} key={product._id}/>

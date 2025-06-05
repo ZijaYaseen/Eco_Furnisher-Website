@@ -45,7 +45,7 @@ const FeaturedProducts = [
 
 const FeaturedSection = () => {
   return (
-    <section className="px-6 lg:px-8 py-16 bg-gray-50">
+    <section className="px-6 lg:px-14 py-16 bg-gray-50 max-w-[1440px] mx-auto">
       {/* Section Heading */}
       <div className="mb-8 text-center">
         <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
@@ -57,7 +57,7 @@ const FeaturedSection = () => {
       </div>
 
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 justify-center">
         {FeaturedProducts.map((product) => {
           // Calculate excerpt by taking first 30 words from blogParagraph
           const words = product.blogParagraph.split(" ");
@@ -66,7 +66,7 @@ const FeaturedSection = () => {
               ? words.slice(0, 30).join(" ") + "..."
               : product.blogParagraph;
           return (
-            <div key={product.id} className="">
+            <div key={product.id} className="p-3 border border-gray-100 shadow-lg">
               {/* Image Section with Amazon link */}
               <a
                 href={product.amazonLink}
@@ -92,7 +92,7 @@ const FeaturedSection = () => {
                 {/* Blog Section Under the Image */}
                 <div className="py-4">
                   <h2 className="font-semibold text-xl md:text-3xl text-black hover:text-gray-700">
-                    sofa Trends and techniques , would u like to do it more ...
+                    Sofa Trends and Techniques , would you like to do it more ...
 
                   </h2>
                   <p className="mt-2 text-gray-700">{excerpt}</p>
