@@ -69,7 +69,7 @@ const FeaturedSection = () => {
             <div key={product.id} className="p-3 border border-gray-100 shadow-lg">
               {/* Image Section with Amazon link */}
               <a
-                href={product.amazonLink}
+                href={"/"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block"

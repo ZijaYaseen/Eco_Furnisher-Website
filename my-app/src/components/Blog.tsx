@@ -14,14 +14,14 @@ const blogs = [
     date: "PUBLISHED APRIL 4, 2025",
     author: "Hannah Morrill",
     description: "We dish on our favorite (highly giftable) beauty products. Plus: the best lotions, retinols, and what to get for a 90th birthday.",
-    image: "/blog1.svg",
+    image: "/blog2.svg",
   },
   {
     title: "The Best Photo Book Service",
     date: "UPDATED APRIL 3, 2025",
     author: "Erin Roberts",
     description: "If you want to make a photo book to commemorate an event or experience, Mixbook is the best service to use.",
-    image: "/blog1.svg",
+    image: "/blog3.svg",
   },
 ];
 
@@ -38,7 +38,7 @@ export default function BlogSection() {
             </div>
             <div className="text-sm md:text-base grid gap-2">
             <h2 className="text-lg md:text-2xl font-bold">{blog.title}</h2>
-            <p className="text-blue-700 font-semibold">{blog.date}</p>
+            <p className="text-gray-500 font-semibold">{blog.date}</p>
             <p className="font-semibold">by {blog.author}</p>
             <p className="text-gray-700">{blog.description}</p>
             </div>
