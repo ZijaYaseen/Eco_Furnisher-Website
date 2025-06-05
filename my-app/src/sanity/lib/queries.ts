@@ -40,7 +40,7 @@ export async function GetProductsData(searchQuery: string = '') {
 // Best seller section product data
 export async function BestSellerSanity() {
   const query = `
-    *[_type == "product"]{
+    *[_type == "product" || tags == "Best Seller"]{
       _id,
       slug { current },
       productNameEn,
@@ -79,12 +79,34 @@ export async function BestSellerSanity() {
 export async function TopPicksDataSanity() {
 
   const query = `
-  *[_type == "product" && "Top Picks" in tags[]] {
-    _id,
-    name,
-    imagePath,
-    amazonLink,
-  }
+    *[_type == "product" || tags == "Top Picks"]{
+      _id,
+      slug { current },
+      productNameEn,
+      productSku,
+      "imagePath": productImageSet[0],
+      "imageSet" : productImageSet,
+      rating,
+      description,
+      shortDescription,
+      categoryId,
+      CategoryName,
+      packingWeight,
+      inventory,
+      tags,
+      seo {
+        metaTitle,
+        metaDescription,
+        metaKeywords
+      },
+      variants{
+        vid,
+        variantSellPrice,
+        variantSugSellPrice,
+        variantactualSellPrice,
+        discountPercentage
+      }
+    }
   `;
   return await client.fetch(query);
 };
