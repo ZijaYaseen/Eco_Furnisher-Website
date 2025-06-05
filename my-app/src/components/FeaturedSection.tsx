@@ -66,7 +66,7 @@ const FeaturedSection = () => {
               ? words.slice(0, 30).join(" ") + "..."
               : product.blogParagraph;
           return (
-            <div key={product.id} className="bg-gray-100">
+            <div key={product.id} className="">
               {/* Image Section with Amazon link */}
               <a
                 href={product.amazonLink}

@@ -81,7 +81,7 @@ const CollectionsSection = () => {
   const handleNext = () => swiperRef.current?.slideNext();
 
   return (
-    <section className="mx-auto max-w-screen-xl py-12 px-4 sm:px-6 lg:px-8 relative">
+    <section className="mx-auto max-w-screen-xl py-12 px-6 lg:px-8 relative">
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
           Explore Latest Collections
@@ -102,7 +102,7 @@ const CollectionsSection = () => {
           setIsEnd(swiper.isEnd);
         }}
         slidesPerView={2}
-        spaceBetween={20}
+        spaceBetween={10}
         breakpoints={{
           640: { slidesPerView: 2 },
           768: { slidesPerView: 4 },

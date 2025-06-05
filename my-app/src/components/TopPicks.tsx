@@ -11,7 +11,7 @@ interface BestSellerSectionProps {
 const TopPicks = ({ products }: BestSellerSectionProps) => {
 
   return (
-    <section className="mx-auto max-w-screen-xl py-12 px-4 sm:px-6 lg:px-8 relative bg-gray-50">
+    <section className="mx-auto max-w-screen-xl py-12 px-6 lg:px-8 relative bg-gray-50">
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
           Top Picks For You
