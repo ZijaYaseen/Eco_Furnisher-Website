@@ -40,7 +40,7 @@ export async function GetProductsData(searchQuery: string = '') {
 // Best seller section product data
 export async function BestSellerSanity() {
   const query = `
-    *[_type == "product" || tags == "Best Seller"]{
+    *[_type == "product" && "Best Seller" in tags]{
       _id,
       slug { current },
       productNameEn,
@@ -79,7 +79,7 @@ export async function BestSellerSanity() {
 export async function TopPicksDataSanity() {
 
   const query = `
-    *[_type == "product" || tags == "Top Picks"]{
+    *[_type == "product" && "Top Picks" in tags]{
       _id,
       slug { current },
       productNameEn,
