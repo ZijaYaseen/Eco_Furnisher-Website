@@ -398,7 +398,7 @@ const Checkout = () => {
                 {cartItems.map((item) => (
                   <div
                     key={item._key}
-                    className="flex justify-between items-start gap-4"
+                    className="flex justify-between items-start gap-4 py-3 border border-gray-50"
                   >
                     <div className="flex items-start gap-4">
                       <div className="p-1 flex-shrink-0">
@@ -434,7 +434,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-lg mt-2">
                   <p>Shipping</p>
-                  <p>$10</p>
+                  <p>00</p>
                 </div>
                 <div className="flex justify-between text-xl font-bold mt-4 pt-4 border-t border-gray-300">
                   <p>Total</p>
