@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function HeroSection() {
   return (
     <>
-      <main className="w-full font-poppins max-w-[1440px] mx-auto bg-[url('/Home-Section.jpg')] bg-cover">
+      <main className="w-full font-poppins max-w-[1440px] mx-auto bg-[url('/Hero-Section.jpg')] bg-cover">
         {/* HERO SECTION with Video Background */}
         <section className="relative w-full h-screen flex items-center  overflow-hidden">
           {/* Video Background */}

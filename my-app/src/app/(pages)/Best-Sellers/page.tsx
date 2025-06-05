@@ -16,7 +16,7 @@ export default async function BestSellerPage() {
           src="/best-seller-home.jpg"
           alt="Best Sellers Background"
           fill
-          className="object-cover"
+          className="object-cover bg-cover"
         />
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex items-center justify-center md:text-right md:justify-start md:px-10">
@@ -25,9 +25,9 @@ export default async function BestSellerPage() {
       </div>
 
       {/* Products Grid */}
-      <div className="container mx-auto px-2 py-8">
+      <div className="container mx-auto px-5 py-8">
         {products.length > 0 ? (
-          <div className="grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+          <div className="grid gap-2 grid-cols-1 md:grid-cols-4 lg:grid-cols-6">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}

@@ -46,7 +46,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <Link
       href={`/Shop/${product.slug.current}`}
-      className="group block border border-gray-100 shadow hover:shadow-lg p-2 relative"
+      className="group block border border-gray-300 shadow-lg p-2 relative"
     >
       {/* Image Container */}
       <div className="relative md:h-56 h-60">
