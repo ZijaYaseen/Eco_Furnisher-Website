@@ -40,7 +40,7 @@ const Home = async () => {
   <h1 className="font-bold text-4xl sm:text-6xl text-center">Our Instagram</h1>
   <p className="font-normal text-lg sm:text-xl text-center">Follow our store on Instagram</p>
   <a
-  href='https://www.instagram.com/ecof.urnish?igsh=MW1kYWtudXlxeXJvbA=='
+  href='https://www.instagram.com/ecofurnishers?utm_source=qr&igsh=MW1kYWtudXlxeXJvbA=='
     rel='noopener noreferral'
     target='_blank'
     className="font-normal text-lg sm:text-xl bg-[#FAF4F4] rounded-3xl shadow-2xl w-[60%] sm:w-[15vw] h-[10vh] flex items-center justify-center"
