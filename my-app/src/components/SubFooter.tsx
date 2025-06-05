@@ -20,7 +20,7 @@ const SubFooter = () => {
             <h3 className="text-2xl font-bold mb-4">Fast & Free Shipping</h3>
             <div className="h-0.5 w-20 bg-black mb-6 mx-auto"></div>
             <p className="text-gray-600 mb-4">
-              All orders ship within 24 hours from our US warehouses. Free ground shipping on orders over $50.
+              We offer completely free shipping on every order, and you can expect it to arrive within 4-6 business days.
             </p>
             <ul className="text-left w-full max-w-xs mx-auto space-y-2">
               <li className="flex items-start">
