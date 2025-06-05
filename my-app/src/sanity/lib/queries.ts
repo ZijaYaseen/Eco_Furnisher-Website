@@ -76,7 +76,7 @@ export async function BestSellerSanity() {
 
 
 // Top Picks product data
-export async function TopPicksData() {
+export async function TopPicksDataSanity() {
 
   const query = `
   *[_type == "product" && "Top Picks" in tags[]] {

@@ -1,6 +1,8 @@
+import type { PortableTextBlock } from '@portabletext/types';
+
 export const Nav = [
     {name:"Home", Link:"/"},
-    {name:"Shop All", Link:"/Shop"},
+    {name:"Shop", Link:"/Shop"},
     {name:"About", Link:"/About"},
     {name:"Contact", Link:"/Contact"},
     {name:"Blogs", Link:"/Blog"},
@@ -91,7 +93,7 @@ export interface Product {
   CategoryName: string[];
   packingWeight: number;
   shortDescription: string;
-  description: string;
+  description: PortableTextBlock[];
   rating: number;
   inventory: number;
   tags: string[];

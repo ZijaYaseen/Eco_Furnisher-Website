@@ -1,19 +1,17 @@
 // app/page.tsx
 
 import HeroSection from '@/components/HeroSection';
-import { BestSellerSanity } from '@/sanity/lib/queries';
+import { BestSellerSanity, TopPicksDataSanity } from '@/sanity/lib/queries';
 import FeaturedSection from '@/components/FeaturedSection';
 import TopPicks from '@/components/TopPicks';
 import CollectionsSection from '@/components/Collection';
 import BestSellerSection from '@/components/BestSeller';
 import BlogSection from '@/components/Blog';
 
-
 const Home = async () => {
 
   const BestSellerData = await BestSellerSanity();
-
-
+  const TopPicksData  = await TopPicksDataSanity ();
 
   return (
     <div className='max-w-[1440px] mx-auto font-poppins h-full w-full overflow-hidden mt-[56px]'>
@@ -29,7 +27,7 @@ const Home = async () => {
     <CollectionsSection />
 
     {/* Home page 3rd section */}
-    <TopPicks products={BestSellerData}/>
+    <TopPicks products={TopPicksData}/>
 
 
 {/* Home page 4th section */}

@@ -13,39 +13,8 @@ import CartSidebar from "./CartSidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OutOfStockModal from "./OutOfStockModal";
-
-// Define interfaces based on sanity schema
-interface Product {
-  _id: string;
-  productNameEn: string;
-  productSku: string;
-  imageSet: string[];
-  categoryId: string;
-  CategoryName: string[];
-  packingWeight: number;
-  shortDescription: string;
-  description: string;
-  rating: number;
-  inventory: number;
-  tags: string[];
-  slug: { current: string };
-  variants: {
-    vid: string;
-    variantSellPrice: number;
-    variantSugSellPrice: number;
-    variantactualSellPrice: number;
-    discountPercentage: number;
-  };
-}
-
-// CartItem type matching Sanity cartItem object
-export interface CartItem {
-  _key: string;
-  product: Product;
-  quantity: number;
-  subtotal: number;
-  discountedPrice: number;
-}
+import { PortableText } from '@portabletext/react';
+import { Product, CartItem } from "@/data";
 
 interface ProductDetailClientProps {
     product: Product;
@@ -60,13 +29,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
     // For the collapsible description sections
     const [showOverview, setShowOverview] = useState(false);
-    const [showSpec, setShowSpec] = useState(false);
 
-    // Split the description string into Overview and Specification parts.
-    // It assumes your description contains "Specification:" as a marker.
-    const parts = product.description.split("Specification:");
-    const overviewHTML = parts[0]; // Everything before "Specification:"
-    const specHTML = parts[1] ? "Specification:" + parts[1] : "";
 
     // Desktop main image state
     const [mainImage, setMainImage] = useState(product.imageSet[0]);
@@ -88,18 +51,18 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     const originalPrice = firstVariant.variantactualSellPrice;
     const discountPercent = firstVariant.discountPercentage;
     const discountedPrice = originalPrice - originalPrice * (discountPercent / 100);
-    
+
 
     const handleAddToCart = async () => {
         if (product.inventory < count) {
             setIsModalOpen(true);
             return;
         }
-        const cartItem : CartItem = {
+        const cartItem: CartItem = {
             _key: product._id,
             product,
             quantity: count,
-            subtotal : discountedPrice  * count,
+            subtotal: discountedPrice * count,
             discountedPrice
         };
         dispatch(addToCart(cartItem))
@@ -257,7 +220,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     </div>
 
 
-                   
+
 
                     {/* Error Message */}
                     {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
@@ -286,28 +249,16 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     <div className="prose max-w-none mb-4 space-y-4">
                         {/* Overview Section */}
                         <div className="border-b pb-2 flex justify-between items-center cursor-pointer" onClick={() => setShowOverview(!showOverview)}>
-                            <h4 className="font-bold text-xl">Overview</h4>
+                            <h4 className="font-bold text-xl">Description</h4>
                             {showOverview ? <FaMinus /> : <FaPlus />}
                         </div>
                         {showOverview && (
-                            <div dangerouslySetInnerHTML={{ __html: overviewHTML }} />
+                            <div className="prose max-w-none mb-4 space-y-4">
+                                {/* Sanity ke PortableText component ko value me product.description do */}
+                                <PortableText value={product.description} />
+                            </div>
                         )}
 
-                        {/* Specification Section */}
-                        {specHTML && (
-                            <div className="border-b pb-2 flex justify-between items-center cursor-pointer" onClick={() => setShowSpec(!showSpec)}>
-                                <h4 className="font-bold text-xl">Specification</h4>
-                                {showSpec ? <FaMinus /> : <FaPlus />}
-                            </div>
-                        )}
-                        {showSpec && specHTML && (
-                            <div className="mt-2">
-                                {specHTML.split("<br/>").map((line, index) => {
-                                    const trimmed = line.trim();
-                                    return trimmed ? <p key={index} className="mb-1">{trimmed}</p> : null;
-                                })}
-                            </div>
-                        )}
                     </div>
 
                     {/* SKU, Category, Tags, Share Section */}

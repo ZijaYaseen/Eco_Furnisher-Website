@@ -63,9 +63,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
         )}
       </div>
       {/* Product Details */}
-      <div className="py-3">
+      <div className="pt-3">
         <h3 className="text-lg font-semibold text-gray-900">
-          {product.productNameEn}
+          {truncateText(product.productNameEn, 7)}
         </h3>
         <div className="mt-1 flex items-center gap-2">
           <span className="text-base text-gray-700 font-bold">
