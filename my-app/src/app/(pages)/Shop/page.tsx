@@ -23,7 +23,7 @@ const Shop = () => {
       <PagesHeader title='Shop' name='Shop' />
 
       {/* Filter and Sort Section */}
-      <div className='bg-gray-100 md:h-[100px] px-10 py-3 md:py-0 flex flex-col md:flex-row justify-between items-center gap-4'>
+      <div className='bg-gray-100 md:h-[100px] my-10 px-10 py-3 md:py-0 flex flex-col md:flex-row justify-between items-center gap-4'>
         <div className='flex items-center space-x-3'>
           <LiaSlidersHSolid size={25} />
           <h4 className='font-normal text-xl'>Filter</h4>
