@@ -1,4 +1,3 @@
-// /components/ProductCard.tsx
 "use client";
 
 import Image from "next/image";
@@ -36,56 +35,71 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  // Use the first variant for pricing
-  const firstVariant = product.variants;
-  const originalPrice = firstVariant?.variantactualSellPrice ;
-  const discountPercent = firstVariant?.discountPercentage;
-  const discountedPrice =
-    originalPrice - originalPrice * (discountPercent / 100);
+  const variants = product.variants ?? [];
+  // Primary variant for image and price
+  const primary = product.variants[0];
+  const originalPrice = primary.variantActualSellPrice || 0;
+  const discountPercent = primary.discountPercentage || 0;
+  const discountedPrice = originalPrice - (originalPrice * discountPercent) / 100;
+
+  // Collect all colors from all variants
+  const allColors = variants.flatMap(v => v.colors ?? []);
 
   return (
     <Link
       href={`/Shop/${product.slug.current}`}
       className="group block border border-gray-300 shadow-lg p-2 relative"
     >
-      {/* Image Container */}
+      {/* Image */}
       <div className="relative md:h-56 h-60">
         <Image
-          src={product.imageSet[0]}
+          src={primary.variantImage}
           alt={product.productNameEn}
           fill
           className="object-cover bg-gray-100 object-center transition-transform duration-300 group-hover:scale-105"
         />
         {discountPercent > 0 && (
-          <div className="absolute top-2 left-2 bg-red-600 text-white px-4 py-2 text-xs font-bold rounded">
+          <div className="absolute top-2 left-2 bg-red-600 text-white px-4 py-2 text-xs font-bold">
             {discountPercent}% OFF
           </div>
         )}
       </div>
-      {/* Product Details */}
+
+      {/* Details */}
       <div className="pt-3">
-        <h3 className="text-lg font-semibold text-gray-900">
-          {truncateText(product.productNameEn, 7)}
-        </h3>
-        <div className="mt-1 flex items-center gap-2">
-          <span className="text-base text-gray-700 font-bold">
+        <div className="mt-1 flex items-center gap-4">
+          <span className="text-2xl text-gray-700 font-bold">
             ${discountedPrice.toFixed(2)}
           </span>
           {discountPercent > 0 && (
-            <span className="text-sm text-gray-500 line-through">
+            <span className="text-lg text-gray-500 line-through">
               ${originalPrice.toFixed(2)}
             </span>
           )}
         </div>
+
+        <h3 className="text-lg font-medium text-gray-900">
+          {truncateText(product.productNameEn, 7)}
+        </h3>
+
         <div className="mt-1 flex items-center gap-4">
           {renderStars(product.rating)}
-          <span className="text-xs text-gray-600">{product.rating.toFixed(1)}</span>
+          <span className="text-xs text-gray-600">
+            {product.rating.toFixed(1)}
+          </span>
         </div>
-        {product.shortDescription && (
-          <p className="mt-1 text-xs  text-gray-600">
-            {truncateText(product.shortDescription, 15)}
-          </p>
-        )}
+
+        {/* Color swatches for all variant colors */}
+        <div className="mt-3 flex gap-2">
+          {allColors.map((color, idx) => (
+            <div
+              key={idx}
+              title={color.colorName}
+              className="w-6 h-6 border-2"
+              style={{ backgroundColor: color.colorCode }}
+            />
+          ))}
+        </div>
       </div>
     </Link>
   );

@@ -1,5 +1,7 @@
+// Sanity client import
 import { client } from "./client";
 
+// Fetch products based on search (name or category)
 export async function GetProductsData(searchQuery: string = '') {
   const query = `
     *[_type == "product" &&
@@ -17,6 +19,7 @@ export async function GetProductsData(searchQuery: string = '') {
       categoryId,
       CategoryName,
       packingWeight,
+      shippingCharge,
       inventory,
       tags,
       seo {
@@ -24,35 +27,37 @@ export async function GetProductsData(searchQuery: string = '') {
         metaDescription,
         metaKeywords
       },
-      variants{
+      variants[]{
         vid,
         variantSellPrice,
         variantSugSellPrice,
-        variantactualSellPrice,
-        discountPercentage
+        variantActualSellPrice,
+        discountPercentage,
+        colors{ colorName, colorCode },
+        variantImage
       }
     }
   `;
   return await client.fetch(query, { searchQuery: `*${searchQuery}*` }, { cache: "no-store" });
 }
 
-
-// Best seller section product data
+// Best Seller products
 export async function BestSellerSanity() {
   const query = `
     *[_type == "product" && "Best Seller" in tags]{
       _id,
-      slug { current },
+      slug,
       productNameEn,
       productSku,
       "imagePath": productImageSet[0],
-      "imageSet" : productImageSet,
+      "imageSet": productImageSet,
       rating,
       description,
       shortDescription,
       categoryId,
       CategoryName,
       packingWeight,
+      shippingCharge,
       inventory,
       tags,
       seo {
@@ -60,24 +65,22 @@ export async function BestSellerSanity() {
         metaDescription,
         metaKeywords
       },
-      variants{
+      variants[]{
         vid,
         variantSellPrice,
         variantSugSellPrice,
-        variantactualSellPrice,
-        discountPercentage
+        variantActualSellPrice,
+        discountPercentage,
+        colors{ colorName, colorCode },
+        variantImage
       }
     }
   `;
   return await client.fetch(query, {}, { cache: "no-store" });
 }
 
-
-
-
-// Top Picks product data
+// Top Picks products
 export async function TopPicksDataSanity() {
-
   const query = `
     *[_type == "product" && "Top Picks" in tags]{
       _id,
@@ -85,13 +88,14 @@ export async function TopPicksDataSanity() {
       productNameEn,
       productSku,
       "imagePath": productImageSet[0],
-      "imageSet" : productImageSet,
+      "imageSet": productImageSet,
       rating,
       description,
       shortDescription,
       categoryId,
       CategoryName,
       packingWeight,
+      shippingCharge,
       inventory,
       tags,
       seo {
@@ -99,29 +103,54 @@ export async function TopPicksDataSanity() {
         metaDescription,
         metaKeywords
       },
-      variants{
+      variants[]{
         vid,
         variantSellPrice,
         variantSugSellPrice,
-        variantactualSellPrice,
-        discountPercentage
+        variantActualSellPrice,
+        discountPercentage,
+        colors{ colorName, colorCode },
+        variantImage
       }
     }
   `;
-  return await client.fetch(query);
-};
-
-// New Arrivals product data
-export async function NewArrivalsSanity() {
-  const query = `
-  *[_type == "product" && "One Product" in tags] {
-    _id,
-    name,
-    imagePath,
-    amazonLink,
-    tags
-  }
-  `;
-  return await client.fetch(query);
+  return await client.fetch(query, {}, { cache: "no-store" });
 }
 
+// New Arrivals products
+export async function NewArrivalsSanity() {
+  const query = `
+    *[_type == "product" && "New Arrival" in tags]{
+      _id,
+      slug { current },
+      productNameEn,
+      productSku,
+      "imagePath": productImageSet[0],
+      "imageSet": productImageSet,
+      rating,
+      description,
+      shortDescription,
+      categoryId,
+      CategoryName,
+      packingWeight,
+      shippingCharge,
+      inventory,
+      tags,
+      seo {
+        metaTitle,
+        metaDescription,
+        metaKeywords
+      },
+      variants[]{
+        vid,
+        variantSellPrice,
+        variantSugSellPrice,
+        variantActualSellPrice,
+        discountPercentage,
+        colors{ colorName, colorCode },
+        variantImage
+      }
+    }
+  `;
+  return await client.fetch(query, {}, { cache: "no-store" });
+}

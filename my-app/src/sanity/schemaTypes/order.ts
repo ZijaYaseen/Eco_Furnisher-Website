@@ -1,3 +1,6 @@
+import { MdDescription } from "react-icons/md";
+
+// schemas/order.ts
 export default {
   name: 'order',
   title: 'Order',
@@ -11,8 +14,8 @@ export default {
       description: 'Reference to the user if logged in',
     },
     {
-      name: 'billingDetails',
-      title: 'Billing Details',
+      name: 'shippingDetails',
+      title: 'Shipping Details',
       type: 'object',
       fields: [
         { name: 'firstName', title: 'First Name', type: 'string' },
@@ -34,14 +37,30 @@ export default {
         {
           type: 'object',
           fields: [
-            { 
-              name: 'product', 
-              title: 'Product', 
-              type: 'reference', 
-              to: [{ type: 'product' }] 
+            {
+              name: 'product',
+              title: 'Product',
+              type: 'reference',
+              to: [{ type: 'product' }]
             },
-            { name: 'quantity', title: 'Quantity', type: 'number' },
-            { name: 'subtotal', title: 'Subtotal', type: 'number' },
+            {
+              name: 'variants',
+              title: 'Variants',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    { name: 'vid', title: 'Variant ID', type: 'string', description: 'The unique ID for the variant' },
+                    { name: 'quantity', title: 'Quantity', type: 'number' },
+                    { name: 'subtotal', title: 'Subtotal', type: 'number' },
+                    
+                  ],
+                },
+              ],
+              description: 'Different variants of the product, each with its own vid , quantity and subtotal',
+            },
+            { name: 'Total', title: 'total', type: 'number'},
           ],
         },
       ],
@@ -52,6 +71,16 @@ export default {
       type: 'number',
     },
     {
+      name: 'shippingCost',
+      title: 'Shipping Cost',
+      type: 'number',
+    },
+    {
+      name: 'taxAmount',
+      title: 'Tax Amount',
+      type: 'number',
+    },
+    {
       name: 'paymentMethod',
       title: 'Payment Method',
       type: 'string',
@@ -59,6 +88,7 @@ export default {
         list: [
           { title: 'Stripe', value: 'stripe' },
           { title: 'PayPal', value: 'paypal' },
+          { title: 'COD', value: 'cod' },
         ],
       },
     },
@@ -86,13 +116,18 @@ export default {
       options: {
         list: [
           { title: 'Pending', value: 'pending' },
-          { title: 'Paid', value: 'paid' },
+          { title: 'Processing', value: 'processing' },
           { title: 'Shipped', value: 'shipped' },
           { title: 'Delivered', value: 'delivered' },
           { title: 'Cancelled', value: 'cancelled' },
         ],
       },
       initialValue: 'pending',
+    },
+    {
+      name: 'trackingNumber',
+      title: 'Tracking Number',
+      type: 'string',
     },
   ],
   initialValue: {

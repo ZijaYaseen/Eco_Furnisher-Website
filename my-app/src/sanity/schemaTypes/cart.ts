@@ -1,3 +1,4 @@
+// schemas/cart.ts
 export default {
   name: 'cart',
   title: 'Cart',
@@ -14,11 +15,17 @@ export default {
       title: 'Guest ID',
       type: 'string',
     },
+
     {
       name: 'items',
       title: 'Items',
       type: 'array',
       of: [{ type: 'cartItem' }],
+    },
+    {
+      name: 'grandTotal',
+      title: 'Total Amount',
+      type: 'number',
     },
   ],
 };

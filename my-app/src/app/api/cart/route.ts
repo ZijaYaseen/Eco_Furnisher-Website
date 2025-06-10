@@ -1,21 +1,19 @@
 // /app/api/cart/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { client } from "@/sanity/lib/client";
 import { nanoid } from "nanoid";
 
-// Convert the secret key from the environment variable.
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
 
-// ----------------------------
-// Define Interfaces for Cart Data
-// ----------------------------
+// Updated interfaces
 interface CartItemInDocument {
   _key: string;
   product: { _ref: string };
+  variantId: string;
   quantity: number;
   subtotal: number;
+  discountedPrice: number; 
 }
 
 interface NewCart {
@@ -23,77 +21,79 @@ interface NewCart {
   items: {
     _key: string;
     product: { _type?: string; _ref: string };
+    variantId: string;
     quantity: number;
     subtotal: number;
+    discountedPrice: number; 
   }[];
-  // Optional fields for association:
   user?: { _type: string; _ref: string };
   guestId?: string;
+  grandTotal: number; // ADDED GRAND TOTAL
 }
 
 interface ExistingCart {
   _id: string;
   items: CartItemInDocument[];
-  // Optionally stored fields:
   user?: { _type: string; _ref: string };
   guestId?: string;
+  grandTotal: number; // ADDED GRAND TOTAL
 }
 
-// ----------------------------
-// Function to Merge Guest Cart with User Cart
-// ----------------------------
+// Helper function to calculate grand total
+const calculateGrandTotal = (items: CartItemInDocument[]) => {
+  return items.reduce((sum, item) => sum + item.subtotal, 0);
+};
+
+// Merge carts function with discountedPrice support
 async function mergeGuestCartWithUserCart(userId: string, guestId: string): Promise<void> {
-  // 1. Fetch the guest cart (if any)
   const guestCartQuery = `*[_type == "cart" && guestId == $guestId][0]`;
   const guestCart = await client.fetch(guestCartQuery, { guestId }) as ExistingCart | undefined;
+  if (!guestCart) return;
 
-  // 2. Fetch the user's existing cart (if any)
   const userCartQuery = `*[_type == "cart" && user._ref == $userId][0]`;
   const userCart = await client.fetch(userCartQuery, { userId }) as ExistingCart | undefined;
 
-  if (!guestCart) return; // Agar guest cart nahin hai, to kuch merge karne ki zarurat nahin.
-
   if (userCart) {
-    // Merge items from guest cart into the existing user cart.
     const mergedItems = [...userCart.items];
     for (const guestItem of guestCart.items) {
-      // Check if product already exists in user cart.
-      const index = mergedItems.findIndex(item => item.product._ref === guestItem.product._ref);
+      const index = mergedItems.findIndex(item => 
+        item.product._ref === guestItem.product._ref && 
+        item.variantId === guestItem.variantId
+      );
       if (index > -1) {
-        // Agar product exists karta hai, quantity add karo.
         mergedItems[index].quantity += guestItem.quantity;
-        // Recalculate subtotal. (Yahan assume kiya gaya hai ke product price remains same.)
-        const productPrice =
-          guestItem.quantity > 0 ? guestItem.subtotal / guestItem.quantity : 0;
-        mergedItems[index].subtotal = mergedItems[index].quantity * productPrice;
+        mergedItems[index].subtotal = mergedItems[index].quantity * mergedItems[index].discountedPrice;
       } else {
-        // Naya item add karo.
         mergedItems.push(guestItem);
       }
     }
-    await client.patch(userCart._id).set({ items: mergedItems }).commit();
-    // (Optional) Agar aap guest cart document ko delete karna chahte hain, to aap niche wali line uncomment kar sakte hain.
-    // await client.delete(guestCart._id);
+    
+    // Calculate new grand total
+    const newGrandTotal = calculateGrandTotal(mergedItems);
+    
+    await client.patch(userCart._id)
+      .set({ 
+        items: mergedItems,
+        grandTotal: newGrandTotal // UPDATE GRAND TOTAL
+      })
+      .commit();
   } else {
-    // Agar user ke paas pehle se cart nahin hai, to guest cart ko user cart bana dein.
     await client
       .patch(guestCart._id)
       .set({
         user: { _type: "reference", _ref: userId },
-        guestId: null, // Guest ID ko clear kar sakte hain.
+        guestId: null,
+        // Keep existing grand total
       })
       .commit();
   }
 }
 
-// ----------------------------
-// POST: Add/Update Cart
-// ----------------------------
+// POST Endpoint - Add to cart with variant support
 export async function POST(req: NextRequest) {
   try {
-    const { productId, quantity } = await req.json();
+    const { productId, variantId, quantity } = await req.json();
 
-    // 1. Check if the request comes from a logged-in user.
     const token = req.cookies.get("token")?.value;
     let userId: string | null = null;
     let guestId = req.cookies.get("guestId")?.value;
@@ -107,28 +107,34 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // If not logged in and no guestId exists, generate one.
     if (!userId && !guestId) {
       guestId = nanoid();
     }
 
-    // 2. If user is logged in but a guestId exists, merge guest cart with user cart.
     if (userId && guestId) {
       await mergeGuestCartWithUserCart(userId, guestId);
     }
 
-    // 3. Fetch the product’s price from Sanity.
-    const productQuery = `*[_type == "product" && _id == $productId][0]{ price }`;
-    const product = await client.fetch(productQuery, { productId });
-    if (!product) {
+    // Fetch variant-specific price and discount
+    const productQuery = `*[_type == "product" && _id == $productId][0]{
+      "variant": variants[vid == $variantId][0] {
+        variantActualSellPrice,
+        discountPercentage
+      }
+    }`;
+    const product = await client.fetch(productQuery, { productId, variantId });
+    
+    if (!product || !product.variant) {
       return NextResponse.json(
-        { success: false, error: "Product not found" },
+        { success: false, error: "Product variant not found" },
         { status: 404 }
       );
     }
-    const productPrice = product.price;
+    
+    const productPrice = product.variant.variantActualSellPrice;
+    const discountPercentage = product.variant.discountPercentage || 0;
+    const discountedPrice = productPrice * (1 - discountPercentage / 100);
 
-    // 4. Determine which cart to update (user’s cart or guest cart).
     let query = "";
     let queryParams: { userId?: string; guestId?: string } = {};
 
@@ -143,26 +149,39 @@ export async function POST(req: NextRequest) {
     const existingCart = (await client.fetch(query, queryParams)) as ExistingCart | undefined;
 
     if (existingCart) {
-      // 5. Update existing cart: either update the quantity or add the new item.
       const productIndex = existingCart.items.findIndex(
-        (item: CartItemInDocument) => item.product._ref === productId
+        (item: CartItemInDocument) => 
+          item.product._ref === productId && 
+          item.variantId === variantId
       );
+      
       const updatedItems = [...existingCart.items];
 
       if (productIndex > -1) {
+        const existingDiscountedPrice = updatedItems[productIndex].discountedPrice;
         updatedItems[productIndex].quantity += quantity;
-        updatedItems[productIndex].subtotal =
-          updatedItems[productIndex].quantity * productPrice;
+        updatedItems[productIndex].subtotal = updatedItems[productIndex].quantity * existingDiscountedPrice;
       } else {
         updatedItems.push({
           _key: nanoid(),
           product: { _ref: productId },
+          variantId,
           quantity,
-          subtotal: quantity * productPrice,
+          subtotal: quantity * discountedPrice,
+          discountedPrice
         });
       }
 
-      await client.patch(existingCart._id).set({ items: updatedItems }).commit();
+      // CALCULATE NEW GRAND TOTAL
+      const newGrandTotal = calculateGrandTotal(updatedItems);
+      
+      await client.patch(existingCart._id)
+        .set({ 
+          items: updatedItems,
+          grandTotal: newGrandTotal // UPDATE GRAND TOTAL
+        })
+        .commit();
+        
       const res = NextResponse.json({
         success: true,
         message: "Cart updated successfully!",
@@ -172,17 +191,24 @@ export async function POST(req: NextRequest) {
       }
       return res;
     } else {
-      // 6. No cart exists—create a new cart document.
+      const items = [
+        {
+          _key: nanoid(),
+          product: { _type: "reference", _ref: productId },
+          variantId,
+          quantity,
+          subtotal: quantity * discountedPrice,
+          discountedPrice
+        }
+      ];
+      
+      // CALCULATE INITIAL GRAND TOTAL
+      const initialGrandTotal = calculateGrandTotal(items);
+      
       const newCart: NewCart = {
         _type: "cart",
-        items: [
-          {
-            _key: nanoid(),
-            product: { _type: "reference", _ref: productId },
-            quantity,
-            subtotal: quantity * productPrice,
-          },
-        ],
+        items,
+        grandTotal: initialGrandTotal,
       };
 
       if (userId) {
@@ -208,12 +234,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// ----------------------------
-// GET: Fetch Cart (Handles Both Logged-in and Guest Users)
-// ----------------------------
+// GET Endpoint - Fetch cart with variant images
 export async function GET(req: NextRequest) {
   try {
-    // 1. Retrieve token and guestId from cookies.
     const token = req.cookies.get("token")?.value;
     const guestId = req.cookies.get("guestId")?.value;
     let userId: string | null = null;
@@ -227,67 +250,82 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // 2. If user is logged in and a guestId exists, merge the guest cart.
     if (userId && guestId) {
       await mergeGuestCartWithUserCart(userId, guestId);
     }
 
-    // 3. Build query based on whether the user is logged in or is a guest.
     let query = "";
     let queryParams: { userId?: string; guestId?: string } = {};
 
     if (userId) {
       query = `
       *[_type == "cart" && user._ref == $userId][0]{
-  items[]{
-    product->{
-      _id,
-      productNameEn,
-      productSku,
-      "imageSet": productImageSet,
-      variants{
-        variantactualSellPrice,
-        discountPercentage
-      }
-    },
-    quantity,
-    'discountedPrice': product->variants.variantactualSellPrice * (1 - product->variants.discountPercentage / 100),
-    'subtotal': quantity * (product->variants.variantactualSellPrice * (1 - product->variants.discountPercentage / 100))
-    }
-}
-`;
+        items[]{
+          _key,
+          variantId,
+          quantity,
+          subtotal,
+          discountedPrice,
+          product->{
+            _id,
+            productNameEn,
+            productSku,
+            "imageSet": productImageSet,
+            "variants": variants[vid == ^.^.variantId] {
+              vid,
+              variantActualSellPrice,
+              discountPercentage,
+              "variantImage": variantImage,
+              colors { colorName, colorCode }
+            }
+          }
+        },
+        grandTotal
+      }`;
       queryParams = { userId };
     } else if (guestId) {
       query = `
       *[_type == "cart" && guestId == $guestId][0]{
-  items[]{
-    product->{
-      _id,
-      productNameEn,
-      productSku,
-      "imageSet": productImageSet,
-      variants{
-        vid,
-        variantactualSellPrice,
-        discountPercentage
-      }
-    },
-    quantity,
-   'discountedPrice': product->variants.variantactualSellPrice * (1 - product->variants.discountPercentage / 100),
-    'subtotal': quantity * (product->variants.variantactualSellPrice * (1 - product->variants.discountPercentage / 100))
-      }
-}
-`;
+        items[]{
+          _key,
+          variantId,
+          quantity,
+          subtotal,
+          discountedPrice,
+          product->{
+            _id,
+            productNameEn,
+            productSku,
+            "imageSet": productImageSet,
+            "variants": variants[vid == ^.^.variantId] {
+              vid,
+              variantActualSellPrice,
+              discountPercentage,
+              "variantImage": variantImage,
+              colors { colorName, colorCode }
+            }
+          }
+        },
+        grandTotal
+      }`;
       queryParams = { guestId };
     } else {
-      // Agar koi identifier nahin, to empty cart return karein.
-      return NextResponse.json({ success: true, cart: { items: [] } });
+      return NextResponse.json({ 
+        success: true, 
+        cart: { 
+          items: [], 
+          grandTotal: 0 
+        } 
+      });
     }
 
     const cart = await client.fetch(query, queryParams);
     return NextResponse.json({
       success: true,
-      cart: cart || { items: [] },
+      cart: cart || { 
+        items: [], 
+        grandTotal: 0 
+      },
     });
   } catch (error) {
     console.error("Cart GET Error:", error);
@@ -298,20 +336,17 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// ----------------------------
-// DELETE: Remove Item from Cart
-// ----------------------------
+// DELETE Endpoint - Remove item by key
 export async function DELETE(req: NextRequest) {
-    try {
-    const productId = req.nextUrl.searchParams.get("productId");
-    if (!productId) {
+  try {
+    const itemKey = req.nextUrl.searchParams.get("itemKey");
+    if (!itemKey) {
       return NextResponse.json(
-        { success: false, error: "Missing productId" },
+        { success: false, error: "Missing itemKey" },
         { status: 400 }
       );
     }
 
-    // 1. Determine user identity from token or guestId.
     const token = req.cookies.get("token")?.value;
     let userId: string | null = null;
     const guestId = req.cookies.get("guestId")?.value;
@@ -325,7 +360,6 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    // 2. Build query based on whether it's a user or guest cart.
     let query = "";
     let queryParams: { userId?: string; guestId?: string } = {};
     if (userId) {
@@ -341,7 +375,6 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // 3. Fetch the existing cart.
     const existingCart = (await client.fetch(query, queryParams)) as ExistingCart | undefined;
     if (!existingCart) {
       return NextResponse.json(
@@ -350,33 +383,38 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // 4. Filter out the product to be removed.
     const filteredItems = existingCart.items.filter(
-      (item: CartItemInDocument) => item.product._ref !== productId
+      (item: CartItemInDocument) => item._key !== itemKey
     );
-    await client.patch(existingCart._id).set({ items: filteredItems }).commit();
+    
+    // CALCULATE NEW GRAND TOTAL
+    const newGrandTotal = calculateGrandTotal(filteredItems);
+    
+    await client.patch(existingCart._id)
+      .set({ 
+        items: filteredItems,
+        grandTotal: newGrandTotal // UPDATE GRAND TOTAL
+      })
+      .commit();
 
     return NextResponse.json({
       success: true,
-      message: "Product removed from cart successfully!",
+      message: "Item removed from cart successfully!",
     });
   } catch (error) {
     console.error("Cart DELETE Error:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to remove product from cart" },
+      { success: false, error: "Failed to remove item from cart" },
       { status: 500 }
     );
   }
-};
+}
 
-// ----------------------------
-// PATCH: Update Item Quantity in Cart
-// ----------------------------
+// PATCH Endpoint - Update quantity with variant support
 export async function PATCH(req: NextRequest) {
   try {
-    const { productId, quantity } = await req.json();
+    const { itemKey, quantity } = await req.json();
     
-    // 1. Authenticate User/Guest
     const token = req.cookies.get("token")?.value;
     let userId: string | null = null;
     const guestId = req.cookies.get("guestId")?.value;
@@ -390,23 +428,6 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
-    // 2. Fetch Product's Current Price
-    const product = await client.fetch(
-      `*[_type == "product" && _id == $productId][0]{
-        "price": variants.variantactualSellPrice
-      }`,
-      { productId }
-    );
-
-    if (!product) {
-      return NextResponse.json(
-        { success: false, error: "Product not found" },
-        { status: 404 }
-      );
-    }
-    const productPrice = product.price;
-
-    // 3. Find User's/Guest's Cart
     let query = "";
     let queryParams: { userId?: string; guestId?: string } = {};
 
@@ -431,26 +452,39 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    // 4. Update Quantity & Subtotal
+    const itemToUpdate = existingCart.items.find(item => item._key === itemKey);
+    if (!itemToUpdate) {
+      return NextResponse.json(
+        { success: false, error: "Item not found in cart" },
+        { status: 404 }
+      );
+    }
+
     const updatedItems = existingCart.items.map(item => {
-      if (item.product._ref === productId) {
+      if (item._key === itemKey) {
         return {
           ...item,
           quantity: quantity,
-          subtotal: quantity * productPrice
+          subtotal: quantity * item.discountedPrice
         };
       }
       return item;
     });
 
-    // 5. Save Updated Cart
-    await client.patch(existingCart._id).set({ items: updatedItems }).commit();
+    // CALCULATE NEW GRAND TOTAL
+    const newGrandTotal = calculateGrandTotal(updatedItems);
+    
+    await client.patch(existingCart._id)
+      .set({ 
+        items: updatedItems,
+        grandTotal: newGrandTotal // UPDATE GRAND TOTAL
+      })
+      .commit();
 
     return NextResponse.json({
       success: true,
       message: "Quantity updated successfully!"
     });
-
   } catch (error) {
     console.error("Cart PATCH Error:", error);
     return NextResponse.json(

@@ -48,10 +48,10 @@ export default {
       description: 'Weight of the packaging',
     },
     {
-      name: "shippingCharge",
-      title: "Shipping Charge (in cents)",
-      type: "number",
-      description: "Shipping charge for this product (e.g. 500 for $5.00)",
+      name: 'shippingCharge',
+      title: 'Shipping Charge (in cents)',
+      type: 'number',
+      description: 'Shipping charge for this product (e.g. 500 for $5.00)',
     },
     {
       name: 'shortDescription',
@@ -70,7 +70,6 @@ export default {
             { title: 'Normal', value: 'normal' },
             { title: 'Heading 1', value: 'h1' },
             { title: 'Heading 2', value: 'h2' },
-            // Zaroorat ho to aur headings add kar sakte ho
           ],
           marks: {
             decorators: [
@@ -106,12 +105,10 @@ export default {
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      description:
-        'URL-friendly identifier auto-generated from the product name and category',
+      description: 'URL-friendly identifier auto-generated from the product name and category',
       options: {
         source: (doc: ProductDoc): string => {
           const productName = doc.productNameEn || '';
-          // Use first category name if available
           const categoryName =
             doc.CategoryName && doc.CategoryName.length > 0 ? doc.CategoryName[0] : '';
           return `${productName}-${categoryName}`;
@@ -120,69 +117,51 @@ export default {
           input.toLowerCase().replace(/\s+/g, '-').slice(0, 200),
       },
     },
-    // Add your SEO metadata field here
     {
       name: 'seo',
       title: 'SEO',
       type: 'object',
       fields: [
-        {
-          name: 'metaTitle',
-          title: 'Meta Title',
-          type: 'string',
-          description: 'The title used for SEO and social sharing',
-        },
-        {
-          name: 'metaDescription',
-          title: 'Meta Description',
-          type: 'text',
-          description: 'A brief description used for SEO and social sharing',
-        },
-        {
-          name: 'metaKeywords',
-          title: 'Meta Keywords',
-          type: 'array',
-          of: [{ type: 'string' }],
-          description: 'A list of keywords used for SEO',
-        },
+        { name: 'metaTitle', title: 'Meta Title', type: 'string', description: 'The title used for SEO and social sharing' },
+        { name: 'metaDescription', title: 'Meta Description', type: 'text', description: 'A brief description used for SEO and social sharing' },
+        { name: 'metaKeywords', title: 'Meta Keywords', type: 'array', of: [{ type: 'string' }], description: 'A list of keywords used for SEO' },
       ],
     },
+    // Variants now as an array to support multiple entries
     {
       name: 'variants',
       title: 'Variants',
-      type: 'object',
-      fields: [
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            { name: 'vid', title: 'Variant ID', type: 'string', description: 'The unique ID for the variant' },
+            { name: 'variantSellPrice', title: 'Variant Sell Price', type: 'number', description: 'The current selling price for this variant' },
+            { name: 'variantSugSellPrice', title: 'Variant Suggested Sell Price', type: 'number', description: 'The suggested selling price for this variant' },
+            { name: 'variantActualSellPrice', title: 'Variant Actual Sell Price', type: 'number', description: 'The actual selling price for this variant' },
+            { name: 'discountPercentage', title: 'Discount Percentage', type: 'number', description: 'Discount percentage applied to this variant' },
+            // Multiple colors per variant
             {
-              name: 'vid',
-              title: 'Variant ID',
-              type: 'string',
-              description: 'The unique ID for the variant',
-            },
+              name: 'colors',
+              title: 'Colors',
+              type: 'object',
+                  fields: [
+                    { name: 'colorName', title: 'Color Name', type: 'string', description: 'Name of the color (e.g., Red)' },
+                    { name: 'colorCode', title: 'Color Code', type: 'string', description: 'Hex code for the color (e.g., #FF0000)' },
+                  ],
+                },
+            // Image specific to each variant
             {
-              name: 'variantSellPrice',
-              title: 'Variant Sell Price',
-              type: 'number',
-              description: 'The current selling price for this variant',
-            },
-            {
-              name: 'variantSugSellPrice',
-              title: 'Variant Suggested Sell Price',
-              type: 'number',
-              description: 'The suggested selling price for this variant',
-            },
-            {
-              name: 'variantactualSellPrice',
-              title: 'Variant Actual Sell Price',
-              type: 'number',
-              description: 'The actual selling price for this variant',
-            },
-            {
-              name: 'discountPercentage',
-              title: 'Discount Percentage',
-              type: 'number',
-              description: 'Discount percentage applied to this variant',
+              name: 'variantImage',
+              title: 'Variant Image',
+              type: 'url',
+              description: 'Image for this specific variant',
             },
           ],
         },
+      ],
+      description: 'Different variants of the product, each with its own price, colors, and images',
+    },
   ],
 };

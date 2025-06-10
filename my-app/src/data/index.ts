@@ -92,19 +92,27 @@ export interface Product {
   categoryId: string;
   CategoryName: string[];
   packingWeight: number;
+  shippingCharge: number;
   shortDescription: string;
   description: PortableTextBlock[];
   rating: number;
   inventory: number;
   tags: string[];
   slug: { current: string };
-  variants: {
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    metaKeywords?: string[];
+  };
+  variants: Array<{
     vid: string;
     variantSellPrice: number;
     variantSugSellPrice: number;
-    variantactualSellPrice: number;
+    variantActualSellPrice: number;
     discountPercentage: number;
-  };
+    colors: { colorName: string; colorCode: string };
+    variantImage: string;
+  }>;
 }
 
 // CartItem type matching Sanity cartItem object
@@ -114,6 +122,12 @@ export interface CartItem {
   quantity: number;
   subtotal: number;
   discountedPrice : number;
+  variantId: string; 
+}
+
+export interface Cart {
+  cartItems : CartItem;
+  grandTotal : number
 }
   // categoriesData.ts
 

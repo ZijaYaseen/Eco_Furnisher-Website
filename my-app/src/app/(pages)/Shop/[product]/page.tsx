@@ -17,17 +17,18 @@ const productMetaQuery = `*[_type == "product" && slug.current == $product][0]{
 }`;
 
 const productDetailQuery = `*[_type == "product" && slug.current == $product][0]{
-  'slug': slug.current,
+  slug,             
   _id,
   productNameEn,
   productSku,
-  "imageSet": productImageSet,
+  "imageSet": productImageSet[],
   rating,
   shortDescription,
   description,
   categoryId,
   CategoryName,
   packingWeight,
+  shippingCharge, 
   inventory,
   tags,
   seo {
@@ -35,14 +36,20 @@ const productDetailQuery = `*[_type == "product" && slug.current == $product][0]
     metaDescription,
     metaKeywords
   },
-  variants{
+  variants[]{    
     vid,
     variantSellPrice,
     variantSugSellPrice,
-    variantactualSellPrice,
-    discountPercentage
-  },
+    variantActualSellPrice,  
+    discountPercentage,
+    colors{               
+      colorName,
+      colorCode
+    },
+    variantImage     
+  }
 }`;
+
 
 // Generate static routes using product slug
 export async function generateStaticParams() {

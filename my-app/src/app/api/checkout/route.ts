@@ -1,5 +1,4 @@
-// /app/api/checkout/route.ts (ya jahan aapka checkout API hai)
-
+// /app/api/checkout/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { client } from '@/sanity/lib/client';
@@ -10,40 +9,43 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2025-01-27.acacia',
 });
 
+interface OrderItemVariant {
+  vid: string;
+  quantity: number;
+  subtotal: number;
+}
+
 interface OrderItem {
   product: {
     _ref: string;
     name: string;
     imageSet: string[];
   };
-  quantity: number;
-  subtotal: number;  // already includes quantity * per-unit price
+  variants: OrderItemVariant[];
+  Total: number;
 }
 
 export async function POST(req: NextRequest) {
   try {
     // 1) Authentication
     const token = req.cookies.get('token')?.value;
-    if (!token) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required. Please log in.' },
-        { status: 401 }
-      );
-    }
+    const guestId = req.cookies.get('guestId')?.value;
+    let userId: string | null = null;
 
-    let userId: string;
-    try {
-      const { payload } = await jwtVerify(token, SECRET_KEY);
-      userId = (payload as { _id: string })._id;
-    } catch {
-      return NextResponse.json(
-        { success: false, error: 'Invalid session. Please log in again.' },
-        { status: 401 }
-      );
+    if (token) {
+      try {
+        const { payload } = await jwtVerify(token, SECRET_KEY);
+        userId = (payload as { _id: string })._id;
+      } catch {
+        return NextResponse.json(
+          { success: false, error: 'Invalid session. Please log in again.' },
+          { status: 401 }
+        );
+      }
     }
 
     // 2) Parse request body
-    const { billingDetails, paymentMethod, orderItems, orderTotal } = await req.json();
+    const { billingDetails, shippingDetails, paymentMethod, orderItems, orderTotal, shippingCost = 0, taxAmount = 0 } = await req.json();
 
     // 3) Validation
     const validationErrors: string[] = [];
@@ -61,61 +63,104 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4) Create pending order in Sanity
+    // 4) Prepare Sanity order items
     const sanityOrderItems = orderItems.map((item: OrderItem) => ({
       product: { _type: 'reference', _ref: item.product._ref },
-      quantity: item.quantity,
-      subtotal: item.subtotal,
+      variants: item.variants.map(variant => ({
+        vid: variant.vid,
+        quantity: variant.quantity,
+        subtotal: variant.subtotal
+      })),
+      Total: item.Total
     }));
 
+    // 5) Create pending order in Sanity
     const newOrder = {
       _type: 'order',
-      user: { _type: 'reference', _ref: userId },
+      user: userId ? { _type: 'reference', _ref: userId } : undefined,
       billingDetails: {
         ...billingDetails,
         country: billingDetails.country || 'USA',
       },
-      paymentMethod: paymentMethod === 'stripe' ? 'stripe' : 'paypal',
+      shippingDetails: {
+        ...shippingDetails,
+        country: shippingDetails?.country || billingDetails.country || 'USA',
+      },
+      paymentMethod: paymentMethod === 'stripe' ? 'stripe' : 
+                     paymentMethod === 'paypal' ? 'paypal' : 'cod',
       orderItems: sanityOrderItems,
       orderTotal,
+      shippingCost,
+      taxAmount,
       orderStatus: 'pending',
       createdAt: new Date().toISOString(),
     };
+    
     const createdOrder = await client.create(newOrder);
 
-    // 5) Handle Stripe payments
+    // 6) Handle Stripe payments
     if (paymentMethod === 'stripe') {
       try {
-        //    ――――――――――――――――――――――――――――――
-        //    |  Yahan per-unit price calculate kar ke send karenge  |
-        //    ――――――――――――――――――――――――――――――
-        const lineItems = orderItems.map((item: OrderItem) => {
-          // per-unit price in dollars:
-          const perUnitPrice = item.subtotal / item.quantity;
-          return {
+        // Prepare line items for Stripe
+        const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+        
+        orderItems.forEach((item: OrderItem) => {
+          item.variants.forEach(variant => {
+            // Calculate per-unit price
+            const perUnitPrice = variant.subtotal / variant.quantity;
+            
+            lineItems.push({
+              price_data: {
+                currency: 'usd',
+                product_data: {
+                  name: `${item.product.name} (Variant: ${variant.vid})`,
+                  images: [item.product.imageSet[0]],
+                },
+                unit_amount: Math.round(perUnitPrice * 100),
+              },
+              quantity: variant.quantity,
+            });
+          });
+        });
+
+        // Add shipping as a separate line item if needed
+        if (shippingCost > 0) {
+          lineItems.push({
             price_data: {
               currency: 'usd',
               product_data: {
-                name: item.product.name,
-                images: [item.product.imageSet[0]],
+                name: 'Shipping',
               },
-              unit_amount: Math.round(perUnitPrice * 100), 
-              // eg: item.subtotal=42.50, quantity=2 → perUnitPrice=21.25 → unit_amount=2125
+              unit_amount: Math.round(shippingCost * 100),
             },
-            quantity: item.quantity, 
-            // Stripe will calculate total = 2125 * 2 = 4250 cents ($42.50)
-          };
-        });
+            quantity: 1,
+          });
+        }
+
+        // Add tax as a separate line item if needed
+        if (taxAmount > 0) {
+          lineItems.push({
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: 'Tax',
+              },
+              unit_amount: Math.round(taxAmount * 100),
+            },
+            quantity: 1,
+          });
+        }
 
         const session = await stripe.checkout.sessions.create({
           payment_method_types: ['card'],
           line_items: lineItems,
           mode: 'payment',
-          success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/order-success?orderId=${createdOrder._id}`,
+          success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/success?orderId=${createdOrder._id}`,
           cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout`,
           metadata: {
             sanityOrderId: createdOrder._id,
-            userId,
+            userId: userId || '',
+            guestId: guestId || '',
           },
           customer_email: billingDetails.email,
         });
@@ -127,18 +172,35 @@ export async function POST(req: NextRequest) {
       } catch (error) {
         console.error('Stripe error:', error);
         return NextResponse.json(
-          { success: false, error: `Stripe Error: ${error}` },
+          { success: false, error: `Stripe Error: ${error instanceof Error ? error.message : String(error)}` },
           { status: 500 }
         );
       }
     }
 
-    // 6) Handle PayPal payments…
+    // 7) Handle PayPal payments
     if (paymentMethod === 'paypal') {
       return NextResponse.json(
         { 
           success: true, 
           redirectTo: `/api/paypal/create-order?orderId=${createdOrder._id}&total=${orderTotal}`,
+        },
+        { status: 200 }
+      );
+    }
+
+    // 8) Handle COD (Cash on Delivery)
+    if (paymentMethod === 'cod') {
+      // Update order status to processing since no payment is needed
+      await client
+        .patch(createdOrder._id)
+        .set({ orderStatus: 'processing' })
+        .commit();
+      
+      return NextResponse.json(
+        { 
+          success: true, 
+          orderId: createdOrder._id,
         },
         { status: 200 }
       );
@@ -151,7 +213,11 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Checkout API error:', error);
     return NextResponse.json(
-      { success: false, error: 'Checkout process failed. Please contact support.' },
+      { 
+        success: false, 
+        error: 'Checkout process failed. Please contact support.',
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
   }

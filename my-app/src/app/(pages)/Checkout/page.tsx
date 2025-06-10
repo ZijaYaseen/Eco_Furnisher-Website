@@ -60,6 +60,7 @@ const Checkout = () => {
     fetchCartItems();
   }, [dispatch]);
 
+  // Calculate cart total (sum of all subtotals)
   const cartTotal = cartItems.reduce(
     (acc, item) => acc + (item.subtotal || 0),
     0
@@ -100,7 +101,7 @@ const Checkout = () => {
     if (!formData.lastName.trim()) newErrors.lastName = "Last Name is required";
     if (!formData.streetAddress.trim()) newErrors.streetAddress = "Street Address is required";
     if (!formData.city.trim()) newErrors.city = "City is required";
-    if (!formData.country.trim()) newErrors.city = "Country is required";
+    if (!formData.country.trim()) newErrors.country = "Country is required";
     if (!formData.state.trim()) newErrors.state = "State is required";
     if (!formData.zip.trim()) newErrors.zip = "ZIP code is required";
     else if (!/^\d{5}$/.test(formData.zip)) newErrors.zip = "Enter a valid 5-digit ZIP";
@@ -111,61 +112,91 @@ const Checkout = () => {
     return newErrors;
   };
 
- const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  const validationErrors = validate();
-  if (Object.keys(validationErrors).length > 0) {
-    setErrors(validationErrors);
-    return;
-  }
+  const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
-  setIsSubmitting(true);
-  
-  // Prepare order items with product references
-  const checkoutData = {
-    billingDetails: formData,
-    paymentMethod,
-    orderItems: cartItems.map(item => ({
-      product: {
-        _ref: item.product._id, // Sanity product ID
-        name: item.product.productNameEn,
-        imageSet: item.product.imageSet
-      },
-      quantity: item.quantity,
-      subtotal: item.subtotal
-    })),
-    orderTotal: cartTotal,
-  };
-
-  try {
-    const response = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(checkoutData),
-    });
+    setIsSubmitting(true);
     
-    const data = await response.json();
+    // Group cart items by product (since one product can have multiple variants)
+    const groupedItems = cartItems.reduce((acc, item) => {
+      const productId = item.product._id;
+      if (!acc[productId]) {
+        acc[productId] = {
+          product: {
+            _ref: productId,
+            name: item.product.productNameEn,
+            imageSet: item.product.imageSet
+          },
+          variants: [],
+          Total: 0
+        };
+      }
+      
+      // Add variant to the product
+      acc[productId].variants.push({
+        vid: item.variantId,
+        quantity: item.quantity,
+        subtotal: item.subtotal
+      });
+      
+      // Add to product total
+      acc[productId].Total += item.subtotal;
+      
+      return acc;
+    }, {} as Record<string, any>);
+    
+    // Convert grouped items to array
+    const orderItems = Object.values(groupedItems);
+    
+    // Prepare checkout data
+    const checkoutData = {
+      billingDetails: formData,
+      shippingDetails: formData, // Using same as billing for simplicity
+      paymentMethod,
+      orderItems,
+      orderTotal: cartTotal,
+      shippingCost: 0, // Free shipping for now
+      taxAmount: 0 // No tax for now
+    };
 
-    if (response.status === 401) {
-      router.push("/Account/Login");
-    } 
-    else if (data.redirectTo) {
-      // For PayPal redirect
-      router.push(data.redirectTo);
-    } 
-    else if (data.url) {
-      // For Stripe redirect
-      window.location.href = data.url;
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(checkoutData),
+      });
+      
+      const data = await response.json();
+
+      if (response.status === 401) {
+        router.push("/Account/Login");
+      } 
+      else if (data.redirectTo) {
+        // For PayPal redirect
+        router.push(data.redirectTo);
+      } 
+      else if (data.url) {
+        // For Stripe redirect
+        window.location.href = data.url;
+      }
+      else if (data.orderId) {
+        // For COD or direct success
+        router.push(`/checkout/order-success?orderId=${data.orderId}`);
+      }
+      else {
+        console.error("Checkout error:", data.error);
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+    } finally {
+      setIsSubmitting(false);
     }
-    else {
-      console.error("Checkout error:", data.error);
-    }
-  } catch (error) {
-    console.error("Error placing order:", error);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   return (
     <div className="w-full mt-12 md:mt-24 font-poppins bg-white text-black">
@@ -255,28 +286,29 @@ const Checkout = () => {
                   )}
                 </div>
 
+                {/* Country */}
                 <div className="flex flex-col">
-  <label htmlFor="country" className="text-base font-medium">
-    Country *
-  </label>
-  <select
-    id="country"
-    name="country"
-    value={formData.country}
-    onChange={handleChange}
-    className={`mt-1 p-3 border rounded-md focus:outline-none ${
-      errors.country ? "border-red-500" : "border-gray-300"
-    }`}
-  >
-    <option value="">Select Country</option>
-    <option value="USA">United States</option>
-    <option value="CAN">Canada</option>
-    {/* Add other countries */}
-  </select>
-  {errors.country && (
-    <p className="text-red-500 text-sm">{errors.country}</p>
-  )}
-</div>
+                  <label htmlFor="country" className="text-base font-medium">
+                    Country *
+                  </label>
+                  <select
+                    id="country"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    className={`mt-1 p-3 border rounded-md focus:outline-none ${
+                      errors.country ? "border-red-500" : "border-gray-300"
+                    }`}
+                  >
+                    <option value="">Select Country</option>
+                    <option value="USA">United States</option>
+                    <option value="CAN">Canada</option>
+                    {/* Add other countries */}
+                  </select>
+                  {errors.country && (
+                    <p className="text-red-500 text-sm">{errors.country}</p>
+                  )}
+                </div>
                 
                 {/* City */}
                 <div className="flex flex-col">
@@ -398,16 +430,16 @@ const Checkout = () => {
                 {cartItems.map((item) => (
                   <div
                     key={item._key}
-                    className="flex justify-between items-start gap-4 py-3 border border-gray-50"
+                    className="flex justify-between items-start gap-4 py-3 border-b border-gray-100"
                   >
                     <div className="flex items-start gap-4">
                       <div className="p-1 flex-shrink-0">
                         <Image
-                          src={item.product.imageSet[0]}
+                          src={item.product.variants[0]?.variantImage || item.product.imageSet[0]}
                           alt={item.product.productNameEn}
                           width={70}
                           height={70}
-                          className="object-contain rounded-md"
+                          className="object-contain"
                         />
                       </div>
                       <div>
@@ -415,9 +447,9 @@ const Checkout = () => {
                         <p className="text-sm text-gray-600">
                           Quantity: {item.quantity}
                         </p>
-                        {item.product.variants.discountPercentage > 0 && (
+                        {item.product.variants[0].discountPercentage > 0 && (
                           <span className="text-green-600 text-sm">
-                            {item.product.variants.discountPercentage}% OFF
+                            {item.product.variants[0].discountPercentage}% OFF
                           </span>
                         )}
                       </div>
@@ -434,7 +466,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-lg mt-2">
                   <p>Shipping</p>
-                  <p>00</p>
+                  <p>$0.00</p>
                 </div>
                 <div className="flex justify-between text-xl font-bold mt-4 pt-4 border-t border-gray-300">
                   <p>Total</p>
@@ -524,6 +556,7 @@ const Checkout = () => {
                       height={20} 
                     />
                   </div>
+                    
                 </div>
                 
                 {/* Security Badges */}
