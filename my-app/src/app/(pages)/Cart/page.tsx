@@ -10,7 +10,6 @@ import { MdDelete } from "react-icons/md";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
-import { CartItem } from "@/data";
 
 const Cart = () => {
   const { items, grandTotal } = useAppSelector((state) => state.cart);

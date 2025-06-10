@@ -1,5 +1,3 @@
-import { MdDescription } from "react-icons/md";
-
 // schemas/order.ts
 export default {
   name: 'order',

@@ -22,6 +22,22 @@ interface FormData {
   email: string;
 }
 
+interface CartVariant {
+  vid: string;
+  quantity: number;
+  subtotal: number;
+}
+
+interface GroupedItem {
+  product: {
+    _ref: string;
+    name: string;
+    imageSet: string[];
+  };
+  variants: CartVariant[];
+  Total: number;
+}
+
 const Checkout = () => {
   const cartItems = useAppSelector((state) => state.cart.items);
   const dispatch = useDispatch();
@@ -123,32 +139,32 @@ const Checkout = () => {
     setIsSubmitting(true);
     
     // Group cart items by product (since one product can have multiple variants)
-    const groupedItems = cartItems.reduce((acc, item) => {
-      const productId = item.product._id;
-      if (!acc[productId]) {
-        acc[productId] = {
-          product: {
-            _ref: productId,
-            name: item.product.productNameEn,
-            imageSet: item.product.imageSet
-          },
-          variants: [],
-          Total: 0
-        };
-      }
-      
-      // Add variant to the product
-      acc[productId].variants.push({
-        vid: item.variantId,
-        quantity: item.quantity,
-        subtotal: item.subtotal
-      });
-      
-      // Add to product total
-      acc[productId].Total += item.subtotal;
-      
-      return acc;
-    }, {} as Record<string, any>);
+    const groupedItems = cartItems.reduce((acc: Record<string, GroupedItem>, item) => {
+  const productId = item.product._id;
+  if (!acc[productId]) {
+    acc[productId] = {
+      product: {
+        _ref: productId,
+        name: item.product.productNameEn,
+        imageSet: item.product.imageSet
+      },
+      variants: [],
+      Total: 0
+    };
+  }
+  
+  // Add variant to the product
+  acc[productId].variants.push({
+    vid: item.variantId,
+    quantity: item.quantity,
+    subtotal: item.subtotal
+  });
+  
+  // Add to product total
+  acc[productId].Total += item.subtotal;
+  
+  return acc;
+}, {});
     
     // Convert grouped items to array
     const orderItems = Object.values(groupedItems);
@@ -186,7 +202,7 @@ const Checkout = () => {
       }
       else if (data.orderId) {
         // For COD or direct success
-        router.push(`/checkout/order-success?orderId=${data.orderId}`);
+        router.push(`/order-success?orderId=${data.orderId}`);
       }
       else {
         console.error("Checkout error:", data.error);

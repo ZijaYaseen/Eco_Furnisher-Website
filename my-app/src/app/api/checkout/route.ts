@@ -29,20 +29,24 @@ export async function POST(req: NextRequest) {
   try {
     // 1) Authentication
     const token = req.cookies.get('token')?.value;
-    const guestId = req.cookies.get('guestId')?.value;
-    let userId: string | null = null;
-
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        userId = (payload as { _id: string })._id;
-      } catch {
-        return NextResponse.json(
-          { success: false, error: 'Invalid session. Please log in again.' },
-          { status: 401 }
-        );
-      }
+    if (!token) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required. Please log in.' },
+        { status: 401 }
+      );
     }
+
+    let userId: string;
+    try {
+      const { payload } = await jwtVerify(token, SECRET_KEY);
+      userId = (payload as { _id: string })._id;
+    } catch {
+      return NextResponse.json(
+        { success: false, error: 'Invalid session. Please log in again.' },
+        { status: 401 }
+      );
+    }
+
 
     // 2) Parse request body
     const { billingDetails, shippingDetails, paymentMethod, orderItems, orderTotal, shippingCost = 0, taxAmount = 0 } = await req.json();
@@ -78,10 +82,6 @@ export async function POST(req: NextRequest) {
     const newOrder = {
       _type: 'order',
       user: userId ? { _type: 'reference', _ref: userId } : undefined,
-      billingDetails: {
-        ...billingDetails,
-        country: billingDetails.country || 'USA',
-      },
       shippingDetails: {
         ...shippingDetails,
         country: shippingDetails?.country || billingDetails.country || 'USA',
@@ -155,12 +155,11 @@ export async function POST(req: NextRequest) {
           payment_method_types: ['card'],
           line_items: lineItems,
           mode: 'payment',
-          success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/success?orderId=${createdOrder._id}`,
+          success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/order-success?orderId=${createdOrder._id}`,
           cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout`,
           metadata: {
             sanityOrderId: createdOrder._id,
             userId: userId || '',
-            guestId: guestId || '',
           },
           customer_email: billingDetails.email,
         });
@@ -184,23 +183,6 @@ export async function POST(req: NextRequest) {
         { 
           success: true, 
           redirectTo: `/api/paypal/create-order?orderId=${createdOrder._id}&total=${orderTotal}`,
-        },
-        { status: 200 }
-      );
-    }
-
-    // 8) Handle COD (Cash on Delivery)
-    if (paymentMethod === 'cod') {
-      // Update order status to processing since no payment is needed
-      await client
-        .patch(createdOrder._id)
-        .set({ orderStatus: 'processing' })
-        .commit();
-      
-      return NextResponse.json(
-        { 
-          success: true, 
-          orderId: createdOrder._id,
         },
         { status: 200 }
       );
