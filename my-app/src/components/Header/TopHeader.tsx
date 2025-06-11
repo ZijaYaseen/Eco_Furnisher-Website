@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Truck, Tag, CheckCircle } from 'react-feather';
 
 export default function TopHeader() {
+  const [isVisible, setIsVisible] = useState(true);
   
   // Optional: Add announcement rotation
   const announcements = [
@@ -18,6 +19,8 @@ export default function TopHeader() {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  if (!isVisible) return null;
 
   return (
     <header className="w-full bg-black text-white py-3 px-4 border-b border-gray-800 sticky top-0 z-50">
@@ -39,6 +42,16 @@ export default function TopHeader() {
           </div>
         </div>
         
+        {/* Right side - Close button */}
+        <button 
+          onClick={() => setIsVisible(false)}
+          className="text-gray-400 hover:text-white transition-colors"
+          aria-label="Close announcement"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
     </header>
   );

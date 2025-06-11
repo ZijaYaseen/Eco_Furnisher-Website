@@ -211,7 +211,7 @@ export default function Header() {
           </ul>
           
           {/* Mobile Account Section */}
-          <div className="absolute bottom-0 w-full bg-black p-4 text-white">
+          <div className="absolute bottom-0 pb-12 w-full bg-black p-4 text-white">
             <button
               onClick={handleLoginClick}
               className="flex items-center gap-2 w-full py-3"
