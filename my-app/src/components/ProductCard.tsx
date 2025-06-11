@@ -48,10 +48,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <Link
       href={`/Shop/${product.slug.current}`}
-      className="group block border border-gray-300 shadow-lg p-2 relative"
+      className="group block relative"
     >
       {/* Image */}
-      <div className="relative md:h-56 h-60">
+      <div className="relative md:h-56 h-40">
         <Image
           src={primary.variantImage}
           alt={product.productNameEn}

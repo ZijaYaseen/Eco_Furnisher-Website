@@ -27,7 +27,7 @@ export default async function BestSellerPage() {
       {/* Products Grid */}
       <div className="container mx-auto px-5 py-8">
         {products.length > 0 ? (
-          <div className="grid gap-6 grid-cols-1 md:grid-cols-4">
+          <div className="grid gap-6 grid-cols-2 md:grid-cols-4">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}

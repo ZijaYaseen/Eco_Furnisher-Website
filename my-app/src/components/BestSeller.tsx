@@ -42,8 +42,8 @@ const BestSellerSection = ({ products }: BestSellerSectionProps) => {
           setIsBeginning(swiper.isBeginning);
           setIsEnd(swiper.isEnd);
         }}
-        slidesPerView={1}
-        spaceBetween={24}
+        slidesPerView={2}
+        spaceBetween={4}
         breakpoints={{
           640: { slidesPerView: 2 },
           768: { slidesPerView: 4 },
