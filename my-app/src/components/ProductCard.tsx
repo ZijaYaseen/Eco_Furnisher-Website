@@ -51,7 +51,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       className="group block relative"
     >
       {/* Image */}
-      <div className="relative md:h-56 h-40">
+      <div className="relative md:h-60 h-40">
         <Image
           src={primary.variantImage}
           alt={product.productNameEn}
@@ -68,18 +68,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
       {/* Details */}
       <div className="pt-3">
         <div className="mt-1 flex items-center gap-4">
-          <span className="text-2xl text-gray-700 font-bold">
+          <span className="md:text-2xl text-xl text-gray-700 font-bold">
             ${discountedPrice.toFixed(2)}
           </span>
           {discountPercent > 0 && (
-            <span className="text-lg text-gray-500 line-through">
+            <span className="md:text-lg text-sm text-gray-500 line-through">
               ${originalPrice.toFixed(2)}
             </span>
           )}
         </div>
 
-        <h3 className="text-lg font-medium text-gray-900">
-          {truncateText(product.productNameEn, 7)}
+        <h3 className="md:text-lg text-sm font-medium text-gray-900">
+          {truncateText(product.productNameEn, 10)}
         </h3>
 
         <div className="mt-1 flex items-center gap-4">

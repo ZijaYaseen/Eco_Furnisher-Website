@@ -518,24 +518,27 @@ const Checkout = () => {
                         Pay with Visa, Mastercard, American Express
                       </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1">
                       <Image 
-                        src="/visa.png" 
+                        src="/payments/visa.svg" 
                         alt="Visa" 
-                        width={40} 
-                        height={25} 
+                        width={20} 
+                        height={15} 
+                        className="w-12 h-8 border-gray-100 border rounded-sm" 
                       />
                       <Image 
-                        src="/mastercard.png" 
+                        src="/payments/mastercard.svg" 
                         alt="Mastercard" 
-                        width={40} 
-                        height={25} 
+                        width={20} 
+                        height={15} 
+                        className="w-12 h-8 border-gray-100 border rounded-sm"
                       />
                       <Image 
-                        src="/amex.png" 
+                        src="/payments/amex-card.svg" 
                         alt="American Express" 
-                        width={40} 
-                        height={25} 
+                        width={20} 
+                        height={15} 
+                        className="w-12 h-8 border-gray-100 border rounded-sm" 
                       />
                     </div>
                   </div>
@@ -566,9 +569,9 @@ const Checkout = () => {
                       </p>
                     </div>
                     <Image 
-                      src="/paypal.png" 
+                      src="/payments/paypal.svg" 
                       alt="PayPal" 
-                      width={60} 
+                      width={80} 
                       height={20} 
                     />
                   </div>

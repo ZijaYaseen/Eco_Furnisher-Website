@@ -23,7 +23,6 @@ interface ProductDetailClientProps {
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(1);
-  const [error, setError] = useState("");
   const [cartSidebar, setCartSidebar] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showOverview, setShowOverview] = useState(false);
@@ -55,10 +54,6 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const discountedPrice = originalPrice - originalPrice * (discountPercent / 100);
 
   const handleAddToCart = async () => {
-    if (!selectedVariant) {
-      setError("Please select a color");
-      return;
-    };
 
     if (product.inventory < count) {
       setIsModalOpen(true);
@@ -80,7 +75,6 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     };
     
     dispatch(addToCart(cartItem));
-    setError("");
     setCartSidebar(true);
     
     try {
@@ -119,7 +113,6 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     if (variant) {
       setMainImage(variant.variantImage);
     }
-    setError(""); // Clear error when selecting color
   };
 
   return (
@@ -146,7 +139,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 alt={`Thumbnail ${idx + 1}`}
                 width={100}
                 height={100}
-                className={`bg-gray-50 w-[80px] md:h-[80px] h-[55px] border cursor-pointer ${mainImage === src ? "border-gray-500" : "border-gray-50"}`}
+                className={`bg-gray-50 w-[80px] md:h-[80px] h-[55px] border rounded-md cursor-pointer ${mainImage === src ? "border-gray-500" : "border-gray-100"}`}
                 onClick={() => setMainImage(src)}
               />
             ))}
@@ -163,7 +156,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               height={500}
               alt={product.productNameEn}
               priority
-              className="bg-gray-50 w-[423px] md:h-[423px] h-[250px]"
+              className="bg-gray-50 w-[423px] md:h-[423px] h-[250px] border border-gray-100 rounded-md"
             />
           </div>
         </div>
@@ -270,9 +263,6 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
           <div className="my-3 text-gray-800">
             {product.shortDescription}
           </div>
-
-          {/* Error */}
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
           {/* Quantity & Add to Cart */}
           <div className="flex flex-col pb-10 gap-5">
