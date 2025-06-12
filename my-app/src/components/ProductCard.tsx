@@ -1,8 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { FaStar, FaStarHalfAlt, FaRegStar, FaHeart, FaRegHeart } from "react-icons/fa";
 import { Product } from "@/data";
 
 // Helper to truncate text
@@ -35,21 +36,69 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const variants = product.variants ?? [];
-  // Primary variant for image and price
-  const primary = product.variants[0];
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const variants  = product.variants;
+  const primary = variants[0];
   const originalPrice = primary.variantActualSellPrice || 0;
   const discountPercent = primary.discountPercentage || 0;
   const discountedPrice = originalPrice - (originalPrice * discountPercent) / 100;
-
-  // Collect all colors from all variants
   const allColors = variants.flatMap(v => v.colors ?? []);
+
+  // Check wishlist status on mount
+  useEffect(() => {
+    const checkWishlist = async () => {
+      try {
+        const res = await fetch("/api/wishlist");
+        const data = await res.json();
+        const inWishlist = data.items?.some(
+          (item: any) => item.product?._id === product._id
+        );
+        setIsInWishlist(inWishlist);
+      } catch (error) {
+        console.error("Wishlist check error:", error);
+      }
+    };
+    
+    checkWishlist();
+  }, [product._id]);
+
+  const toggleWishlist = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      const res = await fetch("/api/wishlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product._id })
+      });
+      
+      if (res.ok) {
+        setIsInWishlist(!isInWishlist);
+      }
+    } catch (error) {
+      console.error("Wishlist toggle error:", error);
+    }
+  };
 
   return (
     <Link
       href={`/Shop/${product.slug.current}`}
       className="group block relative"
     >
+      {/* Wishlist Heart Button */}
+      <button
+        onClick={toggleWishlist}
+        className="absolute top-2 right-2 z-10 p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+        aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+      >
+        {isInWishlist ? (
+          <FaHeart className="text-gray-700" />
+        ) : (
+          <FaRegHeart className="text-gray-700" />
+        )}
+      </button>
+
       {/* Image */}
       <div className="relative md:h-60 h-40">
         <Image
@@ -90,7 +139,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         {/* Color swatches for all variant colors */}
-        <div className="mt-3 flex gap-2">
+        <div className="my-3 flex gap-2">
           {allColors.map((color, idx) => (
             <div
               key={idx}
@@ -99,6 +148,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
               style={{ backgroundColor: color.colorCode }}
             />
           ))}
+        </div>
+
+        {/* Choose Option Button */}
+        <div className="md:py-4 py-2">
+          <Link
+          href={`/Shop/${product.slug.current}`}
+          className="md:py-4 py-2 bg-white text-black text-center border border-gray-950 md:rounded-full rounded-3xl font-semibold block hover:bg-gray-800 hover:text-white ease-in-out transition-colors"
+        >
+          CHOOSE OPTIONS
+        </Link>
         </div>
       </div>
     </Link>
