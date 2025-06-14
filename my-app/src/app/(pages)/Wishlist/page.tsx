@@ -15,7 +15,7 @@ import {
   Dispatch, 
   RootState 
 } from '@/redux/store';
-import { CartItem } from '@/data';
+import { WishlistItem } from '@/data';
 
 export default function WishlistPage() {
   const dispatch = useDispatch<Dispatch>();
@@ -30,7 +30,7 @@ export default function WishlistPage() {
   };
 
   // Normalize product data for ProductCard
-  const getProductData = (item: CartItem) => {
+  const getProductData = (item: WishlistItem) => {
     if (!item.product) return null;
     
     return {
@@ -63,7 +63,7 @@ export default function WishlistPage() {
 
         {status === 'succeeded' && items.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {items.map((item) => {
+            {items.map((item: any) => {
               const product = getProductData(item);
               return product ? (
                 <div key={item._key} className="relative">

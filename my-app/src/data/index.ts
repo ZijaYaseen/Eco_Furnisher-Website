@@ -126,7 +126,8 @@ export interface CartItem {
 }
 
 export interface WishlistItem {
-  product : Product
+  _key: string;
+  product:  Product; // At minimum has _id, may have other product fields
 } 
 
 export interface Cart {
