@@ -15,7 +15,18 @@ import {
   Dispatch, 
   RootState 
 } from '@/redux/store';
-import { WishlistItem } from '@/data';
+import { Product } from '@/data'; // Import your Product type
+
+// Define the wishlist item type
+interface WishlistItem {
+  _key: string;
+  product: Product; // Full product details
+}
+
+// Type guard to check if an item has full product data
+function isFullProduct(item: any): item is WishlistItem {
+  return item?.product?._id && item?.product?.productNameEn;
+}
 
 export default function WishlistPage() {
   const dispatch = useDispatch<Dispatch>();
@@ -27,18 +38,6 @@ export default function WishlistPage() {
 
   const handleRemoveItem = (productId: string) => {
     dispatch(removeWishlistItem(productId));
-  };
-
-  // Normalize product data for ProductCard
-  const getProductData = (item: WishlistItem) => {
-    if (!item.product) return null;
-    
-    return {
-      ...item.product,
-      variants: Array.isArray(item.product.variants)
-        ? item.product.variants
-        : [item.product.variants]
-    };
   };
 
   return (
@@ -63,21 +62,21 @@ export default function WishlistPage() {
 
         {status === 'succeeded' && items.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {items.map((item: any) => {
-              const product = getProductData(item);
-              return product ? (
+            {items
+              .filter(isFullProduct) // Only render items with full product data
+              .map((item) => (
                 <div key={item._key} className="relative">
                   <button
-                    onClick={() => handleRemoveItem(product._id)}
+                    onClick={() => handleRemoveItem(item.product._id)}
                     className="absolute top-2 right-2 z-20 p-2 bg-white rounded-full shadow-md hover:bg-red-100 transition-colors"
                     aria-label="Remove from wishlist"
                   >
                     <FaHeart className="text-red-500" />
                   </button>
-                  <ProductCard product={product} />
+                  <ProductCard product={item.product} />
                 </div>
-              ) : null;
-            })}
+              ))
+            }
           </div>
         )}
 
