@@ -125,10 +125,16 @@ export interface CartItem {
   variantId: string; 
 }
 
+export interface WishlistItem {
+  product : Product
+} 
+
 export interface Cart {
   cartItems : CartItem;
   grandTotal : number
 }
+
+
   // categoriesData.ts
 
 export const megaMenuData = [

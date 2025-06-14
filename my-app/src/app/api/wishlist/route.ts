@@ -5,14 +5,20 @@ import { nanoid } from "nanoid";
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
 
+interface SanityReference {
+  _type: "reference";
+  _ref: string;
+}
+
 interface WishlistItem {
   _key: string;
-  product: { _ref: string };
+  product: SanityReference; 
 }
 
 interface WishlistDocument {
   _id: string;
-  user?: { _type: string; _ref: string };
+  _type: "wishlist";
+  user?: SanityReference;
   guestId?: string;
   items: WishlistItem[];
 }
@@ -124,23 +130,29 @@ export async function POST(req: NextRequest) {
       }
     } else {
       // Create new wishlist
-      const newWishlist = {
-        _type: "wishlist",
-        items: [{
-          _key: nanoid(),
-          product: { _type: "reference", _ref: productId }
-        }]
-      } as any;
+      const newWishlist: Omit<WishlistDocument, "_id"> = {
+      _type: "wishlist",
+      items: [{
+        _key: nanoid(),
+        product: {
+          _type: "reference",
+          _ref: productId
+        }
+      }]
+    };
 
-      if (userId) {
-        newWishlist.user = { _type: "reference", _ref: userId };
-      } else {
-        newWishlist.guestId = guestId;
-      }
-
-      await client.create(newWishlist);
+    if (userId) {
+      newWishlist.user = {
+        _type: "reference",
+        _ref: userId
+      };
+    } else {
+      newWishlist.guestId = guestId;
     }
 
+    await client.create(newWishlist);
+    
+  } 
     const res = NextResponse.json({ success: true });
     if (!userId && guestId) {
       res.cookies.set("guestId", guestId, { 

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaStar, FaStarHalfAlt, FaRegStar, FaHeart, FaRegHeart } from "react-icons/fa";
-import { Product } from "@/data";
+import {  Product, WishlistItem } from "@/data";
 
 // Helper to truncate text
 const truncateText = (text: string, wordLimit: number = 25): string => {
@@ -50,8 +50,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
       try {
         const res = await fetch("/api/wishlist");
         const data = await res.json();
-        const inWishlist = data.items?.some(
-          (item: any) => item.product?._id === product._id
+        console.log("Data", data);
+        
+        const inWishlist: boolean  = data.items?.some(
+          (item: WishlistItem) => item.product?._id === product._id
         );
         setIsInWishlist(inWishlist);
       } catch (error) {
