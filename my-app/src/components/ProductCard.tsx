@@ -156,7 +156,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <div className="md:py-4 py-2">
           <Link
           href={`/Shop/${product.slug.current}`}
-          className="md:py-4 py-2 bg-white text-black text-center border border-gray-950 md:rounded-full rounded-3xl font-semibold block hover:bg-gray-800 hover:text-white ease-in-out transition-colors"
+          className="md:py-4 py-2 bg-white text-black text-sm md:text-base text-center border border-gray-950 md:rounded-full rounded-3xl font-semibold block hover:bg-gray-800 hover:text-white ease-in-out transition-colors"
         >
           CHOOSE OPTIONS
         </Link>

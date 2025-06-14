@@ -1,6 +1,13 @@
 // src/redux/wishlistSlice.ts
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { Product } from '@/data';
+
+// Define types for wishlist items
+interface WishlistItem {
+  _key: string;
+  product: Pick<Product, '_id'> & Partial<Product>; // At minimum has _id, may have other product fields
+}
 
 export const fetchWishlist = createAsyncThunk(
   'wishlist/fetchWishlist',
@@ -39,7 +46,7 @@ export const removeWishlistItem = createAsyncThunk(
 );
 
 interface WishlistState {
-  items: any[];
+  items: WishlistItem[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
