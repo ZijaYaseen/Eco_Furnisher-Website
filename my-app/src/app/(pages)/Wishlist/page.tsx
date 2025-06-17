@@ -15,18 +15,6 @@ import {
   Dispatch, 
   RootState 
 } from '@/redux/store';
-import { Product } from '@/data'; // Import your Product type
-
-// Define the wishlist item type
-interface WishlistItem {
-  _key: string;
-  product: Product; // Full product details
-}
-
-// Type guard to check if an item has full product data
-function isFullProduct(item: any): item is WishlistItem {
-  return item?.product?._id && item?.product?.productNameEn;
-}
 
 export default function WishlistPage() {
   const dispatch = useDispatch<Dispatch>();
@@ -63,8 +51,7 @@ export default function WishlistPage() {
 
         {status === 'succeeded' && items.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {items
-              .filter(isFullProduct) // Only render items with full product data
+            {items  // Only render items with full product data
               .map((item) => (
                 <div key={item._key} className="relative">
                   <button

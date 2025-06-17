@@ -6,7 +6,7 @@ import { Product } from '@/data';
 // Define types for wishlist items
 interface WishlistItem {
   _key: string;
-  product: Pick<Product, '_id'> & Partial<Product>; // At minimum has _id, may have other product fields
+  product: Product; // At minimum has _id, may have other product fields
 }
 
 export const fetchWishlist = createAsyncThunk(
@@ -91,7 +91,7 @@ const wishlistSlice = createSlice({
           // Add item
           state.items.push({
             _key: `temp-${Date.now()}`,
-            product: { _id: productId }
+            product: { _id: productId } as Product
           });
         } else {
           // Remove item
