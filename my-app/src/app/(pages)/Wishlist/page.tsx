@@ -31,6 +31,7 @@ function isFullProduct(item: any): item is WishlistItem {
 export default function WishlistPage() {
   const dispatch = useDispatch<Dispatch>();
   const { items, status, error } = useSelector((state: RootState) => state.wishlist);
+  console.log(items, "items");
 
   useEffect(() => {
     dispatch(fetchWishlist());
@@ -71,7 +72,7 @@ export default function WishlistPage() {
                     className="absolute top-2 right-2 z-20 p-2 bg-white rounded-full shadow-md hover:bg-red-100 transition-colors"
                     aria-label="Remove from wishlist"
                   >
-                    <FaHeart className="text-red-500" />
+                    <FaHeart className="text-gray-700" />
                   </button>
                   <ProductCard product={item.product} />
                 </div>
