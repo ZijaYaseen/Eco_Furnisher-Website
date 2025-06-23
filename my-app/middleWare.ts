@@ -7,7 +7,7 @@ export function middleware(req: NextRequest) {
   try {
     jwt.verify(token, process.env.JWT_SECRET as string);
     return NextResponse.next(); // Proceed if token is valid
-  } catch (error) {
+  } catch (error) {z
     return NextResponse.redirect(new URL("/Account/Login", req.url)); //  Redirect to login if invalid
   }
 }
