@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 // Edge runtime configuration for Vercel
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 
 export async function middleware(req: NextRequest) {
   try {
