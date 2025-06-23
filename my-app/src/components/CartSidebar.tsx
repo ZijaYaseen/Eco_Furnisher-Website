@@ -113,7 +113,7 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
                             <p className="lg:text-lg text-sm font-semibold">
                               {item.product?.productNameEn || "Unknown Product"}
                             </p>
-                            <div className="flex items-center lg:gap-4 gap-1 text-sm">
+                            <div className="flex items-center lg:gap-4 gap-1 md:text-sm text-[11px]">
                               <p>Quantity : {item.quantity}</p>
                               <MdClose size={12} />
                               <span className="font-bold">
@@ -121,7 +121,7 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
                               </span>
                             </div>
                             {variant?.colors && (
-                              <p className="font-bold text-sm">
+                              <p className="font-semibold text-sm">
                                 Color : {variant.colors.colorName}
                               </p>
                             )}

@@ -3,37 +3,50 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { PiEyeSlashThin, PiEyeThin } from "react-icons/pi";
+import { signIn, getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [socialLoading, setSocialLoading] = useState<'google' | 'facebook' | null>(null);
+    const router = useRouter();
 
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
+        setIsLoading(true);
 
         const formData = new FormData(e.currentTarget);
         const password = formData.get("password") as string;
 
         try {
-            const res = await fetch('/api/account/login', {
-                credentials: 'include',
-                method: "POST",
-                headers: { 'Content-Type': "application/json" },
-                body: JSON.stringify({ email, password })
+            await signIn("credentials", {
+                email,
+                password,
+                redirect: true,
+                callbackUrl: "/Dashboard",
             });
-
-            const data = await res.json();
-            if (!res.ok) {
-                setError(data.error || "Invalid Email or Password");
-                return;
-            }
-
-            window.location.href = "/Dashboard"; // Safe Redirect
-
         } catch (error) {
             setError(error instanceof Error ? error.message : "Something went wrong");
+            setIsLoading(false);
+        }
+    };
+
+    const handleSocialLogin = async (provider: "google" | "facebook") => {
+        setSocialLoading(provider);
+        try {
+            await signIn(provider, {
+                callbackUrl: "/Dashboard",
+                redirect: true,
+            });
+        } catch (error) {
+            setError(`Failed to login with ${provider}`);
+            setSocialLoading(null);
         }
     };
 
@@ -44,6 +57,47 @@ const Login = () => {
                     <h1 className="font-semibold text-4xl">Log In</h1>
 
                     {error && <p className="text-red-500">{error}</p>}
+                    
+                    {/* Social Login Buttons */}
+                    <div className="flex flex-col gap-4">
+                        <button
+                            type="button"
+                            onClick={() => handleSocialLogin("google")}
+                            disabled={isLoading || socialLoading !== null}
+                            className="flex items-center justify-center gap-3 p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        >
+                            {socialLoading === 'google' ? (
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-black"></div>
+                            ) : (
+                                <FcGoogle size={24} />
+                            )}
+                            <span>{socialLoading === 'google' ? 'Signing in...' : 'Continue with Google'}</span>
+                        </button>
+                        
+                        <button
+                            type="button"
+                            onClick={() => handleSocialLogin("facebook")}
+                            disabled={isLoading || socialLoading !== null}
+                            className="flex items-center justify-center gap-3 p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        >
+                            {socialLoading === 'facebook' ? (
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                            ) : (
+                                <FaFacebook size={24} className="text-blue-600" />
+                            )}
+                            <span>{socialLoading === 'facebook' ? 'Signing in...' : 'Continue with Facebook'}</span>
+                        </button>
+                    </div>
+
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300" />
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+                        </div>
+                    </div>
+
                     <form className="flex flex-col gap-7" onSubmit={handleLogin}>
                         <div className="flex flex-col gap-2">
                             <label htmlFor="email" className="text-base font-medium">
@@ -91,9 +145,10 @@ const Login = () => {
                         <div className="grid gap-4">
                             <button
                                 type="submit"
-                                className="font-normal text-xl w-[215px] md:h-16 h-14 rounded-[15px] border border-black"
+                                disabled={isLoading || socialLoading !== null}
+                                className="font-normal text-xl w-[215px] md:h-16 h-14 rounded-[15px] border border-black disabled:opacity-50"
                             >
-                                Log In
+                                {isLoading ? "Logging in..." : "Log In"}
                             </button>
 
                             <Link href={"/Account/Sign-up"}>

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { client } from '@/sanity/lib/client';
 import Stripe from 'stripe';
+import { getToken } from "next-auth/jwt";
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -29,24 +30,36 @@ export async function POST(req: NextRequest) {
   try {
     // 1) Authentication
     const token = req.cookies.get('token')?.value;
-    if (!token) {
+    let userId: string | null = null;
+
+    if (token) {
+      try {
+        const { payload } = await jwtVerify(token, SECRET_KEY);
+        userId = (payload as { _id: string })._id;
+      } catch {
+        // ignore, try next-auth
+      }
+    }
+
+    // 2) Try NextAuth JWT if manual JWT not found
+    if (!userId) {
+      const nextAuthToken = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+      if (nextAuthToken && nextAuthToken.email) {
+        // Fetch user from Sanity by email
+        const query = `*[_type == "user" && email == $email][0]`;
+        const sanityUser = await client.fetch(query, { email: nextAuthToken.email });
+        if (sanityUser && sanityUser._id) {
+          userId = sanityUser._id;
+        }
+      }
+    }
+
+    if (!userId) {
       return NextResponse.json(
         { success: false, error: 'Authentication required. Please log in.' },
         { status: 401 }
       );
     }
-
-    let userId: string;
-    try {
-      const { payload } = await jwtVerify(token, SECRET_KEY);
-      userId = (payload as { _id: string })._id;
-    } catch {
-      return NextResponse.json(
-        { success: false, error: 'Invalid session. Please log in again.' },
-        { status: 401 }
-      );
-    }
-
 
     // 2) Parse request body
     const { billingDetails, shippingDetails, paymentMethod, orderItems, orderTotal, shippingCost = 0, taxAmount = 0 } = await req.json();

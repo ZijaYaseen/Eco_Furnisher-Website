@@ -1,43 +1,85 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
 import AdminDashboard from "@/components/AdminDashboard";
 import UserDashboard from "@/components/UserDashboard";
+import { FiLogOut } from "react-icons/fi";
 
 const Dashboard = () => {
   const router = useRouter();
-  const [user, setUser] = useState<{ fullName: string; role: string } | null>(null);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
-      const res = await fetch("/api/account/user", { credentials: "include" });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data);
-      } else {
-        router.push("/Account/Login");
-      }
-    };
-    fetchUserDetails();
-  }, [router]);
+    if (status === "unauthenticated") {
+      router.push("/Account/Login");
+    }
+  }, [status, router]);
 
   const handleLogout = async () => {
-    await fetch("/api/account/logout", { method: "POST", credentials: "include" });
-    router.push("/Account/Login");
+    await signOut({ callbackUrl: "/Account/Login" });
   };
 
+  if (status === "loading") {
+    return (
+      <div className="max-w-[1440px] font-poppins w-full mx-auto mt-16 md:mt-28 h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
+          <p className="mt-4">Loading...</p>
+        </div>
+      </div>
+
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return null;
+  }
+
+  if (!session?.user) {
+    return (
+      <div className="max-w-[1440px] font-poppins w-full mx-auto mt-16 md:mt-28">
+        <div className="text-center">
+          <p>No session found. Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-[1440px] font-poppins w-full mx-auto mt-16 md:mt-28">
-      <h1 className="text-4xl font-semibold text-center">
-        Hello {user ? user.fullName : "!"}
+    <div className="max-w-[1440px] font-poppins w-full mx-auto mt-20 md:mt-28">
+
+      <h1 className="text-4xl font-semibold text-center mb-2">
+        Hello {session.user?.name || "!"}
       </h1>
-      {user?.role === "admin" && <AdminDashboard />}
-      {user?.role === "user" && <UserDashboard />}
+
+      {/* Role-based Dashboard Rendering */}
+      {session.user?.role === "admin" ? (
+        <AdminDashboard />
+      ) : session.user?.role === "user" ? (
+        <UserDashboard />
+      ) : (
+        <div className="text-center">
+          <p className="text-red-600">Invalid role: {session.user?.role}</p>
+          <p className="text-gray-600">Defaulting to User Dashboard</p>
+          <UserDashboard />
+        </div>
+      )}
 
       <div className="flex justify-center mt-10">
-        <button onClick={handleLogout} className="bg-red-600 text-white px-6 py-3 rounded-lg text-lg">
+        {/* <button onClick={handleLogout} className="bg-red-600 text-white px-6 py-3 rounded-lg text-lg">
           Logout
-        </button>
+        </button> */}
+
+        <div className="pt-6 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-center space-x-2 py-2 px-4 border border-red-200 text-red-600 font-medium rounded-lg hover:bg-red-50 transition-colors text-sm lg:text-base"
+          >
+            <FiLogOut className="w-4 h-4" />
+            <span>Logout Account</span>
+          </button>
+        </div>
       </div>
     </div>
   );

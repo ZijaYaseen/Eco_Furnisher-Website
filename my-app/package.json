@@ -27,6 +27,7 @@
     "jwt-decode": "^4.0.0",
     "micro": "^10.0.1",
     "next": "14.2.16",
+    "next-auth": "^4.24.11",
     "next-sanity": "^9.8.38",
     "react": "^18",
     "react-dom": "^18",

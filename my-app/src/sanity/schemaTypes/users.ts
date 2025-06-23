@@ -24,6 +24,37 @@ export default {
             hidden : true, // for Hide sensitive data in Sanity Dashboard
         },
         {
+            name: "image",
+            title: "Profile Image",
+            type: "url",
+            description: "User's profile picture from social login"
+        },
+        {
+            name: "provider",
+            title: "Login Provider",
+            type: "string",
+            options: {
+                list: [
+                    { title: "Email/Password", value: "credentials" },
+                    { title: "Google", value: "google" },
+                    { title: "Facebook", value: "facebook" }
+                ]
+            },
+            initialValue: "credentials"
+        },
+        {
+            name: "providerId",
+            title: "Provider ID",
+            type: "string",
+            description: "Unique ID from social login provider"
+        },
+        {
+            name: "emailVerified",
+            title: "Email Verified",
+            type: "datetime",
+            description: "When the email was verified"
+        },
+        {
             name: "role",
             title: "Role",
             type: "string",

@@ -2,13 +2,12 @@
 
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 export async function POST(req: Request) {
   try {
     const { fullName, email, password } = await req.json();
 
-    // Checking if user already exists with given email OR fullName
+    // Checking if user already exists with given email
     const query = `*[_type == "user" && (email == $email)][0]`;
     const sanityCheckResponse = await fetch(
       `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2021-06-07/data/query/production`,
@@ -41,6 +40,8 @@ export async function POST(req: Request) {
       email,
       password: hashedPassword,
       role: "user",
+      provider: "credentials",
+      emailVerified: new Date().toISOString(),
     };
 
     const sanityResponse = await fetch(
@@ -55,40 +56,29 @@ export async function POST(req: Request) {
       }
     );
 
-    const sanityResult = await sanityResponse.json(); // Response ko variable me store kiya
-    const userId =  sanityResult?.results[0]?._id; // Sanity ka user ID extract kiya
+    const sanityResult = await sanityResponse.json();
+    const userId = sanityResult?.results[0]?._id;
 
+    if (!userId) {
+      return NextResponse.json({
+        success: false,
+        error: "Failed to create user in database",
+      });
+    }
 
-    // Generate JWT Token for the user
-    const token = jwt.sign(
-      {
-        _id: userId, // Sanity se aaya hua user ID
-        fullName,
-        email,
-        role: userData.role
-      }, // JWT token me user ka email and email saved kia he.
-      process.env.JWT_SECRET as string, // Secret key
-      { expiresIn: "24d" } // Token expiry time
-    );
-
-    // Set token as a cookie
-    const response = NextResponse.json({
+    // Return success with user data for automatic login
+    return NextResponse.json({
       success: true,
       message: "User created successfully!",
-      token,
+      user: {
+        id: userId,
+        name: fullName,
+        email: email,
+        role: "user",
+      },
     });
-   // production me secure nhi hoga ..
-   
-    const isProd = process.env.NODE_ENV === "production";
-    const cookieOptions = `token=${token}; HttpOnly; Path=/; Max-Age=${24 * 60 * 60}; ${isProd ? "Secure; SameSite=Strict" : "SameSite=Strict"}`;
-
-    response.headers.set("Set-Cookie", cookieOptions);
-
-
-    return response;
 
   } catch (error) {
-    console.error("Sign-up error:", error);
     return NextResponse.json({ success: false, error: "Sign-up failed!" });
   }
 }
