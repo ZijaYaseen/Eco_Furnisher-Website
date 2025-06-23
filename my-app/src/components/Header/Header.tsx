@@ -10,6 +10,7 @@ import Link from "next/link";
 import SearchBar from "../SearchBar";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
+import { useSession } from "next-auth/react";
 
 // Enhanced NavItem interface for hierarchical structure
 interface NavItem {
@@ -31,18 +32,12 @@ export default function Header() {
   const [menuStack, setMenuStack] = useState<NavItem[][]>([megaMenuData]);
   const router = useRouter();
   const cartItems = useAppSelector((state) => state.cart.items);
-
-  // Login token logic
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) setToken(storedToken);
-  }, []);
+  const { data: session } = useSession();
 
   const handleLoginClick = () => {
     setNavMenuOpen(false);
     setMenuStack([megaMenuData]);
-    router.push(token ? "/Dashboard" : "/Account/Login");
+    router.push(session ? "/Dashboard" : "/Account/Login");
   };
 
   const currentMenu = menuStack[menuStack.length - 1] || [];
