@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { megaMenuData, Nav } from "@/data"; // Added Nav import
 import { HiOutlineShoppingCart } from "react-icons/hi";
 import { FaRegHeart, FaRegUser } from "react-icons/fa";

@@ -50,6 +50,8 @@ const handler = NextAuth({
             image: user.image,
           };
         } catch (error) {
+          console.log("error",error);
+          
           return null;
         }
       }
@@ -82,6 +84,7 @@ const handler = NextAuth({
           }
           return true;
         } catch (error) {
+          console.log("error",error);
           return false;
         }
       }
@@ -103,6 +106,7 @@ const handler = NextAuth({
             token.id = sanityUser._id;
           }
         } catch (error) {
+          console.log("error",error);
           token.role = "user";
         }
       }
