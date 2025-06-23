@@ -49,6 +49,10 @@ const Dashboard = () => {
   return (
     <div className="max-w-[1440px] font-poppins w-full mx-auto mt-20 md:mt-28">
 
+      <h1>
+        Dashboard
+      </h1>
+
       {/* Role-based Dashboard Rendering */}
       {session.user?.role === "admin" ? (
         <AdminDashboard />
