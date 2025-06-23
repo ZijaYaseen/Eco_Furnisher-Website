@@ -139,6 +139,8 @@ export async function POST(req: Request) {
 
     return response;
   } catch (error) {
+    console.log(error);
+    
     return NextResponse.json({ success: false, error: "Sign-up failed!" });
   }
 }

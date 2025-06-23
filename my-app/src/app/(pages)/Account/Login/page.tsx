@@ -4,7 +4,6 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { PiEyeSlashThin, PiEyeThin } from "react-icons/pi";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 
