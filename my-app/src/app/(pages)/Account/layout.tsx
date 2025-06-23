@@ -8,7 +8,7 @@ interface IAccount {
 const AccountLayout:React.FC<IAccount> = (props) => {
   return (
     <div>
-        <div className='mt-[60px] md:mt-[90px]'>
+        <div className='mt-12 md:mt-24'>
         <PagesHeader name="Account" title="Account"/>
         </div>
         {props.children}

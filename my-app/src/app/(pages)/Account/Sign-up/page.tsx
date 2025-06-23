@@ -4,7 +4,6 @@ import Link from "next/link";
 import { PiEyeSlashThin, PiEyeThin } from "react-icons/pi";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 
@@ -15,7 +14,6 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [socialLoading, setSocialLoading] = useState<'google' | 'facebook' | null>(null);
-  const router = useRouter();
 
   // Validation form:
   const [form, setForm] = useState({
@@ -66,7 +64,7 @@ const SignUp = () => {
         setError(data.error || "Failed to sign up!");
       }
     } catch (error) {
-      setError("Error! Try again.");
+      setError(`Error! Try again., ${error}`);
     } finally {
       setIsLoading(false);
     }

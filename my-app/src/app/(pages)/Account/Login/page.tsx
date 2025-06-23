@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { PiEyeSlashThin, PiEyeThin } from "react-icons/pi";
-import { signIn, getSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
@@ -14,7 +14,6 @@ const Login = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [socialLoading, setSocialLoading] = useState<'google' | 'facebook' | null>(null);
-    const router = useRouter();
 
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -45,7 +44,7 @@ const Login = () => {
                 redirect: true,
             });
         } catch (error) {
-            setError(`Failed to login with ${provider}`);
+            setError(`Failed to login with ${provider}, ${error}`);
             setSocialLoading(null);
         }
     };

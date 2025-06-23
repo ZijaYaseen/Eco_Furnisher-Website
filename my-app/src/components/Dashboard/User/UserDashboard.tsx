@@ -2,40 +2,66 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { 
-  FiUser, 
   FiShoppingBag, 
   FiHeart, 
   FiSettings, 
   FiLogOut,
-  FiEdit3,
-  FiMapPin,
-  FiPhone,
-  FiMail,
-  FiCalendar,
   FiPackage,
   FiStar,
   FiTruck,
-  FiCreditCard,
-  FiShield,
   FiGift,
-  FiTrendingUp,
   FiAward,
   FiShoppingCart,
   FiDollarSign
 } from 'react-icons/fi';
 
+interface UserData {
+  name: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  joinDate?: string;
+  avatar?: string;
+}
+
+interface Order {
+  id: string;
+  total: string;
+  date: string;
+  status: string;
+}
+
+interface WishlistItem {
+  id: string;
+  name: string;
+  category: string;
+  price: string;
+}
+
+interface CartItem {
+  id: string;
+  name: string;
+  quantity: number;
+  price: string;
+}
+
+interface Stats {
+  totalOrders: number;
+  totalSpent: string;
+  wishlistItems: number;
+  cartItems: number;
+}
+
 const UserDashboard = () => {
   const { data: session } = useSession();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState<any>(null);
-  const [orders, setOrders] = useState<any[]>([]);
-  const [wishlist, setWishlist] = useState<any[]>([]);
-  const [cart, setCart] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
 
   // Fetch user data from API
   useEffect(() => {
@@ -143,7 +169,6 @@ const UserDashboard = () => {
         totalSpent: `$${totalSpent.toFixed(2)}`,
         wishlistItems: wishlist.length,
         cartItems: cart.length,
-        reviews: 0
       });
     }
   }, [orders, wishlist, cart]);
@@ -283,118 +308,24 @@ const UserDashboard = () => {
     </div>
   );
 
-  const renderProfile = () => (
-    <div className="space-y-4 lg:space-y-6">
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-        <div className="p-4 lg:p-6 border-b border-gray-200">
-          <h3 className="text-base lg:text-lg font-semibold text-black">Profile Information</h3>
-        </div>
-        <div className="p-4 lg:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-6">
-            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto sm:mx-0">
-              <FiUser className="w-8 h-8 lg:w-10 lg:h-10 text-gray-600" />
-            </div>
-            <div className="text-center sm:text-left">
-              <h4 className="text-lg lg:text-xl font-semibold text-black">{userData?.name || "User"}</h4>
-              <p className="text-gray-600 text-sm lg:text-base">Member since {userData?.joinDate || "Recently"}</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                <div className="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg">
-                  <FiUser className="w-4 h-4 text-gray-400" />
-                  <span className="text-black text-sm lg:text-base">{userData?.name || "Not set"}</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <div className="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg">
-                  <FiMail className="w-4 h-4 text-gray-400" />
-                  <span className="text-black text-sm lg:text-base">{userData?.email || "Not set"}</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                <div className="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg">
-                  <FiPhone className="w-4 h-4 text-gray-400" />
-                  <span className="text-black text-sm lg:text-base">{userData?.phone || "Not set"}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                <div className="flex items-start space-x-2 p-3 border border-gray-200 rounded-lg">
-                  <FiMapPin className="w-4 h-4 text-gray-400 mt-1" />
-                  <span className="text-black text-sm lg:text-base">{userData?.address || "Not set"}</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Member Since</label>
-                <div className="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg">
-                  <FiCalendar className="w-4 h-4 text-gray-400" />
-                  <span className="text-black text-sm lg:text-base">{userData?.joinDate || "Recently"}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-            <button className="flex items-center justify-center space-x-2 py-2 px-4 border border-black text-black font-medium rounded-lg hover:bg-black hover:text-white transition-colors text-sm lg:text-base">
-              <FiEdit3 className="w-4 h-4" />
-              <span>Edit Profile</span>
-            </button>
-            <button className="flex items-center justify-center space-x-2 py-2 px-4 bg-black text-white font-medium rounded-lg hover:bg-gray-800 transition-colors text-sm lg:text-base">
-              <FiShield className="w-4 h-4" />
-              <span>Change Password</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   const renderOrders = () => (
     <div className="space-y-4 lg:space-y-6">
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
         <div className="p-4 lg:p-6 border-b border-gray-200">
-          <h3 className="text-base lg:text-lg font-semibold text-black">Order History</h3>
+          <h3 className="text-base lg:text-lg font-semibold text-black">My Orders</h3>
         </div>
         <div className="p-4 lg:p-6">
           {orders.length > 0 ? (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
               {orders.map((order) => (
-                <div key={order.id} className="border border-gray-200 rounded-lg p-4 lg:p-6">
-                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
-                    <div>
-                      <h4 className="font-semibold text-black text-sm lg:text-base">{order.id}</h4>
-                      <p className="text-xs lg:text-sm text-gray-600">Ordered on {order.date}</p>
-                    </div>
-                    <div className="text-left lg:text-right mt-2 lg:mt-0">
-                      <p className="font-semibold text-black text-sm lg:text-base">{order.total}</p>
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                        order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
-                        order.status === 'In Transit' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {order.status}
-                      </span>
-                    </div>
+                <div key={order.id} className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-shadow">
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-black text-sm lg:text-base">Order #{order.id}</h4>
+                    <p className="text-xs lg:text-sm text-gray-600">Date: {order.date}</p>
+                    <p className="font-semibold text-black text-sm lg:text-base">Total: {order.total}</p>
+                    <p className="text-xs lg:text-sm text-gray-600">Status: {order.status}</p>
                   </div>
-                  
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs lg:text-sm text-gray-600 mb-4">
-                    <span>{order.items} items</span>
-                    <span>Tracking: {order.tracking}</span>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 mt-3">
                     <button className="flex items-center justify-center space-x-2 py-2 px-4 border border-black text-black font-medium rounded-lg hover:bg-black hover:text-white transition-colors text-sm">
                       <FiTruck className="w-4 h-4" />
                       <span>Track Order</span>
@@ -472,51 +403,39 @@ const UserDashboard = () => {
           <h3 className="text-base lg:text-lg font-semibold text-black">Account Settings</h3>
         </div>
         <div className="p-4 lg:p-6 space-y-6">
+          {/* Profile Info (read-only) */}
+          <div>
+            <h4 className="font-medium text-black mb-4 text-sm lg:text-base">Profile Information</h4>
+            <div className="space-y-2">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">Name</label>
+                  <div className="w-full border border-gray-300 rounded px-3 py-2 bg-gray-50">{userData?.name || ''}</div>
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">Email</label>
+                  <div className="w-full border border-gray-300 rounded px-3 py-2 bg-gray-50">{userData?.email || ''}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Notification Preferences (read-only) */}
           <div>
             <h4 className="font-medium text-black mb-4 text-sm lg:text-base">Notification Preferences</h4>
             <div className="space-y-3">
-              <label className="flex items-center space-x-3">
-                <input type="checkbox" className="rounded border-gray-300" defaultChecked />
+              <div className="flex items-center space-x-3">
+                <input type="checkbox" className="rounded border-gray-300" checked readOnly />
                 <span className="text-gray-700 text-sm lg:text-base">Order updates and tracking</span>
-              </label>
-              <label className="flex items-center space-x-3">
-                <input type="checkbox" className="rounded border-gray-300" defaultChecked />
-                <span className="text-gray-700 text-sm lg:text-base">Promotional emails</span>
-              </label>
-              <label className="flex items-center space-x-3">
-                <input type="checkbox" className="rounded border-gray-300" />
-                <span className="text-gray-700 text-sm lg:text-base">Newsletter</span>
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-medium text-black mb-4 text-sm lg:text-base">Privacy Settings</h4>
-            <div className="space-y-3">
-              <label className="flex items-center space-x-3">
-                <input type="checkbox" className="rounded border-gray-300" defaultChecked />
-                <span className="text-gray-700 text-sm lg:text-base">Share purchase history for recommendations</span>
-              </label>
-              <label className="flex items-center space-x-3">
-                <input type="checkbox" className="rounded border-gray-300" />
-                <span className="text-gray-700 text-sm lg:text-base">Allow third-party analytics</span>
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-medium text-black mb-4 text-sm lg:text-base">Payment Methods</h4>
-            <div className="space-y-3">
-              <div className="text-center py-4 text-gray-500">
-                <FiCreditCard className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2" />
-                <p className="text-sm lg:text-base">No payment methods added</p>
               </div>
-              <button className="w-full py-2 px-4 border border-black text-black font-medium rounded-lg hover:bg-black hover:text-white transition-colors text-sm lg:text-base">
-                Add Payment Method
-              </button>
+              <div className="flex items-center space-x-3">
+                <input type="checkbox" className="rounded border-gray-300" checked readOnly />
+                <span className="text-gray-700 text-sm lg:text-base">Promotional emails</span>
+              </div>
             </div>
           </div>
 
+          {/* Logout */}
           <div className="pt-6 border-t border-gray-200">
             <button 
               onClick={handleLogout}
@@ -533,7 +452,6 @@ const UserDashboard = () => {
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: FiAward },
-    { id: 'profile', label: 'Profile', icon: FiUser },
     { id: 'orders', label: 'Orders', icon: FiShoppingBag },
     { id: 'wishlist', label: 'Wishlist', icon: FiHeart },
     { id: 'settings', label: 'Settings', icon: FiSettings },
@@ -586,7 +504,6 @@ const UserDashboard = () => {
       {/* Tab Content */}
       <div>
         {activeTab === 'overview' && renderOverview()}
-        {activeTab === 'profile' && renderProfile()}
         {activeTab === 'orders' && renderOrders()}
         {activeTab === 'wishlist' && renderWishlist()}
         {activeTab === 'settings' && renderSettings()}

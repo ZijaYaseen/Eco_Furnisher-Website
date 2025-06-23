@@ -2,6 +2,9 @@
 
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+const SECRET_KEY = process.env.JWT_SECRET as string;
 
 export async function POST(req: Request) {
   try {
@@ -57,17 +60,63 @@ export async function POST(req: Request) {
     );
 
     const sanityResult = await sanityResponse.json();
-    const userId = sanityResult?.results[0]?._id;
+    console.log("Sanity create user result:", sanityResult);
+    const userId = sanityResult?.results?.[0]?._id;
+
+    // Defensive: If userId not found, but no error in response, still return success
+    if ((!userId && !sanityResult.error) || (sanityResult.transactionId && !userId)) {
+      const token = jwt.sign(
+        {
+          fullName: fullName,
+          email: email,
+          role: "user",
+        },
+        SECRET_KEY,
+        { expiresIn: "24d" }
+      );
+      const response = NextResponse.json({
+        success: true,
+        message: "User created (id not returned, but no error from Sanity)",
+        user: {
+          name: fullName,
+          email: email,
+          role: "user",
+        },
+      });
+      response.cookies.set({
+        name: "token",
+        value: token,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production" ? true : false,
+        sameSite: "strict",
+        path: "/",
+        maxAge: 24 * 60 * 60, // 24 hours
+      });
+      return response;
+    }
 
     if (!userId) {
       return NextResponse.json({
         success: false,
         error: "Failed to create user in database",
+        details: sanityResult,
       });
     }
 
-    // Return success with user data for automatic login
-    return NextResponse.json({
+    // JWT generate karo (same as login)
+    const token = jwt.sign(
+      {
+        _id: userId,
+        fullName: fullName,
+        email: email,
+        role: "user",
+      },
+      SECRET_KEY,
+      { expiresIn: "24d" }
+    );
+
+    // Token ko cookies me set karo
+    const response = NextResponse.json({
       success: true,
       message: "User created successfully!",
       user: {
@@ -78,6 +127,17 @@ export async function POST(req: Request) {
       },
     });
 
+    response.cookies.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      sameSite: "strict",
+      path: "/",
+      maxAge: 24 * 60 * 60, // 24 hours
+    });
+
+    return response;
   } catch (error) {
     return NextResponse.json({ success: false, error: "Sign-up failed!" });
   }

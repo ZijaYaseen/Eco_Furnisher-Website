@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import AdminDashboard from "@/components/AdminDashboard";
-import UserDashboard from "@/components/UserDashboard";
+import UserDashboard from "@/components/Dashboard/User/UserDashboard";
 import { FiLogOut } from "react-icons/fi";
 
 const Dashboard = () => {
@@ -49,10 +49,6 @@ const Dashboard = () => {
   return (
     <div className="max-w-[1440px] font-poppins w-full mx-auto mt-20 md:mt-28">
 
-      <h1 className="text-4xl font-semibold text-center mb-2">
-        Hello {session.user?.name || "!"}
-      </h1>
-
       {/* Role-based Dashboard Rendering */}
       {session.user?.role === "admin" ? (
         <AdminDashboard />
@@ -67,9 +63,6 @@ const Dashboard = () => {
       )}
 
       <div className="flex justify-center mt-10">
-        {/* <button onClick={handleLogout} className="bg-red-600 text-white px-6 py-3 rounded-lg text-lg">
-          Logout
-        </button> */}
 
         <div className="pt-6 border-t border-gray-200">
           <button
