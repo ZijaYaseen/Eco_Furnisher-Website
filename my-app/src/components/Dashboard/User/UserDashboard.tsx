@@ -10,7 +10,6 @@ import {
   FiPackage,
   FiStar,
   FiTruck,
-  FiGift,
   FiAward,
   FiShoppingCart,
   FiDollarSign
@@ -26,20 +25,6 @@ interface UserData {
   avatar?: string;
 }
 
-interface Order {
-  id: string;
-  total: string;
-  date: string;
-  status: string;
-}
-
-interface CartItem {
-  id: string;
-  name: string;
-  quantity: number;
-  price: string;
-}
-
 interface Stats {
   totalOrders: number;
   totalSpent: string;
@@ -47,14 +32,114 @@ interface Stats {
   cartItems: number;
 }
 
+// Define types for Cart and Wishlist items based on API structure
+interface WishlistProductVariant {
+  vid: string;
+  variantSellPrice: number;
+  variantSugSellPrice: number;
+  variantActualSellPrice: number;
+  discountPercentage: number;
+  colors: { colorName: string; colorCode: string }[];
+  variantImage: string;
+}
+
+interface WishlistProduct {
+  _id: string;
+  slug: { current: string };
+  productNameEn: string;
+  productSku: string;
+  imagePath: string;
+  imageSet: string[];
+  rating: number;
+  description: string;
+  shortDescription: string;
+  categoryId: string;
+  CategoryName: string;
+  packingWeight: number;
+  shippingCharge: number;
+  inventory: number;
+  tags: string[];
+  seo: {
+    metaTitle: string;
+    metaDescription: string;
+    metaKeywords: string;
+  };
+  variants: WishlistProductVariant[];
+}
+
+interface WishlistItem {
+  _key: string;
+  product: WishlistProduct;
+}
+
+interface CartProductVariant {
+  vid: string;
+  variantActualSellPrice: number;
+  discountPercentage: number;
+  variantImage: string;
+  colors: { colorName: string; colorCode: string }[];
+}
+
+interface CartProduct {
+  _id: string;
+  productNameEn: string;
+  productSku: string;
+  imageSet: string[];
+  variants: CartProductVariant[];
+}
+
+interface CartItem {
+  _key: string;
+  variantId: string;
+  quantity: number;
+  subtotal: number;
+  discountedPrice: number;
+  product: CartProduct;
+}
+
+// Add types for Order based on the new API
+interface OrderProductVariant {
+  vid: string;
+  quantity: number;
+  subtotal: number;
+}
+
+interface OrderProduct {
+  _id: string;
+  productNameEn: string;
+  productSku: string;
+  imageSet: string[];
+  CategoryName: string;
+}
+
+interface OrderItem {
+  product: OrderProduct;
+  variants: OrderProductVariant[];
+  Total: number;
+}
+
+interface OrderDetails {
+  _id: string;
+  createdAt: string;
+  orderStatus: string;
+  orderTotal: number;
+  shippingCost: number;
+  taxAmount: number;
+  paymentMethod: string;
+  trackingNumber?: string;
+  shippingDetails: any;
+  paymentDetails: any;
+  orderItems: OrderItem[];
+}
+
 const UserDashboard = () => {
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [wishlist, setWishlist] = useState<any[]>([]); // Use any[] for real API data
-  const [cart, setCart] = useState<any[]>([]); // Use any[] for real API data
+  const [orders, setOrders] = useState<OrderDetails[]>([]);
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
 
   // Fetch user data from API
@@ -118,15 +203,29 @@ const UserDashboard = () => {
     fetchWishlist();
   }, [session]);
 
-  // TODO: Fetch orders from Sanity directly (no GET API endpoint exists)
+  // Fetch orders from new /api/order endpoint
   useEffect(() => {
-    // Example: setOrders([]); // Replace with real fetch logic
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch('/api/order', { credentials: 'include' });
+        if (response.ok) {
+          const data = await response.json();
+          setOrders(data.orders || []);
+        } else {
+          setOrders([]);
+        }
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        setOrders([]);
+      }
+    };
+    fetchOrders();
   }, [session]);
 
   // Calculate stats
   useEffect(() => {
     if (orders.length >= 0) {
-      const totalSpent = orders.reduce((sum, order) => sum + (parseFloat(order.total?.replace('$', '') || '0')), 0);
+      const totalSpent = orders.reduce((sum, order) => sum + (parseFloat(order.orderTotal?.toFixed(2) || '0')), 0);
       setStats({
         totalOrders: orders.length,
         totalSpent: `$${totalSpent.toFixed(2)}`,
@@ -203,24 +302,24 @@ const UserDashboard = () => {
           {orders.length > 0 ? (
             <div className="space-y-3 lg:space-y-4">
               {orders.slice(0, 3).map((order) => (
-                <div key={order.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 lg:p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
+                <div key={order._id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 lg:p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
                   <div className="flex items-center space-x-3 lg:space-x-4 mb-2 sm:mb-0">
                     <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gray-100 rounded-lg flex items-center justify-center">
                       <FiPackage className="w-5 h-5 lg:w-6 lg:h-6 text-gray-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-black text-sm lg:text-base">{order.id}</p>
-                      <p className="text-xs lg:text-sm text-gray-600">{order.date}</p>
+                      <p className="font-medium text-black text-sm lg:text-base">{order._id}</p>
+                      <p className="text-xs lg:text-sm text-gray-600">Date: {order.createdAt}</p>
                     </div>
                   </div>
                   <div className="text-left sm:text-right">
-                    <p className="font-medium text-black text-sm lg:text-base">{order.total}</p>
+                    <p className="font-medium text-black text-sm lg:text-base">{order.orderTotal.toFixed(2)}</p>
                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                      order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
-                      order.status === 'In Transit' ? 'bg-blue-100 text-blue-800' :
+                      order.orderStatus === 'Delivered' ? 'bg-green-100 text-green-800' :
+                      order.orderStatus === 'In Transit' ? 'bg-blue-100 text-blue-800' :
                       'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {order.status}
+                      {order.orderStatus}
                     </span>
                   </div>
                 </div>
@@ -241,37 +340,6 @@ const UserDashboard = () => {
         </div>
       </div>
 
-      {/* Cart Summary */}
-      {cart.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-          <div className="p-4 lg:p-6 border-b border-gray-200">
-            <h3 className="text-base lg:text-lg font-semibold text-black">Current Cart</h3>
-          </div>
-          <div className="p-4 lg:p-6">
-            <div className="space-y-3">
-              {cart.slice(0, 2).map((item) => (
-                <div key={item.id} className="flex items-center justify-between p-3 border border-gray-100 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-                      <FiGift className="w-5 h-5 text-gray-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-black text-sm lg:text-base">{item.name}</p>
-                      <p className="text-xs lg:text-sm text-gray-600">Qty: {item.quantity}</p>
-                    </div>
-                  </div>
-                  <p className="font-medium text-black text-sm lg:text-base">{item.price}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4">
-              <button className="w-full py-2 px-4 bg-black text-white font-medium rounded-lg hover:bg-gray-800 transition-colors text-sm lg:text-base">
-                View Cart ({cart.length} items)
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -285,12 +353,12 @@ const UserDashboard = () => {
           {orders.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
               {orders.map((order) => (
-                <div key={order.id} className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-shadow">
+                <div key={order._id} className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-shadow">
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-black text-sm lg:text-base">Order #{order.id}</h4>
-                    <p className="text-xs lg:text-sm text-gray-600">Date: {order.date}</p>
-                    <p className="font-semibold text-black text-sm lg:text-base">Total: {order.total}</p>
-                    <p className="text-xs lg:text-sm text-gray-600">Status: {order.status}</p>
+                    <h4 className="font-semibold text-black text-sm lg:text-base">Order #{order._id}</h4>
+                    <p className="text-xs lg:text-sm text-gray-600">Date: {order.createdAt}</p>
+                    <p className="font-semibold text-black text-sm lg:text-base">Total: {order.orderTotal.toFixed(2)}</p>
+                    <p className="text-xs lg:text-sm text-gray-600">Status: {order.orderStatus}</p>
                   </div>
                   <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 mt-3">
                     <button className="flex items-center justify-center space-x-2 py-2 px-4 border border-black text-black font-medium rounded-lg hover:bg-black hover:text-white transition-colors text-sm">
@@ -350,7 +418,7 @@ const UserDashboard = () => {
             <h4 className="font-medium text-black mb-4 text-sm lg:text-base">Notification Preferences</h4>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
-                <input type="checkbox" className="rounded border-gray-300" checked readOnly />
+                <input type="checkbox" className="rounded border-gray-300"/>
                 <span className="text-gray-700 text-sm lg:text-base">Order updates and tracking</span>
               </div>
               <div className="flex items-center space-x-3">
