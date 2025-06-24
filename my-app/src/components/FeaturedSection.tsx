@@ -45,7 +45,7 @@ const FeaturedProducts = [
 
 const FeaturedSection = () => {
   return (
-    <section className="px-6 lg:px-14 py-16 bg-gray-50 max-w-[1440px] mx-auto">
+    <section className="px-2 lg:px-14 py-16 bg-gray-50 max-w-[1440px] mx-auto">
       {/* Section Heading */}
       <div className="mb-8 text-center">
         <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
