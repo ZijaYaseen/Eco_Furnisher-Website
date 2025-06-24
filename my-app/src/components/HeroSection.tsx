@@ -9,15 +9,15 @@ export default function HeroSection() {
         {/* HERO SECTION with Video Background */}
         <section className="relative w-full h-screen flex items-center  overflow-hidden">
           {/* Video Background */}
-          {/* <video
+          <video
             autoPlay
             muted
             playsInline
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover hidden md:block"
           >
             <source src="/12278994-uhd_3840_2160_24fps.mp4" type="video/mp4" />
             Your browser does not support the video tag.
-          </video> */}
+          </video>
 
           {/* Overlay */}
           <div className="absolute inset-0 bg-black/40" />
