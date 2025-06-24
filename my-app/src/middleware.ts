@@ -12,10 +12,11 @@ export async function middleware(req: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET,
       secureCookie: process.env.NODE_ENV === "production"
     });
+    
 
     // Agar token nahi mila, to login page pe redirect karo
     if (!token) {
-      return NextResponse.redirect(new URL("/", req.url));
+      return NextResponse.redirect(new URL("/Account/Login", req.url));
     }
 
     // Token valid hai, request allow karo
@@ -23,7 +24,7 @@ export async function middleware(req: NextRequest) {
   } catch (error) {
     console.error('Middleware error:', error);
     // Error case mein bhi login page pe redirect
-    return NextResponse.redirect(new URL("/", req.url));
+    // return NextResponse.redirect(new URL("/Account/Login", req.url));
   }
 }
 
