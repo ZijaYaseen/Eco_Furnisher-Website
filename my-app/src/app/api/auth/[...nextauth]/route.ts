@@ -5,6 +5,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { client } from "@/sanity/lib/client";
 
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error("NEXTAUTH_SECRET is not defined");
+} 
+
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -121,13 +126,13 @@ const handler = NextAuth({
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Dashboard pe redirect karein har successful auth ke baad
-      if (url.startsWith("/Dashboard")) {
-        return url;
-      }
-      // Default redirect to dashboard
-      return `${baseUrl}/Dashboard`;
-    },
+
+  if (url.startsWith("/")) return `${baseUrl}${url}`
+  // Allow same domain redirects
+  if (new URL(url).origin === baseUrl) return url
+  // Default to dashboard
+  return `${baseUrl}/Dashboard`
+},
   },
   pages: {
     signIn: "/Account/Login",
@@ -143,16 +148,32 @@ const handler = NextAuth({
   },
   secret: process.env.NEXTAUTH_SECRET,
   cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
+  sessionToken: {
+    name: process.env.NODE_ENV === "production" 
+      ? "__Secure-next-auth.session-token" 
+      : "next-auth.session-token",
+    options: {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+      // Add domain only in production:
+      domain: process.env.NODE_ENV === "production" 
+        ? process.env.NEXTAUTH_URL  
+        : undefined
+    }
   },
+  callbackUrl: {
+    name: process.env.NODE_ENV === "production" 
+      ? "__Secure-next-auth.callback-url" 
+      : "next-auth.callback-url",
+    options: {
+      sameSite: "lax",
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+    }
+  }
+}
 });
 
 export { handler as GET, handler as POST };

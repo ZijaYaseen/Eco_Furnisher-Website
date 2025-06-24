@@ -5,17 +5,12 @@ export const runtime = 'experimental-edge';
 
 export async function middleware(req: NextRequest) {
   try {
-    // Determine cookie name based on environment
-    const isProd = process.env.NODE_ENV === "production";
-    const sessionCookieName = isProd 
-      ? "__Secure-next-auth.session-token" 
-      : "next-auth.session-token";
-
     const token = await getToken({ 
       req, 
       secret: process.env.NEXTAUTH_SECRET,
-      cookieName: sessionCookieName, // CRITICAL FIX
-      secureCookie: isProd
+      // Explicitly specify cookie name
+      cookieName: "next-auth.session-token",
+      secureCookie: process.env.NODE_ENV === "production"
     });
 
     if (!token) {
