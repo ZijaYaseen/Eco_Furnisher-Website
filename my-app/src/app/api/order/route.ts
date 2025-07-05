@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { client } from '@/sanity/lib/client';
 import { getToken } from 'next-auth/jwt';
+import type { OrderDetails } from '@/data';
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
 
@@ -69,7 +70,7 @@ export async function GET(req: NextRequest) {
         Total
       }
     }`;
-    let orders = await client.fetch(ordersQuery, { userId });
+    let orders: OrderDetails[] = await client.fetch(ordersQuery, { userId });
 
     // For each order, for each orderItem, for each variant, set the correct image from product.variants if not present
     orders = orders.map(order => ({
