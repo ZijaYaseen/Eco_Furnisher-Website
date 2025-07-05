@@ -53,18 +53,43 @@ export async function GET(req: NextRequest) {
           _id,
           productNameEn,
           productSku,
-          imageSet,
-          CategoryName
+          imageSet[],
+          CategoryName,
+          variants[] {
+            vid,
+            variantImage
+          }
         },
         variants[] {
           vid,
           quantity,
-          subtotal
+          subtotal,
+          image
         },
         Total
       }
     }`;
-    const orders = await client.fetch(ordersQuery, { userId });
+    let orders = await client.fetch(ordersQuery, { userId });
+
+    // For each order, for each orderItem, for each variant, set the correct image from product.variants if not present
+    orders = orders.map(order => ({
+      ...order,
+      orderItems: order.orderItems.map(item => {
+        // Build a map of vid to variantImage from product
+        const vidToImage = (item.product.variants || []).reduce((acc, v) => {
+          acc[v.vid] = v.variantImage;
+          return acc;
+        }, {});
+        return {
+          ...item,
+          variants: item.variants.map(variant => ({
+            ...variant,
+            image: variant.image || vidToImage[variant.vid] || (item.product.imageSet?.[0] || '')
+          }))
+        };
+      })
+    }));
+
     return NextResponse.json({ success: true, orders });
   } catch (error) {
     console.error('Order GET error:', error);

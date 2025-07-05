@@ -15,6 +15,7 @@ import {
   Dispatch, 
   RootState 
 } from '@/redux/store';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function WishlistPage() {
   const dispatch = useDispatch<Dispatch>();
@@ -34,9 +35,7 @@ export default function WishlistPage() {
       <PagesHeader name="Wishlist" title="Your Wishlist" />
       <div className="container mx-auto px-4 py-8">
         {status === 'loading' && (
-          <div className="flex items-center justify-center h-96">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-950 border-t-transparent"></div>
-          </div>
+          <LoadingSpinner text="Loading wishlist..." />
         )}
 
         {status === 'succeeded' && items.length === 0 && (

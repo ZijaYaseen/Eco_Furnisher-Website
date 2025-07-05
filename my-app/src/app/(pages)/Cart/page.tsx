@@ -10,6 +10,7 @@ import { MdDelete } from "react-icons/md";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 const Cart = () => {
   const { items, grandTotal } = useAppSelector((state) => state.cart);
@@ -97,9 +98,7 @@ const Cart = () => {
       <PagesHeader name="Cart" title="Your Cart" />
 
       {isLoading ? (
-        <div className="flex items-center justify-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-950 border-t-transparent"></div>
-        </div>
+        <LoadingSpinner text="Loading cart..." />
       ) : items.length === 0 ? (
         <div className="flex items-center justify-center h-96 text-2xl font-bold">
           Your cart is empty.

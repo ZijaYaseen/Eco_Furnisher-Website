@@ -52,7 +52,7 @@ export default {
                     { name: 'vid', title: 'Variant ID', type: 'string', description: 'The unique ID for the variant' },
                     { name: 'quantity', title: 'Quantity', type: 'number' },
                     { name: 'subtotal', title: 'Subtotal', type: 'number' },
-                    
+                    { name: 'image', title: 'Image', type: 'string', description: 'Image URL for the variant' },
                   ],
                 },
               ],
@@ -114,11 +114,20 @@ export default {
       options: {
         list: [
           { title: 'Pending', value: 'pending' },
-          { title : 'Paid', value : "paid"},
-          { title: 'Processing', value: 'processing' },
+          { title: 'Paid', value: 'paid' },
+        ],
+      },
+      initialValue: 'pending',
+    },
+    {
+      name: 'trackingStatus',
+      title: 'Tracking Status',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Pending', value: 'pending' },
           { title: 'Shipped', value: 'shipped' },
           { title: 'Delivered', value: 'delivered' },
-          { title: 'Cancelled', value: 'cancelled' },
         ],
       },
       initialValue: 'pending',

@@ -9,6 +9,7 @@ import { setCartItems } from "@/redux/cartSlice";
 import axios from "axios";
 import { FaSpinner, FaLock, FaShieldAlt } from "react-icons/fa";
 import Image from "next/image";
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface FormData {
   firstName: string;
@@ -26,6 +27,7 @@ interface CartVariant {
   vid: string;
   quantity: number;
   subtotal: number;
+  image: string;
 }
 
 interface GroupedItem {
@@ -137,39 +139,32 @@ const Checkout = () => {
     }
 
     setIsSubmitting(true);
-    
     // Group cart items by product (since one product can have multiple variants)
     const groupedItems = cartItems.reduce((acc: Record<string, GroupedItem>, item) => {
-  const productId = item.product._id;
-  if (!acc[productId]) {
-    acc[productId] = {
-      product: {
-        _ref: productId,
-        name: item.product.productNameEn,
-        imageSet: item.product.imageSet
-      },
-      variants: [],
-      Total: 0
-    };
-  }
-  
-  // Add variant to the product
-  acc[productId].variants.push({
-    vid: item.variantId,
-    quantity: item.quantity,
-    subtotal: item.subtotal
-  });
-  
-  // Add to product total
-  acc[productId].Total += item.subtotal;
-  
-  return acc;
-}, {});
-    
-    // Convert grouped items to array
+      const productId = item.product._id;
+      if (!acc[productId]) {
+        acc[productId] = {
+          product: {
+            _ref: productId,
+            name: item.product.productNameEn,
+            imageSet: item.product.imageSet
+          },
+          variants: [],
+          Total: 0
+        };
+      }
+      // Find the correct variant object from the product
+      const variantObj = item.product.variants.find(v => v.vid === item.variantId);
+      acc[productId].variants.push({
+        vid: item.variantId,
+        quantity: item.quantity,
+        subtotal: item.subtotal,
+        image: variantObj?.variantImage || item.product.imageSet?.[0] || ''
+      });
+      acc[productId].Total += item.subtotal;
+      return acc;
+    }, {});
     const orderItems = Object.values(groupedItems);
-    
-    // Prepare checkout data
     const checkoutData = {
       billingDetails: formData,
       shippingDetails: formData, // Using same as billing for simplicity
@@ -179,36 +174,24 @@ const Checkout = () => {
       shippingCost: 0, // Free shipping for now
       taxAmount: 0 // No tax for now
     };
-
     try {
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(checkoutData),
       });
-      
       const data = await response.json();
-
       if (response.status === 401) {
         router.push("/Account/Login");
-      } 
-      else if (data.redirectTo) {
-        // For PayPal redirect
-        router.push(data.redirectTo);
-      } 
-      else if (data.url) {
-        // For Stripe redirect
+      } else if (data.url) {
+        // Always redirect to Stripe/PayPal for payment
         window.location.href = data.url;
-      }
-      else if (data.orderId) {
-        // For COD or direct success
-        router.push(`/order-success?orderId=${data.orderId}`);
-      }
-      else {
-        console.error("Checkout error:", data.error);
+      } else {
+        alert(data.error || "Checkout error. Please try again.");
       }
     } catch (error) {
       console.error("Error placing order:", error);
+      alert("Checkout error. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -219,9 +202,7 @@ const Checkout = () => {
       <PagesHeader name="Checkout" title="Checkout" />
 
       {isLoading ? (
-        <div className="flex items-center justify-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-950 border-t-transparent"></div>
-        </div>
+        <LoadingSpinner text="Loading checkout..." />
       ) : cartItems.length === 0 ? (
         <div className="flex items-center justify-center h-96 text-2xl font-bold">
           Your cart is empty! Please add items before proceeding.

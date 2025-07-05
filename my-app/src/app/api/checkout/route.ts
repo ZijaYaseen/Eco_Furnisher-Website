@@ -4,6 +4,7 @@ import { jwtVerify } from 'jose';
 import { client } from '@/sanity/lib/client';
 import Stripe from 'stripe';
 import { getToken } from "next-auth/jwt";
+import { nanoid } from 'nanoid';
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -13,6 +14,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 interface OrderItemVariant {
   vid: string;
   quantity: number;
+  image: string;
   subtotal: number;
 }
 
@@ -82,11 +84,14 @@ export async function POST(req: NextRequest) {
 
     // 4) Prepare Sanity order items
     const sanityOrderItems = orderItems.map((item: OrderItem) => ({
+      _key: nanoid(),
       product: { _type: 'reference', _ref: item.product._ref },
       variants: item.variants.map(variant => ({
+        _key: nanoid(),
         vid: variant.vid,
         quantity: variant.quantity,
-        subtotal: variant.subtotal
+        subtotal: variant.subtotal,
+        image: variant.image || item.product.imageSet?.[0] || '',
       })),
       Total: item.Total
     }));
@@ -108,7 +113,6 @@ export async function POST(req: NextRequest) {
       orderStatus: 'pending',
       createdAt: new Date().toISOString(),
     };
-    
     const createdOrder = await client.create(newOrder);
 
     // 6) Handle Stripe payments
@@ -116,12 +120,10 @@ export async function POST(req: NextRequest) {
       try {
         // Prepare line items for Stripe
         const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-        
         orderItems.forEach((item: OrderItem) => {
           item.variants.forEach(variant => {
             // Calculate per-unit price
             const perUnitPrice = variant.subtotal / variant.quantity;
-            
             lineItems.push({
               price_data: {
                 currency: 'usd',
@@ -135,35 +137,26 @@ export async function POST(req: NextRequest) {
             });
           });
         });
-
-        // Add shipping as a separate line item if needed
         if (shippingCost > 0) {
           lineItems.push({
             price_data: {
               currency: 'usd',
-              product_data: {
-                name: 'Shipping',
-              },
+              product_data: { name: 'Shipping' },
               unit_amount: Math.round(shippingCost * 100),
             },
             quantity: 1,
           });
         }
-
-        // Add tax as a separate line item if needed
         if (taxAmount > 0) {
           lineItems.push({
             price_data: {
               currency: 'usd',
-              product_data: {
-                name: 'Tax',
-              },
+              product_data: { name: 'Tax' },
               unit_amount: Math.round(taxAmount * 100),
             },
             quantity: 1,
           });
         }
-
         const session = await stripe.checkout.sessions.create({
           payment_method_types: ['card'],
           line_items: lineItems,
@@ -176,7 +169,6 @@ export async function POST(req: NextRequest) {
           },
           customer_email: billingDetails.email,
         });
-
         return NextResponse.json(
           { success: true, url: session.url },
           { status: 200 }

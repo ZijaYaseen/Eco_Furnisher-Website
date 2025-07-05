@@ -5,6 +5,7 @@ import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { fetchAllProducts, selectPaginatedProducts } from '@/redux/Search/searchActions';
 import { Product } from '@/data';
 import ProductCard from './ProductCard';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 const ProductsList: React.FC = () => {
   const paginatedProducts: Product[] = useAppSelector(selectPaginatedProducts);
@@ -34,11 +35,7 @@ const ProductsList: React.FC = () => {
   }, [dispatch, paginatedProducts.length]);
 
   if (loading) {
-    return (
-      <div>
-        <h1 className="flex justify-center items-center h-[300px] mt-14 font-bold text-2xl">Loading...</h1>
-      </div>
-    );
+    return <LoadingSpinner text="Loading products..." />;
   }
 
   if (error) {

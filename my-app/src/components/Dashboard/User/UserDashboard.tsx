@@ -7,14 +7,14 @@ import {
   FiHeart, 
   FiSettings, 
   FiLogOut,
-  FiPackage,
-  FiStar,
-  FiTruck,
   FiAward,
   FiShoppingCart,
   FiDollarSign
 } from 'react-icons/fi';
 import Link from 'next/link';
+import type { Product, CartItem, WishlistItem } from '@/data';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import Image from 'next/image';
 
 interface UserData {
   name: string;
@@ -32,88 +32,35 @@ interface Stats {
   cartItems: number;
 }
 
-// Define types for Cart and Wishlist items based on API structure
-interface WishlistProductVariant {
-  vid: string;
-  variantSellPrice: number;
-  variantSugSellPrice: number;
-  variantActualSellPrice: number;
-  discountPercentage: number;
-  colors: { colorName: string; colorCode: string }[];
-  variantImage: string;
+// Types based on Sanity schema
+interface ShippingDetails {
+  firstName: string;
+  lastName: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  phone: string;
+  email: string;
 }
 
-interface WishlistProduct {
-  _id: string;
-  slug: { current: string };
-  productNameEn: string;
-  productSku: string;
-  imagePath: string;
-  imageSet: string[];
-  rating: number;
-  description: string;
-  shortDescription: string;
-  categoryId: string;
-  CategoryName: string;
-  packingWeight: number;
-  shippingCharge: number;
-  inventory: number;
-  tags: string[];
-  seo: {
-    metaTitle: string;
-    metaDescription: string;
-    metaKeywords: string;
-  };
-  variants: WishlistProductVariant[];
+interface PaymentDetails {
+  transactionId: string;
+  paymentAmount: number;
+  paymentMethod: string;
+  paymentDate: string;
 }
 
-interface WishlistItem {
-  _key: string;
-  product: WishlistProduct;
-}
-
-interface CartProductVariant {
-  vid: string;
-  variantActualSellPrice: number;
-  discountPercentage: number;
-  variantImage: string;
-  colors: { colorName: string; colorCode: string }[];
-}
-
-interface CartProduct {
-  _id: string;
-  productNameEn: string;
-  productSku: string;
-  imageSet: string[];
-  variants: CartProductVariant[];
-}
-
-interface CartItem {
-  _key: string;
-  variantId: string;
-  quantity: number;
-  subtotal: number;
-  discountedPrice: number;
-  product: CartProduct;
-}
-
-// Add types for Order based on the new API
 interface OrderProductVariant {
   vid: string;
+  image: string;
   quantity: number;
   subtotal: number;
-}
-
-interface OrderProduct {
-  _id: string;
-  productNameEn: string;
-  productSku: string;
-  imageSet: string[];
-  CategoryName: string;
 }
 
 interface OrderItem {
-  product: OrderProduct;
+  product: Product;
   variants: OrderProductVariant[];
   Total: number;
 }
@@ -121,14 +68,15 @@ interface OrderItem {
 interface OrderDetails {
   _id: string;
   createdAt: string;
-  orderStatus: string;
+  orderStatus: 'pending' | 'paid';
   orderTotal: number;
   shippingCost: number;
   taxAmount: number;
-  paymentMethod: string;
+  paymentMethod: 'stripe' | 'paypal' | 'cod';
   trackingNumber?: string;
-  shippingDetails: any;
-  paymentDetails: any;
+  trackingStatus: 'pending' | 'shipped' | 'delivered';
+  shippingDetails: ShippingDetails;
+  paymentDetails: PaymentDetails;
   orderItems: OrderItem[];
 }
 
@@ -225,7 +173,10 @@ const UserDashboard = () => {
   // Calculate stats
   useEffect(() => {
     if (orders.length >= 0) {
-      const totalSpent = orders.reduce((sum, order) => sum + (parseFloat(order.orderTotal?.toFixed(2) || '0')), 0);
+      // Only sum paid orders for totalSpent
+      const totalSpent = orders
+        .filter(order => order.orderStatus === 'paid')
+        .reduce((sum, order) => sum + (parseFloat(order.orderTotal?.toFixed(2) || '0')), 0);
       setStats({
         totalOrders: orders.length,
         totalSpent: `$${totalSpent.toFixed(2)}`,
@@ -300,27 +251,35 @@ const UserDashboard = () => {
         </div>
         <div className="p-4 lg:p-6">
           {orders.length > 0 ? (
-            <div className="space-y-3 lg:space-y-4">
-              {orders.slice(0, 3).map((order) => (
-                <div key={order._id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 lg:p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center space-x-3 lg:space-x-4 mb-2 sm:mb-0">
-                    <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <FiPackage className="w-5 h-5 lg:w-6 lg:h-6 text-gray-600" />
+            <div className="space-y-4">
+              {orders.slice(0, 3).map((order: OrderDetails) => (
+                <div key={order._id} className="border border-gray-100 rounded-lg p-4 flex flex-col gap-2 hover:bg-gray-50 transition-colors">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs text-gray-500">Order Date: {new Date(order.createdAt).toLocaleDateString()}</span>
+                      <span className={`text-xs font-semibold ${order.orderStatus === 'paid' ? 'text-green-600' : 'text-yellow-600'}`}>{order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}</span>
                     </div>
-                    <div>
-                      <p className="font-medium text-black text-sm lg:text-base">{order._id}</p>
-                      <p className="text-xs lg:text-sm text-gray-600">Date: {order.createdAt}</p>
+                    <div className="text-right">
+                      <span className="font-semibold text-black text-sm">Total: ${order.orderTotal.toFixed(2)}</span>
                     </div>
                   </div>
-                  <div className="text-left sm:text-right">
-                    <p className="font-medium text-black text-sm lg:text-base">{order.orderTotal.toFixed(2)}</p>
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                      order.orderStatus === 'Delivered' ? 'bg-green-100 text-green-800' :
-                      order.orderStatus === 'In Transit' ? 'bg-blue-100 text-blue-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {order.orderStatus}
-                    </span>
+                  <div className="flex flex-col gap-2 mt-2">
+                    {order.orderItems.map((item: OrderItem, idx: number) => (
+                      <div key={idx} className="flex items-center gap-3 border border-gray-100 rounded-lg p-2 bg-white">
+                        <img
+                          src={item.variants[0]?.image || item.product?.imageSet?.[0] || '/placeholder.png'}
+                          alt={item.product?.productNameEn}
+                          className="w-12 h-12 object-cover rounded"
+                        />
+                        <div className="flex-1">
+                          <p className="font-medium text-black text-xs lg:text-sm">{item.product?.productNameEn}</p>
+                          <p className="text-xs text-gray-500">Category: {item.product?.CategoryName}</p>
+                          {item.variants.map((variant: OrderProductVariant, vIdx: number) => (
+                            <span key={vIdx} className="block text-xs text-gray-600">Qty: {variant.quantity} | Subtotal: ${variant.subtotal.toFixed(2)}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -333,46 +292,63 @@ const UserDashboard = () => {
             </div>
           )}
           <div className="mt-4 lg:mt-6">
-            <button className="w-full py-2 px-4 border border-black text-black font-medium rounded-lg hover:bg-black hover:text-white transition-colors text-sm lg:text-base">
+            <button
+              className="w-full py-2 px-4 border border-black text-black font-medium rounded-lg hover:bg-black hover:text-white transition-colors text-sm lg:text-base"
+              onClick={() => setActiveTab('orders')}
+            >
               View All Orders
             </button>
           </div>
         </div>
       </div>
-
     </div>
   );
 
   const renderOrders = () => (
-    <div className="space-y-4 lg:space-y-6">
+    <div className="space-y-4 lg:space-y-6" id='orders'>
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
         <div className="p-4 lg:p-6 border-b border-gray-200">
           <h3 className="text-base lg:text-lg font-semibold text-black">My Orders</h3>
         </div>
         <div className="p-4 lg:p-6">
           {orders.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-              {orders.map((order) => (
-                <div key={order._id} className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-shadow">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold text-black text-sm lg:text-base">Order #{order._id}</h4>
-                    <p className="text-xs lg:text-sm text-gray-600">Date: {order.createdAt}</p>
-                    <p className="font-semibold text-black text-sm lg:text-base">Total: {order.orderTotal.toFixed(2)}</p>
-                    <p className="text-xs lg:text-sm text-gray-600">Status: {order.orderStatus}</p>
+            <div className="space-y-6">
+              {orders.map((order: OrderDetails) => (
+                <div key={order._id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                    <div>
+                      <h4 className="font-semibold text-black text-sm lg:text-base">Order Date: {new Date(order.createdAt).toLocaleDateString()}</h4>
+                      <p className="text-xs lg:text-sm text-gray-600">Status: <span className={`font-semibold ${
+                        order.orderStatus === 'paid' ? 'text-green-600' : 'text-yellow-600'
+                      }`}>{order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}</span></p>
+                      
+                    </div>
+                    <div className="text-left md:text-right mt-2 md:mt-0">
+                      <p className="font-semibold text-black text-sm lg:text-base">Total: ${order.orderTotal.toFixed(2)}</p>
+                    </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 mt-3">
-                    <button className="flex items-center justify-center space-x-2 py-2 px-4 border border-black text-black font-medium rounded-lg hover:bg-black hover:text-white transition-colors text-sm">
-                      <FiTruck className="w-4 h-4" />
-                      <span>Track Order</span>
-                    </button>
-                    <button className="flex items-center justify-center space-x-2 py-2 px-4 border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm">
-                      <FiStar className="w-4 h-4" />
-                      <span>Review</span>
-                    </button>
-                    <button className="flex items-center justify-center space-x-2 py-2 px-4 border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm">
-                      <FiPackage className="w-4 h-4" />
-                      <span>Reorder</span>
-                    </button>
+                  <div className="mt-2">
+                    <h5 className="font-medium text-gray-700 mb-2 text-xs lg:text-sm">Products:</h5>
+                    <div className="space-y-2">
+                      {order.orderItems.map((item: OrderItem, idx: number) => (
+                        <div key={idx} className="flex items-center space-x-3 border border-gray-100 rounded-lg p-2 bg-white">
+                          <Image
+                          width={200}
+                          height={200}
+                            src={item.variants[0]?.image || item.product?.imageSet?.[0] || '/placeholder.png'}
+                            alt={item.product?.productNameEn}
+                            className="w-10 h-10 object-cover rounded"
+                          />
+                          <div className="flex-1">
+                            <p className="font-medium text-black text-xs lg:text-sm">{item.product?.productNameEn}</p>
+                            <p className="text-xs text-gray-500">Category: {item.product?.CategoryName}</p>
+                            {item.variants.map((variant: OrderProductVariant, vIdx: number) => (
+                              <span key={vIdx} className="block text-xs text-gray-600">Qty: {variant.quantity} | Subtotal: ${variant.subtotal.toFixed(2)}</span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -422,7 +398,7 @@ const UserDashboard = () => {
                 <span className="text-gray-700 text-sm lg:text-base">Order updates and tracking</span>
               </div>
               <div className="flex items-center space-x-3">
-                <input type="checkbox" className="rounded border-gray-300" checked readOnly />
+                <input type="checkbox" className="rounded border-gray-300" />
                 <span className="text-gray-700 text-sm lg:text-base">Promotional emails</span>
               </div>
             </div>
@@ -450,14 +426,7 @@ const UserDashboard = () => {
   ];
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
-          <p className="mt-4 text-sm lg:text-base">Loading dashboard...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner text="Loading dashboard..." />;
   }
 
   return (
