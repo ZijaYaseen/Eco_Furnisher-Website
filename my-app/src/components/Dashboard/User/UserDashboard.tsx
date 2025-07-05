@@ -268,9 +268,9 @@ const UserDashboard = () => {
                     {order.orderItems.map((item: OrderItem, idx: number) => (
                       <div key={idx} className="flex items-center gap-3 border border-gray-100 rounded-lg p-2 bg-white">
                         <img
-                          src={item.variants[0]?.image || item.product?.imageSet?.[0] || '/placeholder.png'}
+                          src={item.variants[0]?.image || item.product?.imageSet?.[0]}
                           alt={item.product?.productNameEn}
-                          className="w-12 h-12 object-cover rounded"
+                          className="w-16 h-16 object-cover rounded"
                         />
                         <div className="flex-1">
                           <p className="font-medium text-black text-xs lg:text-sm">{item.product?.productNameEn}</p>
@@ -338,7 +338,7 @@ const UserDashboard = () => {
                           height={200}
                             src={item.variants[0]?.image || item.product?.imageSet?.[0] || '/placeholder.png'}
                             alt={item.product?.productNameEn}
-                            className="w-10 h-10 object-cover rounded"
+                            className="w-16 h-16 object-cover rounded"
                           />
                           <div className="flex-1">
                             <p className="font-medium text-black text-xs lg:text-sm">{item.product?.productNameEn}</p>
