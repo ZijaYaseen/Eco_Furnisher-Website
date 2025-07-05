@@ -1,4 +1,5 @@
 import type { PortableTextBlock } from '@portabletext/types';
+import type { Product } from './index';
 
 export const Nav = [
     {name:"Home", Link:"/"},
@@ -402,6 +403,16 @@ export interface OrderDetails {
   shippingDetails: ShippingDetailsMeta;
   paymentDetails: PaymentDetailsMeta;
   orderItems: OrderItemMeta[];
+}
+
+export interface OrderItemWithProduct {
+  product: Product;
+  variants: VariantMeta[];
+  Total: number;
+}
+
+export interface OrderDetailsWithProduct extends Omit<OrderDetails, 'orderItems'> {
+  orderItems: OrderItemWithProduct[];
 }
 
   

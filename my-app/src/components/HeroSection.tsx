@@ -13,7 +13,7 @@ export default function HeroSection() {
             autoPlay
             muted
             playsInline
-            className="absolute inset-0 w-full h-full object-cover hidden md:block"
+            className="absolute inset-0 w-full h-full object-cover"
           >
             <source src="/12278994-uhd_3840_2160_24fps.mp4" type="video/mp4" />
             Your browser does not support the video tag.
