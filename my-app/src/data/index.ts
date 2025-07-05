@@ -1,5 +1,4 @@
 import type { PortableTextBlock } from '@portabletext/types';
-import type { Product } from './index';
 
 export const Nav = [
     {name:"Home", Link:"/"},
