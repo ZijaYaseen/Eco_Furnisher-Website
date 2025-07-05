@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { client } from '@/sanity/lib/client';
 import { getToken } from 'next-auth/jwt';
-import type { OrderDetails } from '@/data';
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
 
@@ -41,8 +40,6 @@ interface OrderDetailsWithProduct {
   taxAmount: number;
   paymentMethod: 'stripe' | 'paypal' | 'cod';
   trackingNumber?: string;
-  shippingDetails: any;
-  paymentDetails: any;
   orderItems: OrderItemWithProduct[];
 }
 
