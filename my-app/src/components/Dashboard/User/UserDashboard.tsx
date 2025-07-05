@@ -12,7 +12,7 @@ import {
   FiDollarSign
 } from 'react-icons/fi';
 import Link from 'next/link';
-import type { Product, CartItem, WishlistItem } from '@/data';
+import type { Product, CartItem, WishlistItem, OrderDetails, OrderItemMeta, VariantMeta, ShippingDetailsMeta, PaymentDetailsMeta } from '@/data';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Image from 'next/image';
 
@@ -30,54 +30,6 @@ interface Stats {
   totalSpent: string;
   wishlistItems: number;
   cartItems: number;
-}
-
-// Types based on Sanity schema
-interface ShippingDetails {
-  firstName: string;
-  lastName: string;
-  streetAddress: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
-  phone: string;
-  email: string;
-}
-
-interface PaymentDetails {
-  transactionId: string;
-  paymentAmount: number;
-  paymentMethod: string;
-  paymentDate: string;
-}
-
-interface OrderProductVariant {
-  vid: string;
-  image: string;
-  quantity: number;
-  subtotal: number;
-}
-
-interface OrderItem {
-  product: Product;
-  variants: OrderProductVariant[];
-  Total: number;
-}
-
-interface OrderDetails {
-  _id: string;
-  createdAt: string;
-  orderStatus: 'pending' | 'paid';
-  orderTotal: number;
-  shippingCost: number;
-  taxAmount: number;
-  paymentMethod: 'stripe' | 'paypal' | 'cod';
-  trackingNumber?: string;
-  trackingStatus: 'pending' | 'shipped' | 'delivered';
-  shippingDetails: ShippingDetails;
-  paymentDetails: PaymentDetails;
-  orderItems: OrderItem[];
 }
 
 const UserDashboard = () => {
@@ -264,7 +216,7 @@ const UserDashboard = () => {
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 mt-2">
-                    {order.orderItems.map((item: OrderItem, idx: number) => (
+                    {order.orderItems.map((item: OrderItemMeta, idx: number) => (
                       <div key={idx} className="flex items-center gap-3 border border-gray-100 rounded-lg p-2 bg-white">
                         <img
                           src={item.variants[0]?.image || item.product?.imageSet?.[0] || '/placeholder.png'}
@@ -274,7 +226,7 @@ const UserDashboard = () => {
                         <div className="flex-1">
                           <p className="font-medium text-black text-xs lg:text-sm">{item.product?.productNameEn}</p>
                           <p className="text-xs text-gray-500">Category: {item.product?.CategoryName}</p>
-                          {item.variants.map((variant: OrderProductVariant, vIdx: number) => (
+                          {item.variants.map((variant: VariantMeta, vIdx: number) => (
                             <span key={vIdx} className="block text-xs text-gray-600">Qty: {variant.quantity} | Subtotal: ${variant.subtotal.toFixed(2)}</span>
                           ))}
                         </div>
@@ -330,7 +282,7 @@ const UserDashboard = () => {
                   <div className="mt-2">
                     <h5 className="font-medium text-gray-700 mb-2 text-xs lg:text-sm">Products:</h5>
                     <div className="space-y-2">
-                      {order.orderItems.map((item: OrderItem, idx: number) => (
+                      {order.orderItems.map((item: OrderItemMeta, idx: number) => (
                         <div key={idx} className="flex items-center space-x-3 border border-gray-100 rounded-lg p-2 bg-white">
                           <Image
                           width={200}
@@ -342,7 +294,7 @@ const UserDashboard = () => {
                           <div className="flex-1">
                             <p className="font-medium text-black text-xs lg:text-sm">{item.product?.productNameEn}</p>
                             <p className="text-xs text-gray-500">Category: {item.product?.CategoryName}</p>
-                            {item.variants.map((variant: OrderProductVariant, vIdx: number) => (
+                            {item.variants.map((variant: VariantMeta, vIdx: number) => (
                               <span key={vIdx} className="block text-xs text-gray-600">Qty: {variant.quantity} | Subtotal: ${variant.subtotal.toFixed(2)}</span>
                             ))}
                           </div>

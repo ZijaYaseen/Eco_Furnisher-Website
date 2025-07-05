@@ -345,5 +345,63 @@ export const megaMenuData = [
   },
 ];
 
+// Order-related types for reuse across the project
+export type VariantMeta = {
+  vid: string;
+  quantity: number;
+  subtotal: number;
+  image?: string;
+};
+
+export type OrderItemMeta = {
+  product: { _ref: string };
+  variants: VariantMeta[];
+  Total: number;
+};
+
+export type ShippingDetailsMeta = {
+  firstName: string;
+  lastName: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  phone: string;
+  email: string;
+};
+
+export type PaymentDetailsMeta = {
+  transactionId: string;
+  paymentAmount: number;
+  paymentMethod: string;
+  paymentDate: string;
+};
+
+export type OrderMeta = {
+  userId?: string;
+  shippingDetails: ShippingDetailsMeta;
+  billingDetails?: ShippingDetailsMeta;
+  paymentMethod: 'stripe' | 'paypal' | 'cod';
+  orderItems: OrderItemMeta[];
+  orderTotal: number;
+  shippingCost: number;
+  taxAmount: number;
+};
+
+export interface OrderDetails {
+  _id: string;
+  createdAt: string;
+  orderStatus: 'pending' | 'paid';
+  orderTotal: number;
+  shippingCost: number;
+  taxAmount: number;
+  paymentMethod: 'stripe' | 'paypal' | 'cod';
+  trackingNumber?: string;
+  trackingStatus: 'pending' | 'shipped' | 'delivered';
+  shippingDetails: ShippingDetailsMeta;
+  paymentDetails: PaymentDetailsMeta;
+  orderItems: OrderItemMeta[];
+}
 
   

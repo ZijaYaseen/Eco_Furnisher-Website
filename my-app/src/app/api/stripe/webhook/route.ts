@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { client } from '@/sanity/lib/client'
+import type { OrderMeta, OrderItemMeta, VariantMeta } from '@/data'
 
 // 1) Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session
 
     // Get orderMeta from metadata
-    let orderMeta: any = null;
+    let orderMeta: OrderMeta | null = null;
     try {
       orderMeta = session.metadata?.orderMeta ? JSON.parse(session.metadata.orderMeta) : null;
     } catch (err) {
@@ -50,9 +51,9 @@ export async function POST(request: NextRequest) {
     if (orderMeta) {
       try {
         // Prepare Sanity order items
-        const sanityOrderItems = orderMeta.orderItems.map((item: any) => ({
+        const sanityOrderItems = orderMeta.orderItems.map((item: OrderItemMeta) => ({
           product: { _type: 'reference', _ref: item.product._ref },
-          variants: item.variants.map((variant: any) => ({
+          variants: item.variants.map((variant: VariantMeta) => ({
             vid: variant.vid,
             quantity: variant.quantity,
             subtotal: variant.subtotal
