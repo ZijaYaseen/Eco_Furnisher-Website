@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
         vid: variant.vid,
         quantity: variant.quantity,
         subtotal: variant.subtotal,
-        image: variant.image || item.product.imageSet?.[0] || '',
+        variantImage: variant.image || item.product.imageSet?.[0] || '',
       })),
       Total: item.Total
     }));

@@ -2,9 +2,49 @@ import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { client } from '@/sanity/lib/client';
 import { getToken } from 'next-auth/jwt';
-import type { OrderDetailsWithProduct } from '@/data';
+import type { OrderDetails } from '@/data';
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
+
+// Local types for this API response
+interface Product {
+  _id: string;
+  productNameEn: string;
+  productSku: string;
+  imageSet: string[];
+  CategoryName: string[];
+  variants: Array<{
+    vid: string;
+    variantImage: string;
+  }>;
+}
+
+interface Variant {
+  vid: string;
+  quantity: number;
+  subtotal: number;
+  variantImage?: string;
+}
+
+interface OrderItemWithProduct {
+  product: Product;
+  variants: Variant[];
+  Total: number;
+}
+
+interface OrderDetailsWithProduct {
+  _id: string;
+  createdAt: string;
+  orderStatus: 'pending' | 'paid';
+  orderTotal: number;
+  shippingCost: number;
+  taxAmount: number;
+  paymentMethod: 'stripe' | 'paypal' | 'cod';
+  trackingNumber?: string;
+  shippingDetails: any;
+  paymentDetails: any;
+  orderItems: OrderItemWithProduct[];
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -54,18 +94,13 @@ export async function GET(req: NextRequest) {
           _id,
           productNameEn,
           productSku,
-          imageSet[],
           CategoryName,
-          variants[] {
-            vid,
-            variantImage
-          }
         },
         variants[] {
           vid,
           quantity,
           subtotal,
-          image
+          variantImage,
         },
         Total
       }
@@ -77,7 +112,7 @@ export async function GET(req: NextRequest) {
       ...order,
       orderItems: order.orderItems.map(item => {
         // Build a map of vid to variantImage from product
-        const vidToImage = (item.product.variants || []).reduce((acc, v) => {
+        const vidToImage = (item.product.variants || []).reduce<{ [key: string]: string }>((acc, v) => {
           acc[v.vid] = v.variantImage;
           return acc;
         }, {});
@@ -85,7 +120,7 @@ export async function GET(req: NextRequest) {
           ...item,
           variants: item.variants.map(variant => ({
             ...variant,
-            image: variant.image || vidToImage[variant.vid] || (item.product.imageSet?.[0] || '')
+            image: variant.variantImage || variant.variantImage 
           }))
         };
       })
