@@ -108,11 +108,6 @@ export async function GET(req: NextRequest) {
     orders = orders.map(order => ({
       ...order,
       orderItems: order.orderItems.map(item => {
-        // Build a map of vid to variantImage from product
-        const vidToImage = (item.product.variants || []).reduce<{ [key: string]: string }>((acc, v) => {
-          acc[v.vid] = v.variantImage;
-          return acc;
-        }, {});
         return {
           ...item,
           variants: item.variants.map(variant => ({
