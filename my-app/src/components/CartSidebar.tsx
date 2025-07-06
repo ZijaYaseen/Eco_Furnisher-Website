@@ -19,27 +19,6 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
   const dispatch = useDispatch();
   const { items, grandTotal } = useAppSelector((state) => state.cart);
 
-  useEffect(() => {
-    const fetchCart = async () => {
-        try {
-          const response = await fetch("/api/cart", { cache: 'no-store' });
-          const data = await response.json();
-          console.log("API response:", data);
-          
-          if (data.success) {
-            dispatch(setCartData({
-              items: data.cart.items || [],
-              grandTotal: data.cart.grandTotal || 0
-            }));
-          }
-        } catch (error) {
-          console.error("Error fetching cart:", error);
-        }
-      
-    };
-    fetchCart();
-  }, [dispatch]);
-
   const handleLinkClick = () => CartsetMenuOpen(false);
 
   const handleRemove = async (itemKey: string) => {

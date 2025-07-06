@@ -50,7 +50,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
       try {
         const res = await fetch("/api/wishlist");
         const data = await res.json();
-        console.log("Data", data);
         
         const inWishlist: boolean  = data.items?.some(
           (item: WishlistItem) => item.product?._id === product._id

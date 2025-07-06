@@ -24,14 +24,17 @@ const cartSlice = createSlice({
       
       if (existing) {
         existing.quantity += newItem.quantity;
-        // REMOVED FRONTEND PRICE CALCULATION
-        // We'll rely on backend-calculated subtotal
+        existing.subtotal = existing.discountedPrice * existing.quantity; // Update subtotal
       } else {
         state.items.push({ ...newItem, _key: itemKey });
       }
+      // Recalculate grandTotal after add/update
+      state.grandTotal = state.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
     },
     removeFromCart: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter(item => item._key !== action.payload);
+      // Recalculate grandTotal after removal
+      state.grandTotal = state.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
     },
     clearCart: state => {
       state.items = [];
