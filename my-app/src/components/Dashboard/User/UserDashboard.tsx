@@ -274,7 +274,6 @@ const UserDashboard = () => {
                         />
                         <div className="flex-1">
                           <p className="font-medium text-black text-xs lg:text-sm">{item.product?.productNameEn}</p>
-                          <p className="text-xs text-gray-500">Category: {item.product?.CategoryName}</p>
                           {item.variants.map((variant: OrderProductVariant, vIdx: number) => (
                             <span key={vIdx} className="block text-xs text-gray-600">Qty: {variant.quantity} | Subtotal: ${variant.subtotal.toFixed(2)}</span>
                           ))}
@@ -342,7 +341,6 @@ const UserDashboard = () => {
                           />
                           <div className="flex-1">
                             <p className="font-medium text-black text-xs lg:text-sm">{item.product?.productNameEn}</p>
-                            <p className="text-xs text-gray-500">Category: {item.product?.CategoryName}</p>
                             {item.variants.map((variant: OrderProductVariant, vIdx: number) => (
                               <span key={vIdx} className="block text-xs text-gray-600">Qty: {variant.quantity} | Subtotal: ${variant.subtotal.toFixed(2)}</span>
                             ))}

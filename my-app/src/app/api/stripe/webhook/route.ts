@@ -5,6 +5,14 @@ import Stripe from 'stripe'
 import { client } from '@/sanity/lib/client'
 import type { OrderMeta, OrderItemMeta, VariantMeta } from '@/data'
 
+// Type for payment details
+interface PaymentDetails {
+  transactionId: string;
+  paymentAmount: number;
+  paymentMethod: string;
+  paymentDate: string;
+}
+
 // 1) Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-01-27.acacia',
@@ -36,60 +44,34 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // 3c) Agar checkout.session.completed ho, to order create karo
+  // 3c) Agar checkout.session.completed ho, to order update karo
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
+    const sanityOrderId = session.metadata?.sanityOrderId
 
-    // Get orderMeta from metadata
-    let orderMeta: OrderMeta | null = null;
-    try {
-      orderMeta = session.metadata?.orderMeta ? JSON.parse(session.metadata.orderMeta) : null;
-    } catch (err) {
-      console.error('Error parsing orderMeta:', err);
-    }
-
-    if (orderMeta) {
+    if (sanityOrderId) {
       try {
-        // Prepare Sanity order items
-        const sanityOrderItems = orderMeta.orderItems.map((item: OrderItemMeta) => ({
-          product: { _type: 'reference', _ref: item.product._ref },
-          variants: item.variants.map((variant: VariantMeta) => ({
-            vid: variant.vid,
-            quantity: variant.quantity,
-            subtotal: variant.subtotal
-          })),
-          Total: item.Total
-        }));
+        // Prepare payment details with type safety
+        const paymentDetails: PaymentDetails = {
+          transactionId: session.payment_intent?.toString() || '',
+          paymentAmount: session.amount_total ? session.amount_total / 100 : 0,
+          paymentMethod: 'Stripe',
+          paymentDate: new Date().toISOString(),
+        }
 
-        // Create order in Sanity
-        const newOrder = {
-          _type: 'order',
-          user: orderMeta.userId ? { _type: 'reference', _ref: orderMeta.userId } : undefined,
-          shippingDetails: {
-            ...orderMeta.shippingDetails,
-            country: orderMeta.shippingDetails?.country || orderMeta.billingDetails?.country || 'USA',
-          },
-          paymentMethod: orderMeta.paymentMethod,
-          orderItems: sanityOrderItems,
-          orderTotal: orderMeta.orderTotal,
-          shippingCost: orderMeta.shippingCost,
-          taxAmount: orderMeta.taxAmount,
-          orderStatus: 'paid',
-          createdAt: new Date().toISOString(),
-          paymentDetails: {
-            transactionId: session.payment_intent?.toString() || '',
-            paymentAmount: session.amount_total ? session.amount_total / 100 : 0,
-            paymentMethod: 'Stripe',
-            paymentDate: new Date().toISOString(),
-          },
-        };
-        await client.create(newOrder);
+        // Update the existing order in Sanity
+        await client.patch(sanityOrderId)
+          .set({
+            orderStatus: 'paid',
+            paymentDetails,
+          })
+          .commit()
       } catch (err) {
-        console.error('Error creating order in webhook:', err);
+        console.error('Error updating order in webhook:', err)
       }
+    } else {
+      console.error('No sanityOrderId found in Stripe session metadata.')
     }
-
-    // Optionally clear cart here if needed
   }
 
   return NextResponse.json({ received: true })

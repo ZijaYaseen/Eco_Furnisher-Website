@@ -110,10 +110,10 @@ const CartSidebar = ({ CartmenuOpen, CartsetMenuOpen }: CartSidebarProps) => {
                             />
                           )}
                           <div className="flex flex-col text-left lg:gap-2 gap-1">
-                            <p className="lg:text-lg text-sm font-semibold">
+                            <p className="lg:text-lg text-xs font-semibold">
                               {item.product?.productNameEn || "Unknown Product"}
                             </p>
-                            <div className="flex items-center lg:gap-4 gap-1 md:text-sm text-[11px]">
+                            <div className="flex items-center lg:gap-4 gap-1 md:text-sm text-[9px]">
                               <p>Quantity : {item.quantity}</p>
                               <MdClose size={12} />
                               <span className="font-bold">
