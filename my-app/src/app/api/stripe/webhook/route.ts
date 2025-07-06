@@ -3,7 +3,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { client } from '@/sanity/lib/client'
-import type { OrderMeta, OrderItemMeta, VariantMeta } from '@/data'
 
 // Type for payment details
 interface PaymentDetails {
