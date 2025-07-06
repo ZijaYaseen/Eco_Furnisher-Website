@@ -1,7 +1,6 @@
 // components/CartSidebar.tsx
 "use client";
 
-import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setCartData } from "@/redux/cartSlice";
 import { useAppSelector } from "@/redux/hooks";
