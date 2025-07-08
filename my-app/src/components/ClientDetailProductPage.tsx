@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { PiLineVertical } from "react-icons/pi";
-import { FaStar, FaStarHalf, FaPlus, FaMinus, FaFacebook, FaLinkedin } from "react-icons/fa";
+import { FaStar, FaStarHalf, FaPlus, FaMinus, FaFacebook, FaLinkedin, FaHeart, FaRegHeart } from "react-icons/fa";
 import { AiFillTwitterCircle } from "react-icons/ai";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/redux/cartSlice";
@@ -26,6 +26,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const [cartSidebar, setCartSidebar] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showOverview, setShowOverview] = useState(false);
+  const [isInWishlist, setIsInWishlist] = useState(false);
 
   // initial main image from productImageSet
   const [mainImage, setMainImage] = useState<string>(product.imageSet[0]);
@@ -52,6 +53,39 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const originalPrice = selectedVariant.variantActualSellPrice;
   const discountPercent = selectedVariant.discountPercentage;
   const discountedPrice = originalPrice - originalPrice * (discountPercent / 100);
+
+  // Check wishlist status on mount
+  useEffect(() => {
+    const checkWishlist = async () => {
+      try {
+        const res = await fetch("/api/wishlist");
+        const data = await res.json();
+        const inWishlist = data.items?.some((item: any) => item.product?._id === product._id);
+        setIsInWishlist(inWishlist);
+      } catch (error) {
+        console.error("Wishlist check error:", error);
+      }
+    };
+    checkWishlist();
+  }, [product._id]);
+
+  // Toggle wishlist handler
+  const toggleWishlist = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const res = await fetch("/api/wishlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product._id })
+      });
+      if (res.ok) {
+        setIsInWishlist((prev) => !prev);
+      }
+    } catch (error) {
+      console.error("Wishlist toggle error:", error);
+    }
+  };
 
   const handleAddToCart = async () => {
 
@@ -199,7 +233,9 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
         {/* Right: Description & Options */}
         <div className="flex flex-col md:w-[50%] w-full">
-          <h1 className="font-semibold md:text-[28px] md:leading-[38px] text-2xl">{product.productNameEn}</h1>
+          <h1 className="font-semibold md:text-[28px] md:leading-[38px] text-2xl flex items-center gap-3">
+            {product.productNameEn}
+          </h1>
 
           {/* Price */}
           <div className="my-3">
@@ -264,10 +300,33 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             {product.shortDescription}
           </div>
 
+          {/* wishlist button*/}
+          <div className="my-1">
+            <button
+              onClick={toggleWishlist}
+              className={`flex items-center gap-2 px-5 py-2 border rounded-md shadow transition-colors
+                ${isInWishlist
+                  ? "bg-gray-100 text-black border-gray-400 hover:bg-gray-200"
+                  : "bg-white text-black border-gray-400 hover:bg-gray-100"}
+                `}
+              aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+              type="button"
+            >
+              {isInWishlist ? (
+                <FaHeart className="text-red-500" size={20}/>
+              ) : (
+                <FaRegHeart className="text-black" size={20}/>
+              )}
+              <span className="font-medium">
+                {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+              </span>
+            </button>
+          </div>
+
           {/* Quantity & Add to Cart */}
           <div className="flex flex-col pb-10 gap-5">
             <div className="flex md:gap-4 gap-2 my-5">
-              <div className="flex px-2 gap-8 items-center border border-[#9F9F9F] w-[123px] h-16 rounded-md justify-center">
+              <div className="flex px-2 gap-7 items-center border border-[#9F9F9F] w-[123px] h-16 rounded-md justify-center">
                 <button onClick={handleDecrement} className="text-xl font-bold"> - </button>
                 <p className="text-lg">{count}</p>
                 <button onClick={handleIncrement} className="text-xl"> + </button>
