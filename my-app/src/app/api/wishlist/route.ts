@@ -24,6 +24,8 @@ interface WishlistDocument {
   items: WishlistItem[];
 }
 
+type WishlistQueryParams = { userId?: string; guestId?: string };
+
 // NEW: Migration function for guest to user
 async function mergeGuestWishlistWithUser(userId: string, guestId: string): Promise<void> {
   const guestWishlist = await client.fetch(
@@ -109,7 +111,7 @@ export async function POST(req: NextRequest) {
 
     // Find existing wishlist
     let query = "";
-    let queryParams: { userId?: string; guestId?: string } = {};
+    let queryParams: WishlistQueryParams = {};
 
     if (userId && typeof userId === 'string') {
       query = `*[_type == "wishlist" && user._ref == $userId][0]`;
@@ -119,7 +121,7 @@ export async function POST(req: NextRequest) {
       queryParams = { guestId };
     }
 
-    const wishlist = await client.fetch(query, queryParams as Record<string, any>) as WishlistDocument | undefined;
+    const wishlist = await client.fetch<WishlistDocument | undefined>(query, queryParams);
 
     if (wishlist) {
       // Check if product already exists
@@ -195,7 +197,7 @@ export async function GET(req: NextRequest) {
     }
 
     let query = "";
-    let queryParams: { userId?: string; guestId?: string } = {};
+    let queryParams: WishlistQueryParams = {};
 
     if (userId) {
       query = `*[_type == "wishlist" && user._ref == $userId][0]{
@@ -283,7 +285,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ items: [] });
     }
 
-    const wishlist = await client.fetch(query, queryParams as Record<string, any>) || { items: [] };
+    const wishlist = await client.fetch<WishlistDocument | undefined>(query, queryParams);
     return NextResponse.json(wishlist);
   } catch (error) {
     console.error("Wishlist GET error:", error);
@@ -301,7 +303,7 @@ export async function DELETE(req: NextRequest) {
     const guestId: string | null = req.cookies.get("guestId")?.value ?? null;
 
     let query = "";
-    let queryParams: { userId?: string; guestId?: string } = {};
+    let queryParams: WishlistQueryParams = {};
 
     if (userId) {
       query = `*[_type == "wishlist" && user._ref == $userId][0]`;
@@ -323,7 +325,7 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const wishlist = await client.fetch(query, queryParams as Record<string, any>) as WishlistDocument | undefined;
+    const wishlist = await client.fetch<WishlistDocument | undefined>(query, queryParams);
 
     if (!wishlist) {
       return NextResponse.json(
