@@ -5,12 +5,12 @@ import Products from "./Products";
 import Orders from "./Orders";
 import Users from "./Users";
 
-const TABS = [
-  { key: "dashboard", label: "Dashboard" },
-  { key: "products", label: "Products" },
-  { key: "orders", label: "Orders" },
-  { key: "users", label: "Users" },
-];
+// const TABS = [
+//   { key: "dashboard", label: "Dashboard" },
+//   { key: "products", label: "Products" },
+//   { key: "orders", label: "Orders" },
+//   { key: "users", label: "Users" },
+// ];
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
