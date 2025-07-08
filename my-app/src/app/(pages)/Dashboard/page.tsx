@@ -5,6 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import AdminDashboard from "@/components/Dashboard/Admin/AdminDashboard";
 import UserDashboard from "@/components/Dashboard/User/UserDashboard";
 import { FiLogOut } from "react-icons/fi";
+import ClientHeader from "@/components/Header/ClientHeader";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -47,13 +48,16 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="max-w-[1440px] font-poppins w-full mx-auto mt-20 md:mt-28">
+    <div className="max-w-[1440px] font-poppins w-full mx-auto">
 
       {/* Role-based Dashboard Rendering */}
       {session.user?.role === "admin" ? (
         <AdminDashboard />
       ) : session.user?.role === "user" ? (
+       <div className= "mt-20 md:mt-28">
+        <ClientHeader />
         <UserDashboard />
+       </div>
       ) : (
         <div className="text-center">
           <p className="text-red-600">Invalid role: {session.user?.role}</p>
