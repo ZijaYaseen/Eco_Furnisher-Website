@@ -65,6 +65,21 @@ export async function POST(request: NextRequest) {
             paymentDetails,
           })
           .commit()
+
+        // Clear the user's cart after payment
+        const userId = session.metadata?.userId;
+        console.log('Webhook: userId from session.metadata:', userId);
+        const cartQuery = `*[_type == "cart" && user._ref == $userId][0]`;
+        const cartDoc = await client.fetch(cartQuery, { userId });
+        console.log('Webhook: cartDoc found:', cartDoc ? cartDoc._id : 'No cart found for this userId');
+        if (cartDoc && cartDoc._id) {
+          await client.patch(cartDoc._id)
+            .set({ items: [], grandTotal: 0 })
+            .commit();
+          console.log('Webhook: Cart cleared for userId:', userId);
+        } else {
+          console.log('Webhook: No cart to clear for userId:', userId);
+        }
       } catch (err) {
         console.error('Error updating order in webhook:', err)
       }

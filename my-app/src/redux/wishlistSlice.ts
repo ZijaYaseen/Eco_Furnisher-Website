@@ -3,6 +3,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { Product } from '@/data';
 
+axios.defaults.withCredentials = true;
+
 // Define types for wishlist items
 interface WishlistItem {
   _key: string;

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { client } from "@/sanity/lib/client";
 import { nanoid } from "nanoid";
+import { getToken } from "next-auth/jwt";
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
 
@@ -67,21 +68,35 @@ async function mergeGuestWishlistWithUser(userId: string, guestId: string): Prom
   }
 }
 
+async function getUserIdFromRequest(req: NextRequest): Promise<string | null> {
+  // 1. Try NextAuth session token
+  const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  if (session && typeof session === 'object') {
+    if ('user' in session && session.user && typeof session.user === 'object' && 'id' in session.user && typeof session.user.id === 'string') {
+      return session.user.id;
+    }
+    if ('sub' in session && typeof session.sub === 'string') {
+      return session.sub;
+    }
+  }
+  // 2. Try manual JWT
+  const token = req.cookies.get("token")?.value;
+  if (token) {
+    try {
+      const { payload } = await jwtVerify(token, SECRET_KEY);
+      if (typeof payload._id === 'string') {
+        return payload._id;
+      }
+    } catch {}
+  }
+  return null;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { productId } = await req.json();
-    const token = req.cookies.get("token")?.value;
-    let userId: string | null = null;
+    let userId = await getUserIdFromRequest(req);
     let guestId = req.cookies.get("guestId")?.value;
-
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        userId = (payload as { _id: string })._id;
-      } catch (err) {
-        console.warn("Invalid token, proceeding as guest.", err);
-      }
-    }
 
     if (!userId && !guestId) {
       guestId = nanoid();
@@ -96,15 +111,15 @@ export async function POST(req: NextRequest) {
     let query = "";
     let queryParams: { userId?: string; guestId?: string } = {};
 
-    if (userId) {
+    if (userId && typeof userId === 'string') {
       query = `*[_type == "wishlist" && user._ref == $userId][0]`;
       queryParams = { userId };
-    } else if (guestId) {
+    } else if (guestId && typeof guestId === 'string') {
       query = `*[_type == "wishlist" && guestId == $guestId][0]`;
       queryParams = { guestId };
     }
 
-    const wishlist = await client.fetch(query, queryParams) as WishlistDocument | undefined;
+    const wishlist = await client.fetch(query, queryParams as Record<string, any>) as WishlistDocument | undefined;
 
     if (wishlist) {
       // Check if product already exists
@@ -172,20 +187,9 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
-    const guestId = req.cookies.get("guestId")?.value;
-    let userId: string | null = null;
+    const userId: string | null = await getUserIdFromRequest(req);
+    const guestId: string | null = req.cookies.get("guestId")?.value ?? null;
 
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        userId = (payload as { _id: string })._id;
-      } catch (err) {
-        console.warn("Invalid token", err);
-      }
-    }
-
-    // NEW: Migrate guest wishlist to user if needed
     if (userId && guestId) {
       await mergeGuestWishlistWithUser(userId, guestId);
     }
@@ -200,33 +204,33 @@ export async function GET(req: NextRequest) {
           _key,
           product->{
             _id,
-      slug { current },
-      productNameEn,
-      productSku,
-      "imagePath": productImageSet[0],
-      "imageSet": productImageSet,
-      rating,
-      description,
-      shortDescription,
-      categoryId,
-      CategoryName,
-      packingWeight,
-      shippingCharge,
-      inventory,
-      tags,
-      seo {
-        metaTitle,
-        metaDescription,
-        metaKeywords
-      },
+            slug { current },
+            productNameEn,
+            productSku,
+            "imagePath": productImageSet[0],
+            "imageSet": productImageSet,
+            rating,
+            description,
+            shortDescription,
+            categoryId,
+            CategoryName,
+            packingWeight,
+            shippingCharge,
+            inventory,
+            tags,
+            seo {
+              metaTitle,
+              metaDescription,
+              metaKeywords
+            },
             variants[] {
               vid,
-        variantSellPrice,
-        variantSugSellPrice,
-        variantActualSellPrice,
-        discountPercentage,
-        colors{ colorName, colorCode },
-        variantImage
+              variantSellPrice,
+              variantSugSellPrice,
+              variantActualSellPrice,
+              discountPercentage,
+              colors{ colorName, colorCode },
+              variantImage
             }
           }
         }
@@ -239,33 +243,33 @@ export async function GET(req: NextRequest) {
           _key,
           product->{
             _id,
-      slug { current },
-      productNameEn,
-      productSku,
-      "imagePath": productImageSet[0],
-      "imageSet": productImageSet,
-      rating,
-      description,
-      shortDescription,
-      categoryId,
-      CategoryName,
-      packingWeight,
-      shippingCharge,
-      inventory,
-      tags,
-      seo {
-        metaTitle,
-        metaDescription,
-        metaKeywords
-      },
+            slug { current },
+            productNameEn,
+            productSku,
+            "imagePath": productImageSet[0],
+            "imageSet": productImageSet,
+            rating,
+            description,
+            shortDescription,
+            categoryId,
+            CategoryName,
+            packingWeight,
+            shippingCharge,
+            inventory,
+            tags,
+            seo {
+              metaTitle,
+              metaDescription,
+              metaKeywords
+            },
             variants[] {
               vid,
-        variantSellPrice,
-        variantSugSellPrice,
-        variantActualSellPrice,
-        discountPercentage,
-        colors{ colorName, colorCode },
-        variantImage
+              variantSellPrice,
+              variantSugSellPrice,
+              variantActualSellPrice,
+              discountPercentage,
+              colors{ colorName, colorCode },
+              variantImage
             }
           }
         }
@@ -275,7 +279,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ items: [] });
     }
 
-    const wishlist = await client.fetch(query, queryParams) || { items: [] };
+    if (!query) {
+      return NextResponse.json({ items: [] });
+    }
+
+    const wishlist = await client.fetch(query, queryParams as Record<string, any>) || { items: [] };
     return NextResponse.json(wishlist);
   } catch (error) {
     console.error("Wishlist GET error:", error);
@@ -288,19 +296,9 @@ export async function GET(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const { productId } = await req.json();
-    const token = req.cookies.get("token")?.value;
-    const guestId = req.cookies.get("guestId")?.value;
-    let userId: string | null = null;
-
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        userId = (payload as { _id: string })._id;
-      } catch (err) {
-        console.warn("Invalid token", err);
-      }
-    }
+    const { productId } = await req.json() as { productId: string };
+    const userId: string | null = await getUserIdFromRequest(req);
+    const guestId: string | null = req.cookies.get("guestId")?.value ?? null;
 
     let query = "";
     let queryParams: { userId?: string; guestId?: string } = {};
@@ -318,7 +316,14 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const wishlist = await client.fetch(query, queryParams) as WishlistDocument | undefined;
+    if (!query) {
+      return NextResponse.json(
+        { success: false, error: "No query for wishlist fetch" },
+        { status: 400 }
+      );
+    }
+
+    const wishlist = await client.fetch(query, queryParams as Record<string, any>) as WishlistDocument | undefined;
 
     if (!wishlist) {
       return NextResponse.json(
@@ -328,7 +333,6 @@ export async function DELETE(req: NextRequest) {
     }
 
     const updatedItems = wishlist.items.filter(item => item.product._ref !== productId);
-    
     await client.patch(wishlist._id)
       .set({ items: updatedItems })
       .commit();

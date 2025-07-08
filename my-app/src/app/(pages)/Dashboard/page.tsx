@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
-import AdminDashboard from "@/components/AdminDashboard";
+import AdminDashboard from "@/components/Dashboard/Admin/AdminDashboard";
 import UserDashboard from "@/components/Dashboard/User/UserDashboard";
 import { FiLogOut } from "react-icons/fi";
 

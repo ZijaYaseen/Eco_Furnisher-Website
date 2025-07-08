@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { client } from "@/sanity/lib/client";
 import { nanoid } from "nanoid";
+import { getToken } from "next-auth/jwt";
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
 
@@ -89,27 +90,37 @@ async function mergeGuestCartWithUserCart(userId: string, guestId: string): Prom
   }
 }
 
+async function getUserIdFromRequest(req: NextRequest): Promise<string | null> {
+  // 1. Try NextAuth session token
+  const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  if (session && typeof session === 'object') {
+    if ('user' in session && session.user && typeof session.user === 'object' && 'id' in session.user && typeof session.user.id === 'string') {
+      return session.user.id;
+    }
+    if ('sub' in session && typeof session.sub === 'string') {
+      return session.sub;
+    }
+  }
+  // 2. Try manual JWT
+  const token = req.cookies.get("token")?.value;
+  if (token) {
+    try {
+      const { payload } = await jwtVerify(token, SECRET_KEY);
+      if (typeof payload._id === 'string') {
+        return payload._id;
+      }
+    } catch {}
+  }
+  return null;
+}
+
 // POST Endpoint - Add to cart with variant support
 export async function POST(req: NextRequest) {
   try {
     const { productId, variantId, quantity } = await req.json();
 
-    const token = req.cookies.get("token")?.value;
-    let userId: string | null = null;
-    let guestId = req.cookies.get("guestId")?.value;
-
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        userId = (payload as { _id: string })._id;
-      } catch (err) {
-        console.warn("Invalid token, proceeding as guest.", err);
-      }
-    }
-
-    if (!userId && !guestId) {
-      guestId = nanoid();
-    }
+    const userId: string | null = await getUserIdFromRequest(req);
+    const guestId: string | undefined = req.cookies.get("guestId")?.value;
 
     if (userId && guestId) {
       await mergeGuestCartWithUserCart(userId, guestId);
@@ -141,7 +152,7 @@ export async function POST(req: NextRequest) {
     if (userId) {
       query = `*[_type == "cart" && user._ref == $userId][0]`;
       queryParams = { userId };
-    } else if (guestId) {
+    } else if (typeof guestId === 'string') {
       query = `*[_type == "cart" && guestId == $guestId][0]`;
       queryParams = { guestId };
     }
@@ -237,18 +248,8 @@ export async function POST(req: NextRequest) {
 // GET Endpoint - Fetch cart with variant images
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
-    const guestId = req.cookies.get("guestId")?.value;
-    let userId: string | null = null;
-
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        userId = (payload as { _id: string })._id;
-      } catch (err) {
-        console.warn("Invalid token", err);
-      }
-    }
+    const userId: string | null = await getUserIdFromRequest(req);
+    const guestId: string | undefined = req.cookies.get("guestId")?.value;
 
     if (userId && guestId) {
       await mergeGuestCartWithUserCart(userId, guestId);
@@ -347,18 +348,8 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const token = req.cookies.get("token")?.value;
-    let userId: string | null = null;
-    const guestId = req.cookies.get("guestId")?.value;
-
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        userId = (payload as { _id: string })._id;
-      } catch (err) {
-        console.warn("Invalid token, proceeding as guest.", err);
-      }
-    }
+    const userId: string | null = await getUserIdFromRequest(req);
+    const guestId: string | undefined = req.cookies.get("guestId")?.value;
 
     let query = "";
     let queryParams: { userId?: string; guestId?: string } = {};
@@ -415,18 +406,8 @@ export async function PATCH(req: NextRequest) {
   try {
     const { itemKey, quantity } = await req.json();
     
-    const token = req.cookies.get("token")?.value;
-    let userId: string | null = null;
-    const guestId = req.cookies.get("guestId")?.value;
-
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        userId = (payload as { _id: string })._id;
-      } catch (err) {
-        console.warn("Invalid token, proceeding as guest.", err);
-      }
-    }
+    const userId: string | null = await getUserIdFromRequest(req);
+    const guestId: string | undefined = req.cookies.get("guestId")?.value;
 
     let query = "";
     let queryParams: { userId?: string; guestId?: string } = {};
