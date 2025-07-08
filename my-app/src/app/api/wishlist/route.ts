@@ -97,7 +97,7 @@ async function getUserIdFromRequest(req: NextRequest): Promise<string | null> {
 export async function POST(req: NextRequest) {
   try {
     const { productId } = await req.json();
-    let userId = await getUserIdFromRequest(req);
+    const userId = await getUserIdFromRequest(req);
     let guestId = req.cookies.get("guestId")?.value;
 
     if (!userId && !guestId) {
