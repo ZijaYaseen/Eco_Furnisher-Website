@@ -40,8 +40,8 @@ export default function SalesChart() {
             {
               label: 'Sales',
               data: sales,
-              borderColor: '#6366f1',
-              backgroundColor: 'rgba(99,102,241,0.1)',
+              borderColor: '#222',
+              backgroundColor: 'rgba(100,100,100,0.05)',
               tension: 0.4,
               fill: true,
             },
@@ -56,28 +56,32 @@ export default function SalesChart() {
   }, []);
 
   return (
-    <div className="bg-white rounded-xl shadow p-6 border border-gray-100 my-8">
-      <div className="font-bold text-lg mb-4 text-black">Sales Over Time</div>
-      {loading ? (
-        <div className="h-40 flex items-center justify-center text-gray-400 animate-pulse">Loading chart...</div>
-      ) : chartData ? (
-        <Line
-          data={chartData}
-          options={{
-            responsive: true,
-            plugins: {
-              legend: { display: false },
-              title: { display: false },
-            },
-            scales: {
-              x: { grid: { display: false } },
-              y: { grid: { color: '#f3f4f6' }, beginAtZero: true },
-            },
-          }}
-        />
-      ) : (
-        <div className="h-40 flex items-center justify-center text-gray-400">No data</div>
-      )}
+    <div className="shadow-lg border border-gray-200 bg-white my-8 overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-100">
+        <div className="font-bold text-xl text-gray-900 tracking-wide">Sales Overview</div>
+      </div>
+      <div className="p-6">
+        {loading ? (
+          <div className="h-24 flex items-center justify-center text-gray-400 animate-pulse">Loading chart...</div>
+        ) : chartData ? (
+          <Line
+            data={chartData}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: { display: false },
+                title: { display: false },
+              },
+              scales: {
+                x: { grid: { display: false } },
+                y: { grid: { color: '#e5e7eb' }, beginAtZero: true },
+              },
+            }}
+          />
+        ) : (
+          <div className="h-24 flex items-center justify-center text-gray-400">No data</div>
+        )}
+      </div>
     </div>
   );
 } 

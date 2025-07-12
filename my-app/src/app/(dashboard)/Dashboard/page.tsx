@@ -6,6 +6,7 @@ import AdminDashboard from "@/components/Dashboard/Admin/AdminDashboard";
 import UserDashboard from "@/components/Dashboard/User/UserDashboard";
 import { FiLogOut } from "react-icons/fi";
 import ClientHeader from "@/components/Header/ClientHeader";
+import Footer from "@/components/Footer";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -54,10 +55,13 @@ const Dashboard = () => {
       {session.user?.role === "admin" ? (
         <AdminDashboard />
       ) : session.user?.role === "user" ? (
-       <div className= "mt-20 md:mt-28">
+       <>
         <ClientHeader />
+        <div className= "mt-20 md:mt-28">
         <UserDashboard />
-       </div>
+        </div>
+        <Footer />
+       </>
       ) : (
         <div className="text-center">
           <p className="text-red-600">Invalid role: {session.user?.role}</p>

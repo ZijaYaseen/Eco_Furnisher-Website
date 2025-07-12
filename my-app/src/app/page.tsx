@@ -7,6 +7,7 @@ import TopPicks from '@/components/TopPicks';
 import CollectionsSection from '@/components/Collection';
 import BestSellerSection from '@/components/BestSeller';
 import BlogSection from '@/components/Blog';
+import ClientHeader from '@/components/Header/ClientHeader';
 
 const Home = async () => {
 
@@ -14,6 +15,8 @@ const Home = async () => {
   const TopPicksData  = await TopPicksDataSanity ();
 
   return (
+    <>
+    <ClientHeader />
     <div className='max-w-[1440px] mx-auto font-poppins h-full w-full overflow-hidden mt-[56px]'>
 
      {/* Home PageSection 1*/}
@@ -56,6 +59,7 @@ const Home = async () => {
 </section>
   
     </div>
+    </>
   )
 }
 

@@ -9,7 +9,16 @@ async function isAdmin(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   if (!(await isAdmin(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-  const users = await client.fetch(`*[_type == "user"] | order(_createdAt desc)`);
+  const users = await client.fetch(`*[_type == "user"] {
+    _id,
+    fullName,
+    email,
+    image,
+    role,
+    provider,
+    emailVerified,
+    _createdAt
+  } | order(_createdAt desc)`);
   return NextResponse.json({ users });
 }
 

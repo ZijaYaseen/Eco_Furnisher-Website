@@ -1,5 +1,6 @@
 import React from 'react'
 import SubFooter from '@/components/SubFooter'
+import ClientHeader from '@/components/Header/ClientHeader'
 import Footer from '@/components/Footer'
 
 interface CheckoutLayoutProps {
@@ -9,9 +10,9 @@ interface CheckoutLayoutProps {
 const CheckoutLayout:React.FC<CheckoutLayoutProps> = (props) => {
   return (
     <div>
-  
+        <ClientHeader />
         {props.children}
-        <SubFooter />
+        <SubFooter />  
         <Footer />
     
     </div>

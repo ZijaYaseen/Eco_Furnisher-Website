@@ -6,17 +6,21 @@ import { client } from '@/sanity/lib/client';
 export interface Order {
   _id: string;
   createdAt: string;
-  orderStatus: 'pending' | 'shipped' | 'delivered' | 'cancelled';
-  trackingStatus: 'not_started' | 'in_transit' | 'delivered';
+  orderStatus: string;
+  trackingStatus: string;
   trackingNumber: string;
-  // ─ add any other fields you fetch/return below
+  user?: any;
+  shippingDetails?: any;
+  orderItems?: any[];
+  orderTotal?: number;
+  shippingCost?: number;
+  taxAmount?: number;
+  paymentMethod?: string;
+  paymentDetails?: any;
 }
 
 /** Only the fields you want to PATCH (all optional). */
-export type OrderPatch = Partial<Pick<
-  Order,
-  'orderStatus' | 'trackingStatus' | 'trackingNumber'
->>;
+export type OrderPatch = Partial<Order>;
 
 /** Helper to guard admin routes via NextAuth JWT. */
 async function isAdmin(req: NextRequest): Promise<boolean> {
@@ -27,54 +31,68 @@ async function isAdmin(req: NextRequest): Promise<boolean> {
   return Boolean(token && (token as any).role === 'admin');
 }
 
-/** GET /api/orders → list all orders (admin‑only) */
+/** GET /api/dashboard/orders → list all orders (admin‑only) */
 export async function GET(req: NextRequest) {
   if (!(await isAdmin(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
 
-  // Fetch all orders, sorted newest first
+  // Fetch all orders, sorted newest first, with user and orderItems details
   const orders: Order[] = await client.fetch(
     `*[_type == "order"] | order(createdAt desc){
-       _id,
-       createdAt,
-       orderStatus,
-       trackingStatus,
-       trackingNumber
-       // …any other fields
-     }`
+      _id,
+      createdAt,
+      orderStatus,
+      trackingStatus,
+      trackingNumber,
+      orderTotal,
+      shippingCost,
+      taxAmount,
+      paymentMethod,
+      paymentDetails,
+      shippingDetails,
+      user->{_id, fullName, email, image, emailVerified},
+      orderItems[]{
+        product->{_id, productNameEn, productImageSet,variants[]},
+        variants[],
+        Total
+      }
+    }`
   );
 
   return NextResponse.json({ orders });
 }
 
-/** PATCH /api/orders → update status/tracking on a single order */
+/** POST /api/dashboard/orders → create a new order */
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  // Validate required fields (add more as needed)
+  if (!body.orderItems || !body.orderTotal) {
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  }
+  // Create order in Sanity
+  const newOrder = await client.create({
+    _type: 'order',
+    ...body,
+    createdAt: new Date().toISOString(),
+  });
+  return NextResponse.json({ order: newOrder }, { status: 201 });
+}
+
+/** PATCH /api/dashboard/orders → update status/tracking on a single order */
 export async function PATCH(req: NextRequest) {
   if (!(await isAdmin(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
 
   const body = await req.json();
-  const { _id, orderStatus, trackingStatus, trackingNumber } = body;
+  const { _id, ...patchData } = body;
 
   if (!_id || typeof _id !== 'string') {
     return NextResponse.json(
       { error: 'Missing or invalid order ID' },
       { status: 400 }
     );
-  }
-
-  // Build only the fields we actually got
-  const patchData: OrderPatch = {};
-
-  if (orderStatus) {
-    patchData.orderStatus = orderStatus;
-  }
-  if (trackingStatus) {
-    patchData.trackingStatus = trackingStatus;
-  }
-  if (trackingNumber) {
-    patchData.trackingNumber = trackingNumber;
   }
 
   if (Object.keys(patchData).length === 0) {

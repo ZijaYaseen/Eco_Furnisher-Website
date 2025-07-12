@@ -6,26 +6,26 @@ export default function TopChannelsTable() {
     { source: 'Facebook', visitors: '1.2K', revenue: '$1,200.00', sales: 1200, conversion: '1.75%' },
   ];
   return (
-    <div className="bg-white rounded-xl shadow p-6 border border-gray-100 overflow-x-auto">
-      <div className="font-bold text-lg mb-4 text-black">Top Channels</div>
+    <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-200 overflow-x-auto">
+      <div className="font-bold text-lg mb-4 text-gray-900">Top Channels</div>
       <table className="min-w-full text-left">
         <thead>
-          <tr className="text-gray-500 text-sm">
-            <th className="py-2 px-4">Source</th>
-            <th className="py-2 px-4">Visitors</th>
-            <th className="py-2 px-4">Revenue</th>
-            <th className="py-2 px-4">Sales</th>
-            <th className="py-2 px-4">Conversion</th>
+          <tr className="text-gray-500 text-sm border-b border-gray-100">
+            <th className="py-2 px-4 font-semibold">Source</th>
+            <th className="py-2 px-4 font-semibold">Visitors</th>
+            <th className="py-2 px-4 font-semibold">Revenue</th>
+            <th className="py-2 px-4 font-semibold">Sales</th>
+            <th className="py-2 px-4 font-semibold">Conversion</th>
           </tr>
         </thead>
         <tbody>
           {channels.map((ch) => (
-            <tr key={ch.source} className="border-t border-gray-100 hover:bg-gray-50">
-              <td className="py-2 px-4 font-medium text-black">{ch.source}</td>
-              <td className="py-2 px-4">{ch.visitors}</td>
-              <td className="py-2 px-4">{ch.revenue}</td>
-              <td className="py-2 px-4">{ch.sales}</td>
-              <td className="py-2 px-4">{ch.conversion}</td>
+            <tr key={ch.source} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
+              <td className="py-2 px-4 font-medium text-gray-900">{ch.source}</td>
+              <td className="py-2 px-4 text-gray-700">{ch.visitors}</td>
+              <td className="py-2 px-4 text-gray-700">{ch.revenue}</td>
+              <td className="py-2 px-4 text-gray-700">{ch.sales}</td>
+              <td className="py-2 px-4 text-gray-700">{ch.conversion}</td>
             </tr>
           ))}
         </tbody>
