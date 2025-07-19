@@ -65,7 +65,7 @@ export default function StatsCards() {
   }, [selectedPeriod]);
 
   return (
-    <div className="space-y-6 mt-6">
+    <div className="space-y-6">
       {/* Time Period Tabs */}
       <div className="flex flex-wrap gap-2">
         {timePeriods.map((period) => (

@@ -1,5 +1,10 @@
 import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
+import { PortableText } from '@portabletext/react';
+import Image from 'next/image';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import DOMPurify from 'dompurify';
 
 // Product type based on Sanity schema
 interface Variant {
@@ -8,7 +13,7 @@ interface Variant {
   variantSugSellPrice?: number;
   variantActualSellPrice?: number;
   discountPercentage?: number;
-  colors?: { colorName: string; colorCode: string };
+  colors?: { colorName?: string; colorCode?: string };
   variantImage?: string;
 }
 interface Product {
@@ -55,6 +60,7 @@ export default function ProductsTable() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [quillValue, setQuillValue] = useState(form.description || '');
 
   // Fetch products
   useEffect(() => {
@@ -72,9 +78,16 @@ export default function ProductsTable() {
     fetchProducts();
   }, [showModal, deletingId, success]);
 
+  useEffect(() => {
+    if (showModal) {
+      setQuillValue(form.description || '');
+    }
+  }, [showModal]);
+
   // Handle form input
   function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
+    if (name === 'description') return;
     setForm({ ...form, [name]: value });
   }
 
@@ -94,7 +107,7 @@ export default function ProductsTable() {
 
   function handleVariantColorChange(idx: number, e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setForm(f => ({
+    setForm((f): Partial<Product> => ({
       ...f,
       variants: (f.variants || []).map((v, i) =>
         i === idx ? { ...v, colors: { ...(v.colors || {}), [name]: value } } : v
@@ -118,7 +131,7 @@ export default function ProductsTable() {
     try {
       const method = editProduct ? 'PATCH' : 'POST';
       const body = editProduct ? { ...form, _id: editProduct._id } : form;
-      const res = await fetch('/api/dashboard/product', {
+      const res = await fetch('/api/dashboard/products', {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -138,7 +151,7 @@ export default function ProductsTable() {
     setError(null);
     setSuccess(null);
     try {
-      const res = await fetch('/api/dashboard/product', {
+      const res = await fetch('/api/dashboard/products', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ _id: id }),
@@ -176,7 +189,9 @@ export default function ProductsTable() {
                 <th className="py-2 px-4 font-semibold">SKU</th>
                 <th className="py-2 px-4 font-semibold">Price</th>
                 <th className="py-2 px-4 font-semibold">Inventory</th>
+                <th className="py-2 px-4 font-semibold">Variants</th>
                 <th className="py-2 px-4 font-semibold">Actions</th>
+                <th className="py-2 px-4 font-semibold">Delete</th>
               </tr>
             </thead>
             <tbody>
@@ -184,22 +199,31 @@ export default function ProductsTable() {
                 <tr key={p._id} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
                   <td className="py-2 px-4">
                     {p.productImageSet?.[0] && (
-                      <img src={p.productImageSet[0]} alt={p.productNameEn} className="w-12 h-12 object-cover rounded" />
+                      <Image width={100} height={100} src={p.productImageSet[0]} alt={p.productNameEn} className="w-24 h-16 object-cover rounded" />
                     )}
                   </td>
                   <td className="py-2 px-4 font-medium text-gray-900">{p.productNameEn}</td>
                   <td className="py-2 px-4 text-gray-700">{p.productSku}</td>
                   <td className="py-2 px-4 text-gray-700">${p.variants?.[0]?.variantActualSellPrice?.toFixed(2) || '-'}</td>
                   <td className="py-2 px-4 text-gray-700">{p.inventory}</td>
-                  <td className="py-2 px-4 flex gap-2">
+                  <td className="py-2 px-4 text-gray-700">{p.variants?.length || 0}</td>
+                  <td className="py-2 px-4">
                     <button
-                      className="text-gray-900 hover:underline"
+                      className="text-gray-900 hover:text-gray-950 bg-gray-100 py-2 px-4 hover:bg-gray-300 rounded"
                       onClick={() => { setEditProduct(p); setForm(p); setShowModal(true); }}
-                    >Edit</button>
+                      title="Edit"
+                    >
+                      Edit
+                    </button>
+                    </td>
+                    <td className="py-2 px-4">
                     <button
-                      className="text-red-600 hover:underline"
+                      className="text-red-600 hover:text-red-800"
                       onClick={() => handleDelete(p._id)}
-                    >Delete</button>
+                      title="Delete"
+                    >
+                      <FaTrash size={24}/>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -238,7 +262,15 @@ export default function ProductsTable() {
                 <textarea name="shortDescription" value={form.shortDescription || ''} onChange={handleChange} className="w-full border rounded px-3 py-2 mt-1" />
               </label>
               <label className="block md:col-span-2">Description
-                <textarea name="description" value={form.description || ''} onChange={handleChange} className="w-full border rounded px-3 py-2 mt-1" />
+                <ReactQuill
+                  value={quillValue}
+                  onChange={value => {
+                    setQuillValue(value);
+                    setForm(f => ({ ...f, description: value }));
+                  }}
+                  className="w-full border rounded mt-1"
+                  theme="snow"
+                />
               </label>
               <label className="block md:col-span-2">Image URLs (comma separated)
                 <input name="productImageSet" value={form.productImageSet?.join(', ') || ''} onChange={e => handleArrayChange('productImageSet', e.target.value)} className="w-full border rounded px-3 py-2 mt-1" />
@@ -292,10 +324,14 @@ export default function ProductsTable() {
       {deletingId && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
-            <div className="font-bold text-lg mb-4">Delete Product?</div>
+            <div className="font-bold text-lg mb-4 flex items-center gap-2">
+              <FaTrash className="text-red-600" /> Delete Product?
+            </div>
             <div className="mb-4">Are you sure you want to delete this product?</div>
             <div className="flex gap-2">
-              <button className="bg-red-600 text-white px-4 py-2 rounded" onClick={() => handleDelete(deletingId)}>Delete</button>
+              <button className="bg-red-600 text-white px-4 py-2 rounded flex items-center gap-2" onClick={() => handleDelete(deletingId)}>
+                <FaTrash /> Delete
+              </button>
               <button className="bg-gray-200 px-4 py-2 rounded" onClick={() => setDeletingId(null)}>Cancel</button>
             </div>
             {error && <div className="text-red-500 mt-2">{error}</div>}

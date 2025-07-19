@@ -1,10 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import AdminDashboard from "@/components/Dashboard/Admin/AdminDashboard";
 import UserDashboard from "@/components/Dashboard/User/UserDashboard";
-import { FiLogOut } from "react-icons/fi";
 import ClientHeader from "@/components/Header/ClientHeader";
 import Footer from "@/components/Footer";
 
@@ -17,10 +16,6 @@ const Dashboard = () => {
       router.push("/Account/Login");
     }
   }, [status, router]);
-
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: "/Account/Login" });
-  };
 
   if (status === "loading") {
     return (
@@ -69,19 +64,6 @@ const Dashboard = () => {
           <UserDashboard />
         </div>
       )}
-
-      <div className="flex justify-center mt-10">
-
-        <div className="pt-6 border-t border-gray-200">
-          <button
-            onClick={handleLogout}
-            className="flex items-center justify-center space-x-2 py-2 px-4 border border-red-200 text-red-600 font-medium rounded-lg hover:bg-red-50 transition-colors text-sm lg:text-base"
-          >
-            <FiLogOut className="w-4 h-4" />
-            <span>Logout Account</span>
-          </button>
-        </div>
-      </div>
     </div>
   );
 };

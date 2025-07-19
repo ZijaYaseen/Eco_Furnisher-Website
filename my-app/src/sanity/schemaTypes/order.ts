@@ -79,6 +79,21 @@ export default {
       type: 'number',
     },
     {
+      name: 'channel',
+      title: 'Channel',
+      type: 'string',
+      options: {
+      list: [
+        { title: 'Website', value: 'website' },
+        { title: 'Instagram', value: 'instagram' },
+        { title: 'Facebook', value: 'facebook' },
+        { title: 'WhatsApp', value: 'whatsapp' },
+        // Add more as needed
+      ],
+    },
+    initialValue: 'website',
+  },
+    {
       name: 'paymentMethod',
       title: 'Payment Method',
       type: 'string',
