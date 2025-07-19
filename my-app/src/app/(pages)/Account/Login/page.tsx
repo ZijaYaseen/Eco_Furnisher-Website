@@ -37,6 +37,7 @@ const Login = () => {
             // Success
             router.push("/Dashboard");
         } catch (error) {
+            console.log(error);
             setError("Something went wrong");
             setIsLoading(false);
         }

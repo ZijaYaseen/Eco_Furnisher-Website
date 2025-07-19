@@ -56,6 +56,8 @@ export default function OrdersTable() {
         const data = await res.json();
         setOrders(data.orders || []);
       } catch (e) {
+        console.log(e);
+        
         setError('Failed to fetch orders');
       }
       setLoading(false);
@@ -83,6 +85,7 @@ export default function OrdersTable() {
       setTracking('');
       setSuccess('Order updated successfully!');
     } catch (e) {
+      console.log(e);
       setError('Failed to update order');
     }
   }

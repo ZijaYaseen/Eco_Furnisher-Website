@@ -1,10 +1,8 @@
 import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
-import { FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
-import { PortableText } from '@portabletext/react';
+import { FaPlus, FaTrash} from 'react-icons/fa';
 import Image from 'next/image';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import DOMPurify from 'dompurify';
 
 // Product type based on Sanity schema
 interface Variant {
@@ -72,6 +70,7 @@ export default function ProductsTable() {
         setProducts(data.products || []);
       } catch (e) {
         setError('Failed to fetch products');
+        console.log(e);
       }
       setLoading(false);
     }
@@ -142,6 +141,7 @@ export default function ProductsTable() {
       setForm(initialForm);
       setSuccess('Product saved successfully!');
     } catch (e) {
+      console.log(e);
       setError('Failed to save product');
     }
   }
@@ -160,6 +160,7 @@ export default function ProductsTable() {
       setDeletingId(null);
       setSuccess('Product deleted successfully!');
     } catch (e) {
+      console.log(e);
       setError('Failed to delete product');
     }
   }
