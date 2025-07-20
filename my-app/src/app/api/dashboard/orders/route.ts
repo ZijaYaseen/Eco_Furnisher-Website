@@ -2,6 +2,70 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { client } from '@/sanity/lib/client';
 
+/** User fields for order reference */
+export interface OrderUser {
+  _id: string;
+  fullName: string;
+  email: string;
+  image?: string;
+  emailVerified?: string;
+}
+
+/** Shipping details object */
+export interface ShippingDetails {
+  firstName: string;
+  lastName: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  phone: string;
+  email: string;
+}
+
+/** Product variant in order item */
+export interface OrderItemVariant {
+  vid: string;
+  quantity: number;
+  subtotal: number;
+  variantImage?: string;
+}
+
+/** Product variant for product and order item */
+export interface ProductVariant {
+  vid: string;
+  variantSellPrice?: number;
+  variantSugSellPrice?: number;
+  variantActualSellPrice?: number;
+  discountPercentage?: number;
+  colors?: {
+    colorName?: string;
+    colorCode?: string;
+  };
+  variantImage?: string;
+}
+
+/** Order item */
+export interface OrderItem {
+  product: {
+    _id: string;
+    productNameEn: string;
+    productImageSet?: string[];
+    variants?: ProductVariant[];
+  };
+  variants: OrderItemVariant[];
+  Total: number;
+}
+
+/** Payment details object */
+export interface PaymentDetails {
+  transactionId?: string;
+  paymentAmount?: number;
+  paymentMethod?: string;
+  paymentDate?: string;
+}
+
 /** Mirror your Sanity “order” schema. */
 export interface Order {
   _id: string;
@@ -9,14 +73,14 @@ export interface Order {
   orderStatus: string;
   trackingStatus: string;
   trackingNumber: string;
-  user?: any;
-  shippingDetails?: any;
-  orderItems?: any[];
+  user?: OrderUser;
+  shippingDetails?: ShippingDetails;
+  orderItems?: OrderItem[];
   orderTotal?: number;
   shippingCost?: number;
   taxAmount?: number;
   paymentMethod?: string;
-  paymentDetails?: any;
+  paymentDetails?: PaymentDetails;
 }
 
 /** Only the fields you want to PATCH (all optional). */

@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     const now = new Date();
     let resetAttempts = user.resetAttempts || 0;
     let resetWindowStart = user.resetWindowStart ? new Date(user.resetWindowStart) : null;
-    let lastResetRequestTime = user.lastResetRequestTime ? new Date(user.lastResetRequestTime) : null;
+    const lastResetRequestTime = user.lastResetRequestTime ? new Date(user.lastResetRequestTime) : null;
 
     // Reset window if 24h passed
     if (!resetWindowStart || now.getTime() - resetWindowStart.getTime() > 24 * 60 * 60 * 1000) {

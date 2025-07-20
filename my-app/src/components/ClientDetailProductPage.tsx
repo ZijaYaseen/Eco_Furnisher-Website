@@ -60,7 +60,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
       try {
         const res = await fetch("/api/wishlist");
         const data = await res.json();
-        const inWishlist = data.items?.some((item: any) => item.product?._id === product._id);
+        const inWishlist = data.items?.some((item:any) => item.product?._id === product._id);
         setIsInWishlist(inWishlist);
       } catch (error) {
         console.error("Wishlist check error:", error);
