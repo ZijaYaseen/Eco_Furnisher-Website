@@ -10,7 +10,7 @@ const loginRateLimitMap = new Map();
 const LOGIN_RATE_LIMIT = 5; // 5 requests
 const LOGIN_RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
 
-function isLoginRateLimited(ip) {
+function isLoginRateLimited(ip:string) {
   const now = Date.now();
   const entry = loginRateLimitMap.get(ip) || { count: 0, last: now };
   if (now - entry.last > LOGIN_RATE_LIMIT_WINDOW) {

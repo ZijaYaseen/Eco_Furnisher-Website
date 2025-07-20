@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+ import { NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { sendEmail } from "@/lib/sendEmail";
 import * as Sentry from "@sentry/nextjs";
@@ -52,10 +52,41 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json({ success: true, message: "A reset link has been sent." });
     }
+    // --- Rate limiting logic per user ---
+    const now = new Date();
+    let resetAttempts = user.resetAttempts || 0;
+    let resetWindowStart = user.resetWindowStart ? new Date(user.resetWindowStart) : null;
+    let lastResetRequestTime = user.lastResetRequestTime ? new Date(user.lastResetRequestTime) : null;
+
+    // Reset window if 24h passed
+    if (!resetWindowStart || now.getTime() - resetWindowStart.getTime() > 24 * 60 * 60 * 1000) {
+      resetAttempts = 0;
+      resetWindowStart = now;
+    }
+
+    // 1 min cooldown
+    if (lastResetRequestTime && now.getTime() - lastResetRequestTime.getTime() < 60 * 1000) {
+      const retryAfter = Math.ceil((60 * 1000 - (now.getTime() - lastResetRequestTime.getTime())) / 1000);
+      return NextResponse.json({
+        success: false,
+        error: `Please wait ${retryAfter} seconds before requesting another reset email.`,
+        retryAfter,
+      }, { status: 429 });
+    }
+
+    // 3 attempts in 24h
+    if (resetAttempts >= 3) {
+      const retryAfter = Math.ceil((resetWindowStart.getTime() + 24 * 60 * 60 * 1000 - now.getTime()) / 1000);
+      return NextResponse.json({
+        success: false,
+        error: "You have reached the maximum number of reset attempts. Try again after 24 hours.",
+        retryAfter,
+      }, { status: 429 });
+    }
     // 2. Generate token and expiry (1 hour)
     const resetToken = nanoid(32);
     const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000).toISOString();
-    // 3. Save token/expiry to user in Sanity
+    // 3. Save token/expiry and rate limit fields to user in Sanity
     const patchBody = {
       mutations: [
         {
@@ -64,6 +95,9 @@ export async function POST(req: Request) {
             set: {
               resetToken,
               resetTokenExpiry,
+              resetAttempts: resetAttempts + 1,
+              resetWindowStart: resetWindowStart.toISOString(),
+              lastResetRequestTime: now.toISOString(),
             },
           },
         },

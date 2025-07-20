@@ -11,7 +11,7 @@ const signupRateLimitMap = new Map();
 const SIGNUP_RATE_LIMIT = 3; // 3 requests
 const SIGNUP_RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
 
-function isSignupRateLimited(ip) {
+function isSignupRateLimited(ip:string) {
   const now = Date.now();
   const entry = signupRateLimitMap.get(ip) || { count: 0, last: now };
   if (now - entry.last > SIGNUP_RATE_LIMIT_WINDOW) {

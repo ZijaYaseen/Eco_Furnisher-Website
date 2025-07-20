@@ -1,17 +1,25 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldown]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("");
-    setError("");
     setLoading(true);
+    setError("");
+    setMessage("");
     try {
       const res = await fetch("/api/account/forgot-password", {
         method: "POST",
@@ -19,10 +27,13 @@ export default function ForgotPasswordPage() {
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
-      if (res.ok && data.success) {
-        setMessage("If this email exists, a reset link has been sent.");
+      if (data.success) {
+        setMessage(data.message);
       } else {
         setError(data.error || "Something went wrong.");
+        if (data.retryAfter) {
+          setCooldown(data.retryAfter); // seconds
+        }
       }
     } catch {
       setError("Something went wrong.");
@@ -40,17 +51,17 @@ export default function ForgotPasswordPage() {
           <input
             type="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
+            onChange={(e) => setEmail(e.target.value)}
             className="p-3 border border-gray-400 rounded focus:outline-none bg-white text-black"
             placeholder="Enter your email"
+            disabled={loading || cooldown > 0}
           />
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || cooldown > 0}
             className="bg-black text-white rounded py-2 font-semibold hover:bg-gray-900 disabled:opacity-50"
           >
-            {loading ? "Sending..." : "Send Reset Link"}
+            {loading ? "Sending..." : cooldown > 0 ? `Try again in ${cooldown}s` : "Send Reset Link"}
           </button>
           {message && <p className="text-green-600 text-center mt-2">{message}</p>}
           {error && <p className="text-red-600 text-center mt-2">{error}</p>}
