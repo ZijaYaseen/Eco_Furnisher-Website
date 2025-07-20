@@ -16,6 +16,46 @@ import OutOfStockModal from "./OutOfStockModal";
 import { PortableText } from '@portabletext/react';
 import { Product, CartItem } from "@/data";
 
+// Wishlist types for wishlist API response
+interface WishlistProduct {
+  _id: string;
+  productNameEn: string;
+  productSku: string;
+  slug: { current: string };
+  imagePath?: string;
+  imageSet?: string[];
+  rating?: number;
+  description?: string;
+  shortDescription?: string;
+  categoryId?: string;
+  CategoryName?: string[];
+  packingWeight?: number;
+  shippingCharge?: string | number;
+  inventory?: number;
+  tags?: string[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    metaKeywords?: string[];
+  };
+  variants?: {
+    vid: string;
+    variantSellPrice?: number;
+    variantSugSellPrice?: number;
+    variantActualSellPrice?: number;
+    discountPercentage?: number;
+    colors?: {
+      colorName?: string;
+      colorCode?: string;
+    };
+    variantImage?: string;
+  }[];
+}
+interface WishlistItem {
+  _key: string;
+  product: WishlistProduct;
+}
+
 interface ProductDetailClientProps {
   product: Product;
 }
@@ -60,7 +100,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
       try {
         const res = await fetch("/api/wishlist");
         const data = await res.json();
-        const inWishlist = data.items?.some((item: any) => item.product?._id === product._id);
+        const inWishlist = data.items?.some((item: WishlistItem) => item.product?._id === product._id);
         setIsInWishlist(inWishlist);
       } catch (error) {
         console.error("Wishlist check error:", error);
