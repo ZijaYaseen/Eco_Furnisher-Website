@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +19,8 @@ const Login = () => {
     const [facebookLoading, setFacebookLoading] = useState(false);
 
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const resetSuccess = searchParams.get("reset") === "success";
 
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -67,7 +70,8 @@ const Login = () => {
             <div className="w-[80%] mx-auto py-10">
                 <div className="flex flex-col gap-8 md:w-[40%] w-full mx-auto">
                     <h1 className="font-semibold text-4xl">Log In</h1>
-
+                    {resetSuccess && <p className="text-green-600 font-semibold text-base mt-2">Password reset successful! You can now log in.</p>}
+                    
                     {error && <p className="text-red-600 font-semibold text-base mt-2">{error}</p>}
                     
                     {/* Social Login Buttons */}
@@ -148,6 +152,9 @@ const Login = () => {
                                     {showPassword ? <PiEyeThin size={24} /> : <PiEyeSlashThin size={24} />}
                                 </button>
                             </div>
+                            <Link href="/Account/ForgotPassword">
+                                <span className="font-light md:text-base text-xs text-blue-600 underline mt-2 inline-block">Forgot Password?</span>
+                            </Link>
                         </div>
                         {error && <p className="text-red-600 font-semibold text-base mt-2">{error}</p>}
                         <div className="grid gap-4 mt-2">

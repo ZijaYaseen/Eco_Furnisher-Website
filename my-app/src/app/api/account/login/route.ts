@@ -5,8 +5,29 @@ import { client } from "@/sanity/lib/client";
 
 const SECRET_KEY = process.env.JWT_SECRET as string;
 
+// Simple in-memory rate limit (per IP)
+const loginRateLimitMap = new Map();
+const LOGIN_RATE_LIMIT = 5; // 5 requests
+const LOGIN_RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+
+function isLoginRateLimited(ip) {
+  const now = Date.now();
+  const entry = loginRateLimitMap.get(ip) || { count: 0, last: now };
+  if (now - entry.last > LOGIN_RATE_LIMIT_WINDOW) {
+    loginRateLimitMap.set(ip, { count: 1, last: now });
+    return false;
+  }
+  if (entry.count >= LOGIN_RATE_LIMIT) return true;
+  loginRateLimitMap.set(ip, { count: entry.count + 1, last: entry.last });
+  return false;
+}
+
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    if (isLoginRateLimited(ip)) {
+      return NextResponse.json({ error: "Too many login attempts. Please try again later." }, { status: 429 });
+    }
     const { email, password } = await req.json();
 
     // 1. Sanity se user fetch kia

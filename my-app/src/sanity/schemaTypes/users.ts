@@ -67,7 +67,39 @@ export default {
             },
             validation: (Rule: Rule) => Rule.required(),
             initialValue: "user" // default role user ...
-        }
-        
+        },
+        {
+            name: 'resetToken',
+            title: 'Reset Token',
+            type: 'string',
+            hidden: true,
+        },
+        {
+            name: 'resetTokenExpiry',
+            title: 'Reset Token Expiry',
+            type: 'datetime',
+            hidden: true,
+        },
+        {
+            name: 'resetAttempts',
+            title: 'Reset Attempts',
+            type: 'number',
+            hidden: true,
+            description: 'Number of password reset attempts in the current window',
+        },
+        {
+            name: 'resetWindowStart',
+            title: 'Reset Window Start',
+            type: 'datetime',
+            hidden: true,
+            description: 'Start time of the current reset attempt window',
+        },
+        {
+            name: 'lastResetRequestTime',
+            title: 'Last Reset Request Time',
+            type: 'datetime',
+            hidden: true,
+            description: 'Timestamp of the last password reset request',
+        },
     ]
 }

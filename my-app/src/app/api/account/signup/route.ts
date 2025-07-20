@@ -6,8 +6,29 @@ import jwt from "jsonwebtoken";
 
 const SECRET_KEY = process.env.JWT_SECRET as string;
 
+// Simple in-memory rate limit (per IP)
+const signupRateLimitMap = new Map();
+const SIGNUP_RATE_LIMIT = 3; // 3 requests
+const SIGNUP_RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
+
+function isSignupRateLimited(ip) {
+  const now = Date.now();
+  const entry = signupRateLimitMap.get(ip) || { count: 0, last: now };
+  if (now - entry.last > SIGNUP_RATE_LIMIT_WINDOW) {
+    signupRateLimitMap.set(ip, { count: 1, last: now });
+    return false;
+  }
+  if (entry.count >= SIGNUP_RATE_LIMIT) return true;
+  signupRateLimitMap.set(ip, { count: entry.count + 1, last: entry.last });
+  return false;
+}
+
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    if (isSignupRateLimited(ip)) {
+      return NextResponse.json({ success: false, error: "Too many signup attempts. Please try again later." }, { status: 429 });
+    }
     const { fullName, email, password } = await req.json();
 
     // Checking if user already exists with given email
