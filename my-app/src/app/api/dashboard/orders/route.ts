@@ -92,7 +92,7 @@ async function isAdmin(req: NextRequest): Promise<boolean> {
     req,
     secret: process.env.NEXTAUTH_SECRET,
   });
-  return Boolean(token && (token as any).role === 'admin');
+  return Boolean(token && (token).role === 'admin');
 }
 
 /** GET /api/dashboard/orders → list all orders (admin‑only) */
