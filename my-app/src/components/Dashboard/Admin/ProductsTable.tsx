@@ -68,9 +68,8 @@ export default function ProductsTable() {
         const res = await fetch('/api/dashboard/products');
         const data = await res.json();
         setProducts(data.products || []);
-      } catch (e) {
+      } catch (_e) {
         setError('Failed to fetch products');
-        console.log(e);
       }
       setLoading(false);
     }
@@ -140,8 +139,7 @@ export default function ProductsTable() {
       setEditProduct(null);
       setForm(initialForm);
       setSuccess('Product saved successfully!');
-    } catch (e) {
-      console.log(e);
+    } catch (_e) {
       setError('Failed to save product');
     }
   }
@@ -159,8 +157,7 @@ export default function ProductsTable() {
       if (!res.ok) throw new Error('Failed to delete');
       setDeletingId(null);
       setSuccess('Product deleted successfully!');
-    } catch (e) {
-      console.log(e);
+    } catch (_e) {
       setError('Failed to delete product');
     }
   }
