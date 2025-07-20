@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 interface User {
@@ -24,7 +25,7 @@ export default function UsersTable() {
         const res = await fetch('/api/dashboard/users');
         const data = await res.json();
         setUsers(data.users || []);
-      } catch (e) {
+      } catch (_e) {
         setError('Failed to fetch users');
       }
       setLoading(false);
@@ -48,7 +49,7 @@ export default function UsersTable() {
       setEditId(null);
       setRole('');
       setSuccess('User role updated successfully!');
-    } catch (e) {
+    } catch (_e) {
       setError('Failed to update user');
     }
   }
@@ -78,7 +79,7 @@ export default function UsersTable() {
                 <tr key={u._id} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
                   <td className="py-2 px-4">
                     {u.image ? (
-                      <img src={u.image} alt={u.fullName} className="w-9 h-9 rounded-full object-cover border border-gray-200" />
+                      <Image width={300} height={300} src={u.image} alt={u.fullName} className="w-9 h-9 rounded-full object-cover border border-gray-200" />
                     ) : (
                       <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-sm">
                         {u.fullName ? u.fullName.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase() : '?'}

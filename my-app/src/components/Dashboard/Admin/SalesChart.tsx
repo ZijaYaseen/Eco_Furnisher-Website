@@ -10,12 +10,25 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartData,
+  ChartOptions,
 } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+// Types from dashboard/orders API
+interface Order {
+  _id: string;
+  createdAt: string;
+  orderStatus: string;
+  trackingStatus: string;
+  trackingNumber: string;
+  orderTotal?: number;
+  // Add more fields if needed
+}
+
 export default function SalesChart() {
-  const [chartData, setChartData] = useState<any>(null);
+  const [chartData, setChartData] = useState<ChartData<'line'> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,10 +37,10 @@ export default function SalesChart() {
       try {
         const res = await fetch('/api/dashboard/orders');
         const data = await res.json();
-        const orders = data.orders || [];
+        const orders: Order[] = data.orders || [];
         // Group sales by date (YYYY-MM-DD)
         const salesByDate: Record<string, number> = {};
-        orders.forEach((order: any) => {
+        orders.forEach((order) => {
           const date = order.createdAt?.slice(0, 10);
           if (!date) return;
           salesByDate[date] = (salesByDate[date] || 0) + (order.orderTotal || 0);
@@ -48,6 +61,7 @@ export default function SalesChart() {
           ],
         });
       } catch (e) {
+        console.error(e)
         setChartData(null);
       }
       setLoading(false);

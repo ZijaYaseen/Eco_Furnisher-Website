@@ -267,7 +267,9 @@ const UserDashboard = () => {
                   <div className="flex flex-col gap-2 mt-2">
                     {order.orderItems.map((item: OrderItem, idx: number) => (
                       <div key={idx} className="flex items-center gap-3 border border-gray-100 rounded-lg p-2 bg-white">
-                        <img
+                        <Image
+                        width={300}
+                        height={300}
                           src={item.variants[0]?.image || item.product?.imageSet?.[0]}
                           alt={item.product?.productNameEn}
                           className="w-16 h-16 object-cover rounded"

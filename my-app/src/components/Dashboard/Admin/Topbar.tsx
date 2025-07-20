@@ -74,7 +74,9 @@ export default function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {
             <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4 min-w-[200px]">
               <div className="flex items-center gap-3 mb-3">
                 {user?.image ? (
-                  <img
+                  <Image
+                  width={300}
+                  height={300}
                     src={user.image}
                     alt={user.name || 'User'}
                     className="w-12 h-12 rounded-full object-cover border border-gray-300"

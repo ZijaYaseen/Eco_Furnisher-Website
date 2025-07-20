@@ -10,7 +10,14 @@ const navItems = [
   { label: 'Users', value: 'users', icon: <FiUsers /> },
 ];
 
-export default function Sidebar({ activeTab, setActiveTab, open, onClose }: any) {
+interface SidebarProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  open: boolean;
+  onClose?: () => void;
+}
+
+export default function Sidebar({ activeTab, setActiveTab, open, onClose }: SidebarProps) {
   return (
     <aside className={`fixed top-0 left-0 z-[80] h-screen w-64 bg-white border-r border-gray-200 shadow-lg transition-transform duration-200 flex flex-col overflow-y-auto ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`} style={{ minHeight: '100vh' }}>
       {/* Mobile close button */}

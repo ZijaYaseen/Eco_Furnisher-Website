@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 // Define all types at the top for clarity
@@ -150,7 +151,7 @@ export default function OrdersTable() {
                     <td className={`py-3 px-4 align-top min-w-[180px] w-[220px] ${borderClass}`}>
                       <div className="flex items-center gap-3">
                         {o.user?.image ? (
-                          <img src={o.user.image} alt={o.user.fullName} className="w-10 h-10 object-cover border border-gray-200" />
+                          <Image width={300} height={300} src={o.user.image} alt={o.user.fullName} className="w-10 h-10 object-cover border border-gray-200" />
                         ) : (
                           <div className="w-10 h-10 bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-base">
                             {o.user?.fullName ? o.user.fullName.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase() : '?'}
@@ -167,7 +168,7 @@ export default function OrdersTable() {
                         {o.orderItems?.map((item, idx2) => (
                           <div key={idx2} className="flex items-center gap-3 p-3 bg-white border border-gray-100 w-full">
                             {item.product?.productImageSet?.[0] && (
-                              <img src={item.product.productImageSet[0]} alt={item.product.productNameEn} className="w-12 h-12 object-cover border border-gray-200" />
+                              <Image width={300} height={300} src={item.product.productImageSet[0]} alt={item.product.productNameEn} className="w-12 h-12 object-cover border border-gray-200" />
                             )}
                             <div>
                               <div className="text-gray-900 font-semibold text-base">{item.product?.productNameEn}</div>

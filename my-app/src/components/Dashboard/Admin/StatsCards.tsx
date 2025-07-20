@@ -50,6 +50,7 @@ export default function StatsCards() {
       setStats(data);
       cache.current[period] = data;
     } catch (err) {
+      console.error(err)
       setError('Failed to load stats. Please try again.');
       setStats(null);
     } finally {
