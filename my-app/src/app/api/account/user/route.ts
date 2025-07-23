@@ -5,6 +5,9 @@ import { jwtVerify } from "jose";
 // Convert secret key to Uint8Array
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET as string);
 
+// This API route uses cookies and must always be server-side. Static generation is not supported.
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   if (!token) {

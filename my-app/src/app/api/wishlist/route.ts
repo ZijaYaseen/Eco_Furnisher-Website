@@ -94,6 +94,9 @@ async function getUserIdFromRequest(req: NextRequest): Promise<string | null> {
   return null;
 }
 
+// This API route uses cookies and must always be server-side. Static generation is not supported.
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const { productId } = await req.json();

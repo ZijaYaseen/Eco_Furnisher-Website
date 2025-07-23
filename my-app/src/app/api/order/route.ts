@@ -43,6 +43,9 @@ interface OrderDetailsWithProduct {
   orderItems: OrderItemWithProduct[];
 }
 
+// This API route uses cookies and must always be server-side. Static generation is not supported.
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     // Try to get userId from JWT or next-auth

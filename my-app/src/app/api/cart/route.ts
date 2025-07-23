@@ -474,3 +474,6 @@ export async function PATCH(req: NextRequest) {
     );
   }
 }
+
+// This API route uses cookies and must always be server-side. Static generation is not supported.
+export const dynamic = "force-dynamic";
