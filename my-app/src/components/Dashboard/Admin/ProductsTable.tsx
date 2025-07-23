@@ -251,7 +251,7 @@ export default function ProductsTable() {
                 <input name="packingWeight" type="number" value={form.packingWeight || ''} onChange={handleChange} className="w-full border rounded px-3 py-2 mt-1" />
               </label>
               <label className="block">Shipping Charge
-                <input name="shippingCharge" type="number" value={form.shippingCharge || ''} onChange={handleChange} className="w-full border rounded px-3 py-2 mt-1" />
+                <input name="shippingCharge" type="number" value={form.shippingCharge || parseFloat('00')} onChange={handleChange} className="w-full border rounded px-3 py-2 mt-1" />
               </label>
               <label className="block">Tags (comma separated)
                 <input name="tags" value={form.tags?.join(', ') || ''} onChange={e => handleArrayChange('tags', e.target.value)} className="w-full border rounded px-3 py-2 mt-1" />
