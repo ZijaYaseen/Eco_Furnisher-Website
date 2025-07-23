@@ -56,7 +56,7 @@ export default function OrdersTable() {
         const res = await fetch('/api/dashboard/orders');
         const data = await res.json();
         setOrders(data.orders || []);
-      } catch (_) {
+      } catch {
         setError('Failed to fetch orders');
       }
       setLoading(false);

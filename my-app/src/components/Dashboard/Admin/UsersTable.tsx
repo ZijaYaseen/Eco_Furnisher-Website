@@ -25,7 +25,7 @@ export default function UsersTable() {
         const res = await fetch('/api/dashboard/users');
         const data = await res.json();
         setUsers(data.users || []);
-      } catch (_) {
+      } catch {
         setError('Failed to fetch users');
       }
       setLoading(false);
@@ -49,7 +49,7 @@ export default function UsersTable() {
       setEditId(null);
       setRole('');
       setSuccess('User role updated successfully!');
-    } catch (_) {
+    } catch {
       setError('Failed to update user');
     }
   }
