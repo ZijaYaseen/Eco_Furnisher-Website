@@ -49,7 +49,7 @@ export default function StatsCards() {
       const data: DashboardStatsResponse = await res.json();
       setStats(data);
       cache.current[period] = data;
-    } catch (_err) {
+    } catch (_) {
       setError('Failed to load stats. Please try again.');
       setStats(null);
     } finally {
