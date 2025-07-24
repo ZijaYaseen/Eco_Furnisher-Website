@@ -2,36 +2,16 @@
 
 import { FiBell, FiSearch, FiUser, FiMenu } from 'react-icons/fi';
 import { useSession, signOut } from 'next-auth/react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
+import { useClickOutside } from './useClickOutside';
 
 export default function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { data: session } = useSession();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click (client-side only)
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-
-    if (dropdownOpen) {
-      // Only add event listener if we're in the browser
-      if (typeof document !== 'undefined') {
-        document.addEventListener('mousedown', handleClickOutside);
-      }
-    }
-
-    return () => {
-      // Only remove event listener if we're in the browser
-      if (typeof document !== 'undefined') {
-        document.removeEventListener('mousedown', handleClickOutside);
-      }
-    };
-  }, [dropdownOpen]);
+  useClickOutside(dropdownRef, () => setDropdownOpen(false));
 
   const user = session?.user;
 
