@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     const { result: user } = await sanityRes.json();
     // Always return success for security (don't reveal if user exists)
     if (!user) {
-      return NextResponse.json({ success: true, message: "A reset link has been sent." });
+      return NextResponse.json({ success: true, message: "If this email exist. A reset link has been sent." });
     }
     // --- Rate limiting logic per user ---
     const now = new Date();
@@ -135,7 +135,7 @@ export async function POST(req: Request) {
       subject: "EcoFurnisher Password Reset",
       html,
     });
-    return NextResponse.json({ success: true, message: "If this email exists, a reset link has been sent." });
+    return NextResponse.json({ success: true, message: "A reset link has been sent." });
   } catch (error) {
     if (process.env.SENTRY_DSN) Sentry.captureException(error);
     console.error(error);

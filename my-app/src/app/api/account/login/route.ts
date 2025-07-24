@@ -38,6 +38,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email Not Found" }, { status: 404 });
     }
 
+    // Extra check: password field must be a valid hash (at least 20 chars)
+    if (!user.password || user.password.length < 20) {
+      return NextResponse.json({ error: "Password not set or invalid. Please reset your password." }, { status: 401 });
+    }
+
     // 2. Password match kia
     const passwordMatch = await bcrypt.compare(password, user.password);
 
