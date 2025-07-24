@@ -9,16 +9,9 @@ export default function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { data: session } = useSession();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [isClient, setIsClient] = useState(false); // Track client-side status
-
-  useEffect(() => {
-    setIsClient(true); // Component is now on client-side
-  }, []);
 
   // Close dropdown on outside click (client-side only)
   useEffect(() => {
-    if (!isClient) return; // Exit if not on client
-
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
@@ -26,18 +19,21 @@ export default function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {
     }
 
     if (dropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      // Only add event listener if we're in the browser
+      if (typeof document !== 'undefined') {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      // Only remove event listener if we're in the browser
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('mousedown', handleClickOutside);
+      }
     };
-  }, [dropdownOpen, isClient]);
+  }, [dropdownOpen]);
 
   const user = session?.user;
-
-  // Don't render anything on server
-  if (!isClient) return null;
 
   return (
     <header className="w-full flex items-center justify-between md:px-10 px-4 py-3 bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
