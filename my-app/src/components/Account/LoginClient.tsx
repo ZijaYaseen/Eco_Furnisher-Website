@@ -33,7 +33,11 @@ const LoginClient = () => {
                 redirect: false,
             });
             if (res?.error) {
-                setError(res.error);
+                if (res.error === "CredentialsSignin") {
+                    setError("Invalid Email or Password.");
+                } else {
+                    setError(res.error);
+                }
                 setIsLoading(false);
                 return;
             }
