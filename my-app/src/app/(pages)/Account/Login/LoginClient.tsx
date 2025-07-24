@@ -1,0 +1,179 @@
+"use client";
+
+import Link from "next/link";
+import { FormEvent, useState } from "react";
+import { PiEyeSlashThin, PiEyeThin } from "react-icons/pi";
+import { useRouter } from "next/navigation";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa";
+import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+
+const LoginClient = () => {
+    const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
+    const [facebookLoading, setFacebookLoading] = useState(false);
+
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const resetSuccess = searchParams.get("reset") === "success";
+
+    const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError("");
+        setIsLoading(true);
+        try {
+            const res = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
+            });
+            if (res?.error) {
+                setError(res.error);
+                setIsLoading(false);
+                return;
+            }
+            // Success
+            router.push("/Dashboard");
+        } catch (error) {
+            console.log(error);
+            setError("Something went wrong");
+            setIsLoading(false);
+        }
+    };
+
+    const handleSocialLogin = async (provider: "google" | "facebook") => {
+        if (provider === "google") setGoogleLoading(true);
+        if (provider === "facebook") setFacebookLoading(true);
+        setError("");
+        try {
+            // Social login logic here (if implemented)
+            // await signIn(provider, { callbackUrl: "/Dashboard", redirect: true });
+            setTimeout(() => {
+                setGoogleLoading(false);
+                setFacebookLoading(false);
+                setError("Social login is not implemented yet.");
+            }, 1200);
+        } catch (error) {
+            setError(`Failed to login with ${provider}, ${error}`);
+            setGoogleLoading(false);
+            setFacebookLoading(false);
+        }
+    };
+
+    return (
+        <div className='max-w-[1440px] font-poppins w-full'>
+            <div className="w-[80%] mx-auto py-10">
+                <div className="flex flex-col gap-8 md:w-[40%] w-full mx-auto">
+                    <h1 className="font-semibold text-4xl">Log In</h1>
+                    {resetSuccess && <p className="text-green-600 font-semibold text-base mt-2">Password reset successful! You can now log in.</p>}
+                    
+                    {error && <p className="text-red-600 font-semibold text-base mt-2">{error}</p>}
+                    
+                    {/* Social Login Buttons */}
+                    <div className="flex flex-col gap-4">
+                        <button
+                            type="button"
+                            onClick={() => handleSocialLogin("google")}
+                            disabled={isLoading || googleLoading}
+                            className="flex items-center justify-center gap-3 p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        >
+                            {googleLoading ? (
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-black"></div>
+                            ) : (
+                                <FcGoogle size={24} />
+                            )}
+                            <span>{googleLoading ? 'Signing in...' : 'Continue with Google'}</span>
+                        </button>
+                        
+                        <button
+                            type="button"
+                            onClick={() => handleSocialLogin("facebook")}
+                            disabled={isLoading || facebookLoading}
+                            className="flex items-center justify-center gap-3 p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        >
+                            {facebookLoading ? (
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                            ) : (
+                                <FaFacebook size={24} className="text-blue-600" />
+                            )}
+                            <span>{facebookLoading ? 'Signing in...' : 'Continue with Facebook'}</span>
+                        </button>
+                    </div>
+
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300" />
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+                        </div>
+                    </div>
+
+                    <form className="flex flex-col gap-7" onSubmit={handleLogin}>
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="email" className="text-base font-medium">
+                                Enter Email address
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="mt-1 p-6 border border-gray-400 md:w-[453px] lg:h-[75px] h-12 rounded-[10px] focus:outline-none bg-white text-black"
+                                required
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="password" className="text-base font-medium">
+                                Password
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    id="password"
+                                    name="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="mt-1 p-6 border border-gray-400 w-full md:w-[453px] lg:h-[75px] h-12 rounded-[10px] focus:outline-none bg-white text-black"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 md:right-6 right-4 flex items-center text-gray-500 focus:outline-none"
+                                >
+                                    {showPassword ? <PiEyeThin size={24} /> : <PiEyeSlashThin size={24} />}
+                                </button>
+                            </div>
+                            <Link href="/Account/ForgotPassword">
+                                <span className="font-light md:text-base text-xs text-blue-600 underline mt-2 inline-block">Forgot Password?</span>
+                            </Link>
+                        </div>
+                        {error && <p className="text-red-600 font-semibold text-base mt-2">{error}</p>}
+                        <div className="grid gap-4 mt-2">
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="font-normal text-xl w-[215px] md:h-16 h-14 rounded-[15px] border border-black bg-black text-white hover:bg-gray-900 disabled:opacity-50"
+                            >
+                                {isLoading ? "Logging in..." : "Log In"}
+                            </button>
+                            <Link href={"/Account/Sign-up"}>
+                                Don&#39;t have an account? <span className="border-b text-base w-36 text-blue-600 border-blue-600">Sign Up</span>
+                            </Link>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default LoginClient; 
