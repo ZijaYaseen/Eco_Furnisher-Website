@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import { FaPlus, FaTrash} from 'react-icons/fa';
 import Image from 'next/image';

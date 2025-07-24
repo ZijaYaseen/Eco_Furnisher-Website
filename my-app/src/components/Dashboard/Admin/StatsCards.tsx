@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useState, useRef } from 'react';
 import { FiUsers, FiShoppingCart, FiDollarSign, FiTrendingUp, FiBarChart2 } from 'react-icons/fi';
 
