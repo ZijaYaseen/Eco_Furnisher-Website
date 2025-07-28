@@ -22,7 +22,7 @@ const BestSellerSection = ({ products }: BestSellerSectionProps) => {
   const handleNext = () => swiperRef.current?.slideNext();
 
   return (
-    <section className="mx-auto max-w-screen-xl py-12 px-3 lg:px-8 relative">
+    <section className="mx-auto max-w-screen-xl py-12 px-3 lg:px-6 relative">
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
           Best Sellers
@@ -43,7 +43,7 @@ const BestSellerSection = ({ products }: BestSellerSectionProps) => {
           setIsEnd(swiper.isEnd);
         }}
         slidesPerView={2}
-        spaceBetween={4}
+        spaceBetween={12}
         breakpoints={{
           640: { slidesPerView: 2 },
           768: { slidesPerView: 4 },
@@ -62,7 +62,7 @@ const BestSellerSection = ({ products }: BestSellerSectionProps) => {
       {!isBeginning && (
         <button
           onClick={handlePrev}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white text-black rounded-full p-2 shadow"
+          className="absolute left-1 top-[35%] -translate-y-1/2 z-10 bg-white text-black rounded-full p-2 shadow"
         >
           <FaChevronLeft size={20} />
         </button>
@@ -70,7 +70,7 @@ const BestSellerSection = ({ products }: BestSellerSectionProps) => {
       {!isEnd && (
         <button
           onClick={handleNext}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white text-black rounded-full p-2 shadow"
+          className="absolute right-1 top-[35%] -translate-y-1/2 z-10 bg-white text-black rounded-full p-2 shadow"
         >
           <FaChevronRight size={20} />
         </button>

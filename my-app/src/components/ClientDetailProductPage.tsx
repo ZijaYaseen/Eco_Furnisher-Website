@@ -180,12 +180,22 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const handleIncrement = () => setCount(prev => prev + 1);
   const handleDecrement = () => setCount(prev => Math.max(1, prev - 1));
 
+  // In onColorClick, scroll carousel to variant image on mobile
   const onColorClick = (vid: string) => {
     setSelectedVariantId(vid);
-    // Find and set variant image
     const variant = product.variants.find(v => v.vid === vid);
     if (variant) {
       setMainImage(variant.variantImage);
+      // Find index of this image in imageSet
+      const idx = product.imageSet.findIndex(img => img === variant.variantImage);
+      if (idx !== -1) {
+        setCurrentMobileIndex(idx);
+        // Scroll carousel to this image (mobile only)
+        if (window.innerWidth < 768 && carouselRef.current) {
+          const width = carouselRef.current.clientWidth;
+          carouselRef.current.scrollTo({ left: width * idx, behavior: 'smooth' });
+        }
+      }
     }
   };
 
@@ -266,6 +276,13 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               <div
                 key={idx}
                 className={`w-2 h-2 rounded-full ${idx === currentMobileIndex ? "bg-black" : "bg-gray-300"}`}
+                onClick={() => {
+                  setCurrentMobileIndex(idx);
+                  if (carouselRef.current) {
+                    const width = carouselRef.current.clientWidth;
+                    carouselRef.current.scrollTo({ left: width * idx, behavior: 'smooth' });
+                  }
+                }}
               ></div>
             ))}
           </div>
@@ -389,9 +406,11 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               {showOverview ? <FaMinus /> : <FaPlus />}
             </div>
             {showOverview && (
-              <div className="prose max-w-none mb-4 space-y-4">
-                <PortableText value={product.description} />
-              </div>
+              Array.isArray(product.description) ? null : (
+                <div className="prose max-w-none mt-4"
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
+              )
             )}
           </div>
 

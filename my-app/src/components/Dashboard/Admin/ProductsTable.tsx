@@ -5,9 +5,11 @@ import { FaPlus, FaTrash} from 'react-icons/fa';
 import Image from 'next/image';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { v4 as uuidv4 } from 'uuid';
 
 // Product type based on Sanity schema
 interface Variant {
+  _key?: string;
   vid?: string;
   variantSellPrice?: number;
   variantSugSellPrice?: number;
@@ -51,6 +53,16 @@ const initialForm: Partial<Product> = {
   variants: [{ variantActualSellPrice: 0, colors: { colorName: '', colorCode: '' } }],
 };
 
+function slugify(input: string) {
+  return input
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-]/g, '')
+    .replace(/\-+/g, '-')
+    .replace(/^\-+|\-+$/g, '')
+    .slice(0, 200);
+}
+
 export default function ProductsTable() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -88,6 +100,11 @@ export default function ProductsTable() {
   function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
     if (name === 'description') return;
+    // Ensure number fields are stored as numbers
+    if (["shippingCharge", "packingWeight", "inventory", "rating"].includes(name)) {
+      setForm({ ...form, [name]: value === '' ? '' : Number(value) });
+      return;
+    }
     setForm({ ...form, [name]: value });
   }
 
@@ -128,9 +145,32 @@ export default function ProductsTable() {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+    // Ensure number fields are numbers before sending to API
+    const numberFields = ["shippingCharge", "packingWeight", "inventory", "rating"] as const;
+    type NumberField = typeof numberFields[number];
+    const cleanForm = { ...form };
+    numberFields.forEach(field => {
+      if (cleanForm[field as NumberField] === undefined || cleanForm[field as NumberField] === null) {
+        cleanForm[field as NumberField] = 0;
+      }
+    });
+    // Auto-generate slug if not present or if productNameEn/CategoryName changes
+    const name = cleanForm.productNameEn || '';
+    const cat = (cleanForm.CategoryName && cleanForm.CategoryName[0]) || '';
+    const autoSlug = slugify(`${name}-${cat}`);
+    if (!cleanForm.slug || !cleanForm.slug.current) {
+      cleanForm.slug = { current: autoSlug };
+    }
+    // Ensure variants have unique _key
+    if (Array.isArray(cleanForm.variants)) {
+      cleanForm.variants = cleanForm.variants.map(v => ({
+        _key: v._key || uuidv4(),
+        ...v
+      }));
+    }
     try {
       const method = editProduct ? 'PATCH' : 'POST';
-      const body = editProduct ? { ...form, _id: editProduct._id } : form;
+      const body = editProduct ? { ...cleanForm, _id: editProduct._id } : cleanForm;
       const res = await fetch('/api/dashboard/products', {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -246,6 +286,15 @@ export default function ProductsTable() {
               <label className="block">SKU
                 <input name="productSku" value={form.productSku || ''} onChange={handleChange} className="w-full border rounded px-3 py-2 mt-1" required />
               </label>
+              <label className="block">Category ID
+                <input name="categoryId" value={form.categoryId || ''} onChange={handleChange} className="w-full border rounded px-3 py-2 mt-1" required />
+              </label>
+              <label className="block">Category Names (comma separated)
+                <input name="CategoryName" value={form.CategoryName?.join(', ') || ''} onChange={e => handleArrayChange('CategoryName', e.target.value)} className="w-full border rounded px-3 py-2 mt-1" required />
+              </label>
+              <label className="block md:col-span-2">Image URLs (comma separated)
+                <input name="productImageSet" value={form.productImageSet?.join(', ') || ''} onChange={e => handleArrayChange('productImageSet', e.target.value)} className="w-full border rounded px-3 py-2 mt-1" />
+              </label>
               <label className="block">Inventory
                 <input name="inventory" type="number" value={form.inventory || ''} onChange={handleChange} className="w-full border rounded px-3 py-2 mt-1" required />
               </label>
@@ -254,6 +303,9 @@ export default function ProductsTable() {
               </label>
               <label className="block">Shipping Charge
                 <input name="shippingCharge" type="number" value={form.shippingCharge || parseFloat('00')} onChange={handleChange} className="w-full border rounded px-3 py-2 mt-1" />
+              </label>
+              <label className="block">Rating (out of 5)
+                <input name="rating" type="number" min={0} max={5} step={0.1} value={form.rating || ''} onChange={handleChange} className="w-full border rounded px-3 py-2 mt-1" />
               </label>
               <label className="block">Tags (comma separated)
                 <input name="tags" value={form.tags?.join(', ') || ''} onChange={e => handleArrayChange('tags', e.target.value)} className="w-full border rounded px-3 py-2 mt-1" />
@@ -272,9 +324,7 @@ export default function ProductsTable() {
                   theme="snow"
                 />
               </label>
-              <label className="block md:col-span-2">Image URLs (comma separated)
-                <input name="productImageSet" value={form.productImageSet?.join(', ') || ''} onChange={e => handleArrayChange('productImageSet', e.target.value)} className="w-full border rounded px-3 py-2 mt-1" />
-              </label>
+              
             </div>
             <div className="mt-6">
               <div className="font-bold text-lg mb-2 flex items-center gap-2">Variants

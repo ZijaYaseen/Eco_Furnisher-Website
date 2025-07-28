@@ -61,8 +61,8 @@ export default {
     },
     {
       name: 'description',
-      title: 'Description',
-      type: 'string',
+      type: 'text', // Changed to text for HTML content
+      title: 'Description (HTML)',
       description: 'A detailed description of the product.',
     },
     {
