@@ -13,7 +13,6 @@ import CartSidebar from "./CartSidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OutOfStockModal from "./OutOfStockModal";
-import { PortableText } from '@portabletext/react';
 import { Product, CartItem } from "@/data";
 
 // Wishlist types for wishlist API response
